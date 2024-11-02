@@ -19,6 +19,10 @@ install it.
 optional,
 - [GraphViz](https://graphviz.org/)
   - [OpenJDK](https://openjdk.org/) required
+- [PlantUML](https://plantuml.com/)
+  - download a Compiled jar
+  - rename to plantuml.jar
+  - place into your yges_js_web directory 
 
 ### Build
 
