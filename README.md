@@ -1,4 +1,4 @@
-﻿# Yggdrasil Essence for Node.js
+﻿# Yggdrasil Essence for web
 
 Copyright © 2024 [Yggdrasil Leaves, LLC.](https://yggdrasil-leaves.com)
 
