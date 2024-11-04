@@ -20,6 +20,7 @@ Showable | int? | minimun showable log level
 Caption | string | a caption
 Format | function<Format> | formatter
 Way | function<Way> | output way
+User | object | user definitions
 
 ## Type: function<Format>(capt,lev,msg):FormattedLog
 
