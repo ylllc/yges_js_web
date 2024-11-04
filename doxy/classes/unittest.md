@@ -5,6 +5,13 @@
 @sa @ref pg_feat_unittest
 
 
+# Properties
+
+Name | Type | Means
+-----|------|------
+User | object | user definitions
+
+
 # Methods
 
 ## chk(cond,msg=null)
