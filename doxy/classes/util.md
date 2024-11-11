@@ -2,10 +2,95 @@
 
 # What's It?
 
-@sa @ref pg_feat_safeiter
-
+@sa @ref pg_feat_trivia @n
+	@ref pg_feat_safeiter @n
 
 # Methods
+
+## isJustNaN(val):bool
+
+### Returns
+
+just NaN.  
+
+
+## isJustInfinity(val):bool
+
+### Returns
+
+just Infinity or -Infinity.  
+
+
+## isEmpty(val):bool
+
+### Returns
+
+null, undefined, empty string returns true.  
+otherwise false.  
+
+
+## isValid(val):bool
+
+### Returns
+
+null, undefined, NaN returns false.  
+otherwise true.  
+
+
+## booleanize(val):bool
+
+### Returns
+
+fix to bool.  
+
+number means nonzero.  
+(include NaN)     
+
+stringified 'null' 'undefined' 'false' '0' become false.  
+(include uppercase and pointed zero range)  
+other string means not empty.  
+
+empty array and object bcome true.  
+
+## trinarize(val):bool?
+
+### Returns
+
+fix to bool or null.  
+null and undefined become null, stringified too.  
+otherwize sami to booleanize()
+
+
+## zerofill(val,col,sgn=false):string
+
+### Args
+
+Name | Type | Means
+-----|------|------
+val | number | source number
+col | int | minimum letters (too long string is return through)
+sgn | bool | use + sign
+
+### Returns
+
+zero filled string.  
+can uses for negative numbers.  
+
+
+## justString(val):string
+
+### Returns
+
+fix to string.  
+uses for logging instead of toString().  
+
+
+## inspect(val):string
+
+### Returns
+
+fix to inspectable string.  
+uses for debugging instead of JSON.stringify().  
 
 
 ## safestepiter(bgn,end,step,cbiter):number
@@ -84,4 +169,3 @@ val | any | value in the object
 
 just false means break from the loop.  
 or continue.  
-
