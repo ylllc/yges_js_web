@@ -37,7 +37,14 @@ null, undefined, NaN returns false.
 otherwise true.  
 
 
-## booleanize(val):bool
+## booleanize(val,stringable=false):bool
+
+### Args
+
+Name | Type | Means
+-----|------|------
+val | number | source value
+stringable | bool | include stringified value
 
 ### Returns
 
@@ -46,13 +53,20 @@ fix to bool.
 number means nonzero.  
 (include NaN)     
 
-stringified 'null' 'undefined' 'false' '0' become false.  
+stringified 'null' 'undefined' 'false' '0' become false in stringable mode.  
 (include uppercase and pointed zero range)  
 other string means not empty.  
 
 empty array and object bcome true.  
 
-## trinarize(val):bool?
+## trinarize(val,stringable=false):bool?
+
+### Args
+
+Name | Type | Means
+-----|------|------
+val | number | source value
+stringable | bool | include stringified value
 
 ### Returns
 
