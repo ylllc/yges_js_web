@@ -135,51 +135,74 @@ f = Util.isValid(NaN); // false
 ## Booleanize
 
 fix to bool.  
-include stringified values.  
 
 ```
 f = Util.booleanize(0); // false
 f = Util.booleanize(1); // true
 f = Util.booleanize(""); // false
-f = Util.booleanize("0"); // false
-f = Util.booleanize(".00"); // false
+f = Util.booleanize("0"); // true
+f = Util.booleanize(".00"); // true
 f = Util.booleanize("A"); // true
 f = Util.booleanize(false); // false
-f = Util.booleanize("false"); // false
-f = Util.booleanize("FaLsE"); // false
+f = Util.booleanize("false"); // true
+f = Util.booleanize("FaLsE"); // true
 f = Util.booleanize(null); // false
-f = Util.booleanize("null"); // false
+f = Util.booleanize("null"); // true
 f = Util.booleanize(undefined); // false
-f = Util.booleanize("undefined"); // false
+f = Util.booleanize("undefined"); // true
 f = Util.booleanize([]); // true
 f = Util.booleanize({}); // true
 f = Util.booleanize(NaN); // true
 f = Util.booleanize("NaN"); // true
 ```
 
+### Unstring Booleanize
+
+include stringified values.  
+
+```
+f = Util.booleanize("0",true); // false
+f = Util.booleanize(".00",true); // false
+f = Util.booleanize("false",true); // false
+f = Util.booleanize("FaLsE",true); // false
+f = Util.booleanize("null",true); // false
+f = Util.booleanize("undefined",true); // false
+
 ## Trinarize
 
 fix to bool or null.  
-include stringified values.  
 
 ```
 f = Util.trinarize(0); // false
 f = Util.trinarize(1); // true
 f = Util.trinarize(""); // false
-f = Util.trinarize("0"); // false
-f = Util.trinarize(".00"); // false
+f = Util.trinarize("0"); // true
+f = Util.trinarize(".00"); // true
 f = Util.trinarize("A"); // true
 f = Util.trinarize(false); // false
-f = Util.trinarize("false"); // false
-f = Util.trinarize("FaLsE"); // false
+f = Util.trinarize("false"); // true
+f = Util.trinarize("FaLsE"); // true
 f = Util.trinarize(null); // null
-f = Util.trinarize("null"); // null
+f = Util.trinarize("null"); // true
 f = Util.trinarize(undefined); // null
-f = Util.trinarize("undefined"); // null
+f = Util.trinarize("undefined"); // true
 f = Util.trinarize([]); // true
 f = Util.trinarize({}); // true
 f = Util.trinarize(NaN); // true
 f = Util.trinarize("NaN"); // true
+```
+
+### Unstring Booleanize
+
+include stringified values.  
+
+```
+f = Util.trinarize("0",true); // false
+f = Util.trinarize(".00",true); // false
+f = Util.trinarize("false",true); // false
+f = Util.trinarize("FaLsE",true); // false
+f = Util.trinarize("null",null); // false
+f = Util.trinarize("undefined",null); // false
 ```
 
 ## Zero Filling
