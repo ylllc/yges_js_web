@@ -34,7 +34,7 @@ for(var i=0;i<5;++i){
 }
 
 // corrected 
-util.safestepiter(0,5,1,(i)=>{
+util.safeStepIter(0,5,1,(i)=>{
 	setTimeout(()=>{
 		log.info('safe loop: '+i);
 	},100);

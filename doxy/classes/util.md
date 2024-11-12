@@ -93,7 +93,7 @@ fix to inspectable string.
 uses for debugging instead of JSON.stringify().  
 
 
-## safestepiter(bgn,end,step,cbiter):number
+## safeStepIter(bgn,end,step,cbiter):number
 
 async-safe step loop,  
 instead of for(var cnt=bgn;(step<0)?(cnt>end):(cnt<end);cnt+=step)  
