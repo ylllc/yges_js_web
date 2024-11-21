@@ -125,7 +125,7 @@ cbiter | function<StepIter> | loop procedure
 
 next counter (same to for() counter)
 
-## Type: function<StepIter>:boolean?
+## Type: function<StepIter>:trinary
 
 Name | Type | Means
 -----|------|------
@@ -133,8 +133,10 @@ cnt | number | stepping counter
 
 ### Returns
 
-just false means break from the loop.  
-or continue.  
+Value | Means
+----- | -----
+false | break iter
+other | continue
 
 ## safearrayiter(src,cbiter)
 
@@ -148,7 +150,7 @@ Name | Type | Means
 src | array | source array
 cbiter | function<ArrayIter> | loop procedure
 
-## Type: function<ArrayIter>:boolean?
+## Type: function<ArrayIter>:trinary
 
 Name | Type | Means
 -----|------|------
@@ -156,8 +158,10 @@ val | any | value in the array
 
 ### Returns
 
-just false means break from the loop.  
-or continue.  
+Value | Means
+----- | -----
+false | break iter
+other | continue
 
 
 ## safedictiter(src,cbiter)
@@ -172,7 +176,7 @@ Name | Type | Means
 src | object | source object
 cbiter | function<DictIter> | loop procedure
 
-## Type: function<DictIter>:boolean?
+## Type: function<DictIter>:trinary
 
 Name | Type | Means
 -----|------|------
@@ -181,5 +185,7 @@ val | any | value in the object
 
 ### Returns
 
-just false means break from the loop.  
-or continue.  
+Value | Means
+----- | -----
+false | break iter
+other | continue

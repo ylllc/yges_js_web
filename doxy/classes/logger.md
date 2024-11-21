@@ -70,3 +70,148 @@ showable | int? | showablility (null means same to parent instance)
 ### Returns
 
 local logger instance
+
+
+## getCaption():string
+
+### Returns
+
+caption for this instance
+
+
+## getShowable():int
+
+### Returns
+
+showable log level for this instance
+
+
+## format(capt,lev,msg):any
+
+format a log element
+
+### Args
+
+Name | Type | Means
+-----|------|------
+capt | string | caption
+lev | int | log level
+msg | string | message
+
+### Returns
+
+formatted value
+
+
+## write(src)
+
+write a formatted log value
+
+### Args
+
+Name | Type | Means
+-----|------|------
+src | any | formatted source
+
+
+## put(lev,msg)
+
+log width variable level.  
+suppressed when lower than showable.  
+
+Name | Type | Means
+-----|------|------
+lev | int | log level
+msg | string | message
+
+
+## tick(msg)
+
+put TICK log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## trace(msg)
+
+put TRACE log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## debug(msg)
+
+put DEBUG log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## info(msg)
+
+put INFO log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## notice(msg)
+
+put NOTICE log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## warn(msg)
+
+put WARN log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## fatal(msg)
+
+put FATAL log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## crit(msg)
+
+put CRIT log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## alert(msg)
+
+put ALERT log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
+## emerg(msg)
+
+put EMERG log
+
+Name | Type | Means
+-----|------|------
+msg | string | message
+
+
