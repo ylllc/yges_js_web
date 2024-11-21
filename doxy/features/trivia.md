@@ -167,6 +167,7 @@ f = Util.booleanize("false",true); // false
 f = Util.booleanize("FaLsE",true); // false
 f = Util.booleanize("null",true); // false
 f = Util.booleanize("undefined",true); // false
+```
 
 ## Trinarize
 
