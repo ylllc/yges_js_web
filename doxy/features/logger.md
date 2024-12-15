@@ -73,6 +73,31 @@ Logger.LogCaption=null;
 
 ```
 
+## Object Inspecting
+
+can put an object directly.  
+it processed by Util.inspect() 
+
+```
+// can output an object directly, without JSON.stringify(), more correct   
+var obj={a:1,b:NaN,c:Infinity,d:[undefined]}
+log.debug(obj);
+```
+
+
+## Deferred Message
+
+for low level log, can suppress message by filter.  
+but still has message creating CPU cost.  
+put message creating function instead of it.  
+
+```
+// can postpone creating message 
+// it don't call for suppressed log 
+log.debug(()=>'deferred message creation: '+Math.pow(1.234,5.678));
+```
+
+
 ## User Customize Output Way
 
 ```

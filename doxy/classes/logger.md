@@ -30,13 +30,22 @@ Name | Type | Means
 -----|------|------
 capt | string | caption by logger
 lev | int | log level
-msg | string | source log message
+msg | LogSource | source log message
 
 you can redefine of log formatting
 
 ### Returns
 
 formatted log message  
+
+
+## Type: LogSource
+
+Type | Means
+-----|------
+function<string> | create log string
+object | inspected string
+others | simple convert to string
 
 
 ## Type: FormattedLog

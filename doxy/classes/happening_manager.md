@@ -61,6 +61,20 @@ true means no happens in this instance and all child HappeningManager.
 
 remove dirty resolved happens in this instance and all child HappeningManager.  
 
+## getInfo():HappeningInfo
+
+### Returns
+
+unresolved happenings info in an object.  
+
+## Type: HappeningInfo
+
+Name | Type | Means
+-----|------|------
+name | string | name of target HappeningManager
+issues | array<object> | GetProp() of each unresolved happenings
+children | array<HappeningInfo> | getInfo() of each children
+
 ## poll(cb)
 
 iterate all unresolved Happening include all child HappeningManager.  
