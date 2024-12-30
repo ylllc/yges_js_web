@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset="utf-8">
+	<title>Yggdrasil Essense</title>
+	<link href="main.css" rel="stylesheet">
+</head>
+<body onload="ipl_ready()"><div class=screen>
+<header>
+<a href="./">Yggdrasil Essense</a> / 
+Test Runner
+<hr>
+</header>
+<main>
+<h1 class="pagetitle">Test Runner</h1>
+<noscript><div class="warning">(JavaScript required)</div></noscript>
+<div id=mainboard class=main></div>
+</main>
+<footer>
+<hr>
+&copy; 2024 Yggdrasil Leaves, LLC.<br>
+Repositories: 
+<a target="_blank" href="https://github.com/ylllc/yges_js_web">[web]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_node">[Node.js]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_deno">[Deno]</a>
+</footer>
+<div id=modules>
+<script src="yges/ipl.js"></script>
+</div>
+<script><!--
+let modules=YgEs.toQHT(document.getElementById('modules'));
+let mainboard=YgEs.toQHT(document.getElementById('mainboard'));
+mainboard.clear();
+let ipl_loading=YgEs.newQHT({target:mainboard,tag:'div',attr:{class:'warning'},sub:['(IPL Loading...)']});
+
+const TestBase='/test/';
+
+async function ipl_ready(){
+
+	ipl_loading.remove();
+
+	let log=YgEs.Log.createLocal('YgEsTest',YgEs.Log.LEVEL.TRACE);
+	let hapmng=YgEs.HappeningManager.createLocal({
+		name:'YgEsTestHaps',
+		happen:(hap)=>{log.fatal(hap.toJSON())},
+	});
+
+	YgEs.Engine.start();
+	let launcher=YgEs.Engine.createLauncher({happen:hapmng});
+	let loader=YgEs.Downloader.setupGUI(launcher,mainboard,true,modules);
+
+	loader.load('test.css','CSS','test.css');
+	loader.load('quickqueue.js','JS','yges/quickqueue.js');
+	loader.load('proptree.js','JS','yges/proptree.js');
+	loader.load('urlbuild.js','JS','yges/urlbuild.js');
+	loader.load('stmac.js','JS','yges/stmac.js');
+	loader.load('agent.js','JS','yges/agent.js');
+	loader.load('unittest.js','JS','yges/unittest.js');
+	loader.load('TestInfo','JSON',TestBase);
+	await launcher.toPromise();
+
+	mainboard.clear();
+	YgEs.Test.setupGUI(launcher,mainboard,TestBase,loader.Ready.TestInfo);
+}
+//--></script></div></body></html>
