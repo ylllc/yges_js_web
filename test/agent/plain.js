@@ -3,28 +3,23 @@
 // © 2024 Yggdrasil Leaves, LLC.          //
 //        All rights reserved.            //
 
-const test=YgEs.Test;
-const eng=YgEs.Engine;
-const workmng=YgEs.AgentManager;
-const hap_global=YgEs.HappeningManager;
+const Test=YgEs.Test;
+const AgentManager=YgEs.AgentManager;
 
 // Plain Agent Test --------------------- //
 
-eng.start();
-
-var scenaria=[
+const scenaria=[
 	{
 		title:'Plain Agent',
-		proc:async ()=>{
-			var w=workmng.standby({});
-			test.chk_strict(w.isOpen(),false);
-			var h=w.open();
-			test.chk_strict(w.isOpen(),true);
+		proc:async (tool)=>{
+			let w=AgentManager.standby({});
+			Test.chk_strict(w.isOpen(),false);
+			let h=w.open();
+			Test.chk_strict(w.isOpen(),true);
 			h.close();
-			test.chk_strict(w.isOpen(),false);
-			eng.shutdown();
+			Test.chk_strict(w.isOpen(),false);
 		},
 	},
 ]
 
-test.run(scenaria);
+Test.run(scenaria);

@@ -6,27 +6,15 @@
 // Unit Test Utility for web ------------ //
 (()=>{ // local namespace 
 
-function _yges_test_cpmsg(msg,v1,op,v2){
+function _cpmsg(msg,v1,op,v2){
 	if(!msg)msg='Test Mismatch:';
 	return ''+msg+' ('+YgEs.inspect(v1)+' '+op+' '+YgEs.inspect(v2)+')';
 }
 
-function _yges_test_assert(cond,msg){
+function _assert(cond,msg){
 
 	if(cond)return;
 	throw new Error('Test Assertion: '+msg);
-}
-
-function _yges_test_try(title,proc,cbok,cbng){
-
-	try{
-		if(proc)proc();
-		if(cbok)cbok();
-	}
-	catch(e){
-		if(cbng)cbng(e);
-		else YgEs.Log.crit(YgEs.fromError(e));
-	}
 }
 
 YgEs.Test={
@@ -34,14 +22,14 @@ YgEs.Test={
 	User:{},
 	scenaria:{},
 
-	never:(msg=null)=>{_yges_test_assert(false,msg)},
-	chk:(cond,msg=null)=>{_yges_test_assert(cond,msg)},
-	chk_loose:(v1,v2,msg=null)=>{_yges_test_assert(v1==v2,_yges_test_cpmsg(msg,v1,'==',v2))},
-	chk_strict:(v1,v2,msg=null)=>{_yges_test_assert(v1===v2,_yges_test_cpmsg(msg,v1,'===',v2))},
-	chk_less:(v1,v2,msg=null)=>{_yges_test_assert(v1<v2,_yges_test_cpmsg(msg,v1,'<',v2))},
-	chk_less_eq:(v1,v2,msg=null)=>{_yges_test_assert(v1<=v2,_yges_test_cpmsg(msg,v1,'<=',v2))},
-	chk_great:(v1,v2,msg=null)=>{_yges_test_assert(v1>v2,_yges_test_cpmsg(msg,v1,'>',v2))},
-	chk_great_eq:(v1,v2,msg=null)=>{_yges_test_assert(v1>=v2,_yges_test_cpmsg(msg,v1,'>=',v2))},
+	never:(msg=null)=>{_assert(false,msg)},
+	chk:(cond,msg=null)=>{_assert(cond,msg)},
+	chk_loose:(v1,v2,msg=null)=>{_assert(v1==v2,_cpmsg(msg,v1,'==',v2))},
+	chk_strict:(v1,v2,msg=null)=>{_assert(v1===v2,_cpmsg(msg,v1,'===',v2))},
+	chk_less:(v1,v2,msg=null)=>{_assert(v1<v2,_cpmsg(msg,v1,'<',v2))},
+	chk_less_eq:(v1,v2,msg=null)=>{_assert(v1<=v2,_cpmsg(msg,v1,'<=',v2))},
+	chk_great:(v1,v2,msg=null)=>{_assert(v1>v2,_cpmsg(msg,v1,'>',v2))},
+	chk_great_eq:(v1,v2,msg=null)=>{_assert(v1>=v2,_cpmsg(msg,v1,'>=',v2))},
 
 	run:(scn)=>{
 		// dummy 
@@ -93,7 +81,10 @@ YgEs.Test={
 						try{
 							q.stat.replace('(running)');
 							q.stat.Element.setAttribute('class','yges_test_stat_running');
-							await q.scn.proc();
+							await q.scn.proc({
+								Launcher:YgEs.Engine.createLauncher(),
+								Log:YgEs.Log.createLocal(q.scn.title,YgEs.Log.LEVEL.DEBUG),
+							});
 							q.stat.replace('[OK]');
 							q.stat.Element.setAttribute('class','yges_test_stat_ok');
 						}

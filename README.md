@@ -37,4 +37,5 @@ see docs/html/index.html
 
 ## Testing
 
-Not yet.
+Run on Server Sample of [Node.js](https://github.com/ylllc/yges_js_node) or [Deno](https://github.com/ylllc/yges_js_deno) version.   
+Start the Server and access http://localhost:8888/test.html  

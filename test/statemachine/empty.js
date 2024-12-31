@@ -3,47 +3,38 @@
 // © 2024 Yggdrasil Leaves, LLC.          //
 //        All rights reserved.            //
 
-// Empty State Test //
+const Test=YgEs.Test;
+const StateMachine=YgEs.StateMachine;
 
-const test=YgEs.Test;
-const eng=YgEs.Engine;
-const stmac=YgEs.StateMachine;
-const log=YgEs.Log;
-const hap_global=YgEs.HappeningManager;
-
-var hap_local=hap_global.createLocal({
-	happen:(hap)=>{log.fatal(hap.GetProp());},
-});
+// Empty State Test --------------------- //
 
 // empty states
-var states={
+const states={
 }
 
-eng.start();
-
-var opt={
-	launcher:eng.createLauncher(),
-	happen:hap_local,
+let opt={
 	cb_done:(user)=>{
 		// OK 
 	},
 	cb_abort:(user)=>{
-		test.never('states abend');
+		Test.never('states abend');
 	},
 }
 
-var scenaria=[
+const scenaria=[
 	{
 		title:'Empty Running',
-		proc:async ()=>{
+		proc:async (tool)=>{
+			opt.launcher=tool.Launcher;
+			opt.happen=tool.Launcher.HappenTo;
+
 			// run with undefined state 
 			// abort soon 
-			stmac.run(null,states,opt);
+			StateMachine.run(null,states,opt);
 
-			await opt.launcher.toPromise();
-			eng.shutdown();
+			await tool.Launcher.toPromise();
 		},
 	},
 ]
 
-test.run(scenaria);
+Test.run(scenaria);
