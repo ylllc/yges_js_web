@@ -12,6 +12,10 @@ let YgEs={
 }
 
 YgEs.createEnum=(src)=>{
+
+	let ll={}
+	for(let i=0;i<src.length;++i)ll[src[i]]=i;
+	return Object.freeze(ll);
 }
 
 YgEs.fromError=(err)=>{
@@ -81,12 +85,8 @@ YgEs.inspect=(val)=>{
 
 // log level 
 const _level_names=Object.freeze(['TICK','TRACE','DEBUG','INFO','NOTICE','WARN','FATAL','CRIT','ALERT','EMERG']);
-
 // make reverse lookup 
-let ll={}
-for(let i in _level_names)ll[_level_names[i]]=parseInt(i);
-ll['NEVER']=_level_names.length;
-const _level_lookup=Object.freeze(ll);
+const _level_lookup=YgEs.createEnum(_level_names.concat(['NEVER']));
 
 // default settings 
 const _default_showable=_level_lookup.INFO;
@@ -100,14 +100,39 @@ function _default_format(src){
 
 	let lev=_level_names[src.Lev]??('?'+src.Lev+'?');
 	let capt=src.Capt?('{'+src.Capt+'} '):'';
-	src.Msg=new Date().toISOString()+': ['+lev+'] '+capt+src.Msg;
+	src.Msg=src.Date+': ['+lev+'] '+capt+src.Msg;
 }
 
 function _default_way(src){
 
-	let msg=src.Msg;
-	if(src.Prop)msg+='; '+YgEs.inspect(src.Prop);
-	console.log(msg);
+	switch(src.Lev){
+		case Log.LEVEL.TICK:
+		case Log.LEVEL.TRACE:
+		case Log.LEVEL.DEBUG:
+		console.debug(src.Msg);
+		break;
+
+		case Log.LEVEL.INFO:
+		case Log.LEVEL.NOTICE:
+		console.info(src.Msg);
+		break;
+
+		case Log.LEVEL.WARN:
+		console.warn(src.Msg);
+		break;
+
+		case Log.LEVEL.FATAL:
+		case Log.LEVEL.CRIT:
+		case Log.LEVEL.ALERT:
+		case Log.LEVEL.EMERG:
+		console.error(src.Msg);
+		break;
+
+		default:
+		console.log(src.Msg);
+	}
+
+	if(src.Prop)console.dir(src.Prop);
 }
 
 // create local instance 
@@ -151,7 +176,12 @@ function _create_local(capt=null,showable=null,parent=null){
 		put:(lev,msg,prop=null)=>{
 			if(lev>=t.LEVEL_NAMES.length)return;
 			if(lev<t.getShowable())return;
-			let src={Capt:t.getCaption(),Lev:lev,Msg:msg}
+			let src={
+				Date:new Date().toISOString(),
+				Capt:t.getCaption(),
+				Lev:lev,
+				Msg:msg
+			}
 			if(prop)src.Prop=prop;
 			t.format(src);
 			t.write(src);
@@ -171,15 +201,13 @@ function _create_local(capt=null,showable=null,parent=null){
 	return t;
 }
 
-YgEs.Log=_create_local();
+const Log=YgEs.Log=_create_local();
 YgEs.Log.name='YgEs_GlobalLogger';
 
 })();
 
 // Utilities ---------------------------- //
 (()=>{ // local namespace 
-
-const HapMng=YgEs.HapMng;
 
 const _rx_zero=/^(0+(|\.)0*|0*(|\.)0+)$/;
 const _rx_null=/^null$/i;
@@ -189,11 +217,6 @@ const _rx_undefined=/^undefined$/i;
 let Util=YgEs.Util={
 	name:'YgEs_Utilities',
 	User:{},
-
-	createEnum:YgEs.createEnum,
-	fromError:YgEs.fromError,
-	justString:YgEs.justString,
-	inspect:YgEs.inspect,
 
 	isJustNaN:(val)=>{
 		if(typeof val!=='number')return false;
@@ -346,24 +369,23 @@ let Timing=YgEs.Timing={
 			else throw e;
 		});
 	},
-	toPromise:(cb_proc,cb_done=null,cb_fail=null)=>{
-		let p=new Promise((ok,ng)=>{
+	toPromise:(cb_proc,cb_ok=null,cb_ng=null)=>{
+		return new Promise((ok,ng)=>{
 			cb_proc(ok,ng);
 		}).then((r)=>{
-			if(cb_done)cb_done(r);
+			if(cb_ok)cb_ok(r);
 			return r;
 		}).catch((e)=>{
-			if(cb_fail)cb_fail(e);
+			if(cb_ng)cb_ng(e);
 			else throw e;
 		});
-		return p;
 	},
 
-	delay:(ms,cb_done,cb_cancel=null)=>{
+	delay:(ms,cb_done,cb_abort=null)=>{
 
 		let h=null;
 		if(!cb_done)return ()=>{
-			if(cb_cancel)cb_cancel();
+			if(cb_abort)cb_abort();
 		};
 
 		h=setTimeout(()=>{
@@ -376,7 +398,7 @@ let Timing=YgEs.Timing={
 			if(h==null)return;
 			clearTimeout(h);
 			h=null;
-			if(cb_cancel)cb_cancel();
+			if(cb_abort)cb_abort();
 		}
 	},
 
@@ -471,25 +493,25 @@ let Timing=YgEs.Timing={
 
 const Log=YgEs.Log;
 
-function _yges_happening_default_happened(hap){
-	Log.fatal(hap.getProp());	
+function _default_happened(hap){
+	Log.fatal(hap.toString(),hap.getProp());	
 }
-function _yges_happening_default_abandoned(hap){
-	Log.warn('* Abandoned * '+hap.toString());	
+function _default_abandoned(hap){
+	Log.warn('* Abandoned * '+hap.toString(),hap.getProp());	
 }
-function _yges_happening_default_resolved(hap){
-	Log.debug('* Resolved * '+hap.toString());	
+function _default_resolved(hap){
+	Log.debug('* Resolved * '+hap.toString(),hap.getProp());	
 }
 
-function _yges_happening_create_happening(cbprop,cbstr,cberr,init={}){
+function _create_happening(cbprop,cbstr,cberr,init={}){
 
-	let cb_resolved=init.cb_resolved??_yges_happening_default_resolved;
-	let cb_abandoned=init.cb_abandoned??_yges_happening_default_abandoned;
+	let resolved=false;
+	let abandoned=false;
+	let cb_resolved=init.cb_resolved??_default_resolved;
+	let cb_abandoned=init.cb_abandoned??_default_abandoned;
 
 	let hap={
 		name:init.name??'YgEs_Happening',
-		resolved:false,
-		abandoned:false,
 		User:init.user??{},
 
 		getProp:cbprop,
@@ -497,93 +519,102 @@ function _yges_happening_create_happening(cbprop,cbstr,cberr,init={}){
 		toJSON:()=>JSON.stringify(hap.getProp()),
 		toError:cberr,
 
-		isResolved:()=>hap.resolved,
+		isResolved:()=>resolved,
 		resolve:()=>{
-			if(hap.resolved)return;
-			hap.resolved=true;
-			hap.abandoned=false;
+			if(resolved)return;
+			resolved=true;
+			abandoned=false;
 			if(cb_resolved)cb_resolved(hap);
 		},
 
-		isAbandoned:()=>hap.abandoned && !hap.resolved,
+		isAbandoned:()=>abandoned && !resolved,
 		abandon:()=>{
-			if(hap.resolved)return;
-			if(hap.abandoned)return;
-			hap.abandoned=true;
+			if(resolved)return;
+			if(abandoned)return;
+			abandoned=true;
 			if(cb_abandoned)cb_abandoned(hap);
 		},
 	}
 	return hap;
 }
 
-function _yges_happening_create_manager(prm,parent=null){
+function _create_manager(prm,parent=null){
+
+	let issues=[]
+	let children=[]
 
 	let mng={
 		name:prm.name??'YgEs_HappeningManager',
-		issues:[],
-		children:[],
 		Happened:prm.happen??null,
 		User:prm.user??{},
 
-		createLocal:(prm={})=>_yges_happening_create_manager(prm,mng),
+		createLocal:(prm={})=>{
+			let cm=_create_manager(prm,mng);
+			children.push(cm);
+			return cm;
+		},
+
+		getParent:()=>parent,
+		getChildren:()=>children,
+		getIssues:()=>issues,
 
 		abandon:()=>{
-			for(let sub of mng.children){
+			for(let sub of children){
 				sub.abandon();
 			}
-			for(let hap of mng.issues){
+			for(let hap of issues){
 				hap.abandon();
 			}
-			mng.issues=[]
+			issues=[]
 		},
 
 		countIssues:()=>{
-			let ct=mng.issues.length;
-			for(let sub of mng.children){
+			let ct=issues.length;
+			for(let sub of children){
 				ct+=sub.countIssues();
 			}
 			return ct;
 		},
 		isCleaned:()=>{
-			if(mng.issues.length>0)return false;
-			for(let sub of mng.children){
+			if(issues.length>0)return false;
+			for(let sub of children){
 				if(!sub.isCleaned())return false;
 			}
 			return true;
 		},
 		cleanup:()=>{
 			let tmp=[]
-			for(let hap of mng.issues){
-				if(!hap.resolved)tmp.push(hap);
+			for(let hap of issues){
+				if(!hap.isResolved())tmp.push(hap);
 			}
-			mng.issues=tmp;
+			issues=tmp;
 
-			for(let sub of mng.children){
+			for(let sub of children){
 				sub.cleanup();
 			}
 		},
 
 		getInfo:()=>{
-			let info={name:mng.name,issues:[],children:[]}
-			for(let hap of mng.issues){
-				if(hap.resolved)continue;
-				info.issues.push({name:hap.name,prop:hap.getProp()});
+			let info={name:mng.name,_issues:[],_children:[]}
+			for(let hap of issues){
+				if(hap.isResolved())continue;
+				info._issues.push({name:hap.name,prop:hap.getProp()});
 			}
-			for(let sub of mng.children){
+			for(let sub of children){
 				let si=sub.getInfo();
-				if(si.issues.length>0 || si.children.length>0)info.children.push(si);
+				if(si._issues.length>0 || si._children.length>0)info._children.push(si);
 			}
 			return info;
 		},
 
 		poll:(cb)=>{
 			if(!cb)return;
-			for(let hap of mng.issues){
-				if(hap.resolved)continue;
-				if(hap.abandoned)continue;
+			for(let hap of issues){
+				if(hap.isResolved())continue;
+				if(hap.isAbandoned())continue;
 				cb(hap);
 			}
-			for(let sub of mng.children){
+			for(let sub of children){
 				sub.poll(cb);
 			}
 		},
@@ -591,15 +622,15 @@ function _yges_happening_create_manager(prm,parent=null){
 		_callHappened:(hap)=>{
 			if(mng.Happened)mng.Happened(hap);
 			else if(parent)parent._callHappened(hap);
-			else _yges_happening_default_happened(hap);
+			else _default_happened(hap);
 		},
 		happen:(hap)=>{
-			mng.issues.push(hap);
+			issues.push(hap);
 			mng._callHappened(hap);
 			return hap;
 		},
 		happenMsg:(msg,init={})=>{
-			return mng.happen(_yges_happening_create_happening(
+			return mng.happen(_create_happening(
 				()=>{return {msg:''+msg}},
 				()=>''+msg,
 				()=>new Error(msg),
@@ -608,7 +639,7 @@ function _yges_happening_create_manager(prm,parent=null){
 		},
 
 		happenProp:(prop,init={})=>{
-			return mng.happen(_yges_happening_create_happening(
+			return mng.happen(_create_happening(
 				()=>prop,
 				()=>JSON.stringify(prop),
 				()=>new Error(JSON.stringify(prop)),
@@ -617,7 +648,7 @@ function _yges_happening_create_manager(prm,parent=null){
 		},
 
 		happenError:(err,init={})=>{
-			return mng.happen(_yges_happening_create_happening(
+			return mng.happen(_create_happening(
 				()=>{return YgEs.fromError(err)},
 				()=>''+err,
 				()=>err,
@@ -625,11 +656,10 @@ function _yges_happening_create_manager(prm,parent=null){
 			));
 		},
 	}
-	if(parent)parent.children.push(mng);
 	return mng;
 }
 
-YgEs.HappeningManager=_yges_happening_create_manager('YgEs_GlobalHappeningManager');
+YgEs.HappeningManager=_create_manager('YgEs_GlobalHappeningManager');
 
 })();
 
@@ -793,6 +823,10 @@ function _yges_enginge_create_launcher(prm){
 	let abandoned=false;
 	let aborted=false;
 
+	let sublauncher=[]
+	let launched=[]
+	let active=[]
+
 	let lnc={
 		name:prm.name??CLASS_LAUNCHER,
 		HappenTo:(prm.happen??HappeningManager).createLocal(),
@@ -800,27 +834,23 @@ function _yges_enginge_create_launcher(prm){
 		Cycle:prm.cycle??DEFAULT_LAUNCHER_CYCLE,
 		User:prm.user??{},
 
-		_sub:[],
-		_launch:[],
-		_active:[],
-
 		isEnd:()=>{
-			if(lnc._launch.length>0)return false;
-			if(lnc._active.length>0)return false;
-			for(let sub of lnc._sub){
+			if(launched.length>0)return false;
+			if(active.length>0)return false;
+			for(let sub of sublauncher){
 				if(!sub.isEnd())return false;
 			}
 			return true;
 		},
 		isAbandoned:()=>abandoned,
 		countActive:()=>{
-			let n=lnc._active.length
-			for(let sub of lnc._sub)n+=sub.countActive();
+			let n=active.length
+			for(let sub of sublauncher)n+=sub.countActive();
 			return n;
 		},
 		countHeld:()=>{
-			let n=lnc._launch.length
-			for(let sub of lnc._sub)n+=sub.countHeld();
+			let n=launched.length
+			for(let sub of sublauncher)n+=sub.countHeld();
 			return n;
 		},
 
@@ -831,7 +861,7 @@ function _yges_enginge_create_launcher(prm){
 
 		createLauncher:(prm={})=>{
 			let sub=_yges_enginge_create_launcher(prm);
-			lnc._sub.push(sub);
+			sublauncher.push(sub);
 			return sub;
 		},
 
@@ -856,46 +886,46 @@ function _yges_enginge_create_launcher(prm){
 			}
 
 			let proc=_create_proc(prm);
-			if(lnc.Limit<0 || lnc._active.length<lnc.Limit){
-				lnc._active.push(proc);
+			if(lnc.Limit<0 || active.length<lnc.Limit){
+				active.push(proc);
 				proc._start();
 			}
 			else{
-				lnc._launch.push(proc);
+				launched.push(proc);
 			}
 			return proc;
 		},
 		abort:()=>{
 			if(lnc.isEnd())return;
 			aborted=true;
-			for(let sub of lnc._sub)sub.abort();
-			lnc._sub=[]
-			for(let proc of lnc._launch)proc.abort();
-			lnc._launch=[]
-			for(let proc of lnc._active)proc.abort();
-			lnc._active=[]
+			for(let sub of sublauncher)sub.abort();
+			sublauncher=[]
+			for(let proc of launched)proc.abort();
+			launched=[]
+			for(let proc of active)proc.abort();
+			active=[]
 		},
 		poll:()=>{
-			for(let sub of lnc._sub){
+			for(let sub of sublauncher){
 				sub.poll();
 			}
 
 			let cont=[]
-			for(let proc of lnc._active){
+			for(let proc of active){
 				if(proc.poll())cont.push(proc);
 			}
-			lnc._active=cont;
+			active=cont;
 
-			if(lnc.Limit<0 || lnc._active.length<lnc.Limit){
+			if(lnc.Limit<0 || active.length<lnc.Limit){
 				let hold=[]
-				for(let proc of lnc._launch){
-					if(lnc.Limit>=0 && lnc._active.length>=lnc.Limit)hold.push(proc);
+				for(let proc of launched){
+					if(lnc.Limit>=0 && active.length>=lnc.Limit)hold.push(proc);
 					else{
 						proc._start();
-						lnc._active.push(proc);
+						active.push(proc);
 					}
 				}
-				lnc._launch=hold;
+				launched=hold;
 			}
 		},
 
@@ -1002,6 +1032,622 @@ YgEs.Engine.shutdown=()=>{
 
 })();
 
+// Statemachine ------------------------- //
+(()=>{ // local namespace 
+
+const Engine=YgEs.Engine;
+const HappeningManager=YgEs.HappeningManager;
+
+function _run(start,states={},opt={}){
+
+	let launcher=opt.launcher??YgEs.Engine;
+	let cur=null;
+
+	let name=opt.name??'YgEs_Statemachine';
+	let happen=opt.happen??HappeningManager;
+	let user=opt.user??{};
+
+	let state_prev=null;
+	let state_cur=null;
+	let state_next=start;
+
+	let ctrl={
+		name:name+'_Control',
+		User:{},
+		getHappeningManager:()=>happen,
+		getPrevState:()=>state_prev,
+		getCurState:()=>state_cur,
+		getNextState:()=>state_next,
+	}
+
+	let getInfo=(phase)=>{
+		return {
+			name:name,
+			prev:state_prev,
+			cur:state_cur,
+			next:state_next,
+			phase:phase,
+			ctrl:ctrl.User,
+			user:user,
+		}
+	}
+
+	let poll_nop=(user)=>{}
+	let poll_cur=poll_nop;
+
+	let call_start=(user)=>{
+		if(state_next==null){
+			// normal end 
+			cur=null;
+			poll_cur=poll_nop;
+			return;
+		}
+		cur=states[state_next]??null;
+		if(!cur){
+			stmac.happen.happenProp({
+				class:'YgEs_Statemachine_Error',
+				cause:'state missing: '+state_next,
+				info:getInfo('selecing'),
+			});
+			poll_cur=poll_nop;
+			return;
+		}
+		state_prev=state_cur;
+		state_cur=state_next;
+		state_next=null;
+		try{
+			if(cur.cb_start)cur.cb_start(ctrl,user);
+			poll_cur=poll_up;
+		}
+		catch(e){
+			stmac.happen.happenProp({
+				class:'YgEs_Statemachine_Error',
+				cause:'throw from a callback',
+				info:getInfo('cb_start'),
+				err:YgEs.fromError(e),
+			});
+			poll_cur=poll_nop;
+		}
+		// can try extra polling 
+		poll_cur(user);
+	}
+	let poll_up=(user)=>{
+		try{
+			var r=cur.poll_up?cur.poll_up(ctrl,user):true;
+		}
+		catch(e){
+			stmac.happen.happenProp({
+				class:'YgEs_Statemachine_Error',
+				cause:'throw from a callback',
+				info:getInfo('poll_up'),
+				err:YgEs.fromError(e),
+			});
+			r=false;
+		}
+		if(r==null)return; // continuing 
+		else if(r===false)proc.abort();
+		else if(r===true){
+			try{
+				// normal transition 
+				if(cur.cb_ready)cur.cb_ready(ctrl,user);
+				poll_cur=poll_keep;
+			}
+			catch(e){
+				stmac.happen.happenProp({
+					class:'YgEs_Statemachine_Error',
+					cause:'throw from a callback',
+					info:getInfo('cb_ready'),
+					err:YgEs.fromError(e),
+				});
+				poll_cur=poll_nop;
+			}
+			// can try extra polling 
+			poll_cur(user);
+		}
+		else{
+			// interruption 
+			state_next=r.toString();
+			call_end(user);
+		}
+	}
+	let poll_keep=(user)=>{
+		try{
+			var r=cur.poll_keep?cur.poll_keep(ctrl,user):true;
+		}
+		catch(e){
+			stmac.happen.happenProp({
+				class:'YgEs_Statemachine_Error',
+				cause:'throw from a callback',
+				info:getInfo('poll_keep'),
+				err:YgEs.fromError(e),
+			});
+			r=false;
+		}
+		if(r==null)return; // continuing 
+		else if(r===false)proc.abort();
+		else if(r===true){
+			// normal end 
+			state_next=null;
+			call_stop(user);
+		}
+		else{
+			// normal transition 
+			state_next=r.toString();
+			call_stop(user);
+		}
+	}
+	let call_stop=(user)=>{
+		try{
+			if(cur.cb_stop)cur.cb_stop(ctrl,user);
+			poll_cur=poll_down;
+		}
+		catch(e){
+			stmac.happen.happenProp({
+				class:'YgEs_Statemachine_Error',
+				cause:'throw from a callback',
+				info:getInfo('cb_stop'),
+				err:YgEs.fromError(e),
+			});
+			poll_cur=poll_nop;
+		}
+		// can try extra polling 
+		poll_cur(user);
+	}
+	let poll_down=(user)=>{
+		try{
+			var r=cur.poll_down?cur.poll_down(ctrl,user):true;
+		}
+		catch(e){
+			stmac.happen.happenProp({
+				class:'YgEs_Statemachine_Error',
+				cause:'throw from a callback',
+				info:getInfo('poll_down'),
+				err:YgEs.fromError(e),
+			});
+			r=false;
+		}
+		if(r==null)return; // continuing 
+		else if(r===false)proc.abort();
+		else if(r===true){
+			// normal transition 
+			call_end(user);
+		}
+		else{
+			// interruption 
+			state_next=r.toString();
+			call_end(user);
+		}
+	}
+	let call_end=(user)=>{
+		try{
+			if(cur.cb_end)cur.cb_end(ctrl,user);
+			call_start(user);
+		}
+		catch(e){
+			stmac.happen.happenProp({
+				class:'YgEs_Statemachine_Error',
+				cause:'throw from a callback',
+				info:getInfo('cb_end'),
+				err:YgEs.fromError(e),
+			});
+			poll_cur=poll_nop;
+		}
+	}
+
+	let stmac={
+		name:name,
+		happen:happen,
+		user:user,
+
+		cb_start:(user)=>{
+			call_start(user);
+		},
+		cb_poll:(user)=>{
+			poll_cur(user);
+			return !!cur;
+		},
+		cb_done:opt.cb_done??'',
+		cb_abort:opt.cb_abort??'',
+	}
+
+	let proc=launcher.launch(stmac);
+	ctrl.isStarted=proc.isStarted;
+	ctrl.isFinished=proc.isFinished;
+	ctrl.isAborted=proc.isAborted;
+	ctrl.isEnd=proc.isEnd;
+	ctrl.abort=proc.abort;
+	ctrl.sync=proc.sync;
+	ctrl.toPromise=proc.toPromise;
+	return ctrl;
+}
+
+YgEs.StateMachine={
+	name:'YgEs_StateMachineContainer',
+	User:{},
+
+	run:_run,
+}
+
+})();
+
+// Agent -------------------------------- //
+(()=>{ // local namespace 
+
+const HappeningManager=YgEs.HappeningManager;
+const Engine=YgEs.Engine;
+const StateMachine=YgEs.StateMachine;
+const Util=YgEs.Util;
+
+// state 
+const _state_names=Object.freeze(['IDLE','BROKEN','DOWN','REPAIR','UP','REST','TROUBLE','HEALTHY']);
+
+// make reverse lookup 
+let ll={}
+for(let i in _state_names)ll[_state_names[i]]=parseInt(i);
+const _state_lookup=Object.freeze(ll);
+
+function _standby(prm){
+
+	let opencount=0;
+	let ctrl=null;
+	let ready=false;
+	let halt=false;
+	let restart=false;
+	let aborted=false;
+	let wait=[]
+
+	let name=prm.name??'YgEs_Agent';
+	let happen=prm.happen??HappeningManager.createLocal();
+	let launcher=prm.launcher??Engine.createLauncher();
+	let user=prm.user??{};
+
+	let getInfo=(phase)=>{
+		return {
+			name:name,
+			phase:phase,
+			state:ctrl?ctrl.getCurState():'NONE',
+			wait:wait,
+			user:user,
+		}
+	}
+
+	let states={
+		'IDLE':{
+			poll_keep:(ctrl,user)=>{
+				if(opencount<1)return true;
+				restart=false;
+
+				happen.cleanup();
+				return happen.isCleaned()?'UP':'REPAIR';
+			},
+		},
+		'BROKEN':{
+			poll_keep:(ctrl,user)=>{
+				if(opencount<1)return true;
+				restart=false;
+
+				return 'REPAIR';
+			},
+		},
+		'REPAIR':{
+			cb_start:(ctrl,user)=>{
+
+				try{
+					//start repairing 
+					wait=[]
+					if(prm.cb_repair)prm.cb_repair(agent);
+				}
+				catch(e){
+					happen.happenProp({
+						class:'YgEs_Agent_Error',
+						cause:'throw from a callback',
+						src:getInfo('cb_repair'),
+						err:YgEs.fromError(e),
+					});
+				}
+			},
+			poll_keep:(ctrl,user)=>{
+				if(opencount<1){
+					happen.cleanup();
+					return happen.isCleaned()?'IDLE':'BROKEN';
+				}
+
+				// wait for delendencies 
+				let cont=[]
+				for(let d of wait){
+					try{
+						if(d())continue;
+						cont.push(d);
+					}
+					catch(e){
+						happen.happenProp({
+							class:'YgEs_Agent_Error',
+							cause:'throw from a callback',
+							src:getInfo('wait for repair'),
+							err:YgEs.fromError(e),
+						});
+					}
+				}
+				wait=cont;
+				if(wait.length>0)return;
+
+				// wait for all happens resolved 
+				happen.cleanup();
+				if(happen.isCleaned())return 'UP';
+			},
+		},
+		'DOWN':{
+			cb_start:(ctrl,user)=>{
+				try{
+					wait=[]
+
+					// down dependencles too 
+					if(prm.dependencies){
+						Util.safeDictIter(prm.dependencies,(k,h)=>{
+							h.close();
+						});
+					}
+
+					if(ctrl.getPrevState()=='UP'){
+						if(prm.cb_back)prm.cb_back(agent);
+					}
+					else{
+						if(prm.cb_close)prm.cb_close(agent);
+					}
+				}
+				catch(e){
+					happen.happenProp({
+						class:'YgEs_Agent_Error',
+						cause:'throw from a callback',
+						src:getInfo('cb_close'),
+						err:YgEs.fromError(e),
+					});
+				}
+			},
+			poll_keep:(ctrl,user)=>{
+
+				// wait for delendencies 
+				let cont=[]
+				for(let d of wait){
+					try{
+						if(d())continue;
+						cont.push(d);
+					}
+					catch(e){
+						happen.happenProp({
+							class:'YgEs_Agent_Error',
+							cause:'throw from a callback',
+							src:getInfo('wait for down'),
+							err:YgEs.fromError(e),
+						});
+					}
+				}
+				wait=cont;
+				if(wait.length>0)return null;
+				happen.cleanup();
+				return happen.isCleaned()?'IDLE':'BROKEN';
+			},
+		},
+		'UP':{
+			cb_start:(ctrl,user)=>{
+				try{
+					wait=[]
+					if(prm.cb_open)prm.cb_open(agent);
+
+					// up dependencles too 
+					if(prm.dependencies){
+						Util.safeDictIter(prm.dependencies,(k,h)=>{
+							h.open();
+							wait.push(()=>h.isReady());
+						});
+					}
+				}
+				catch(e){
+					happen.happenProp({
+						class:'YgEs_Agent_Error',
+						cause:'throw from a callback',
+						src:getInfo('cb_open'),
+						err:YgEs.fromError(e),
+					});
+				}
+			},
+			poll_keep:(user)=>{
+				if(opencount<1 || restart)return 'DOWN';
+
+				// wait for delendencies 
+				let cont=[]
+				for(let d of wait){
+					try{
+						if(d())continue;
+						cont.push(d);
+					}
+					catch(e){
+						happen.happenProp({
+							class:'YgEs_Agent_Error',
+							cause:'throw from a callback',
+							src:getInfo('wait for up'),
+							err:YgEs.fromError(e),
+						});
+					}
+				}
+				wait=cont;
+				if(!happen.isCleaned())return 'DOWN';
+				if(wait.length<1)return 'HEALTHY';
+			},
+			cb_end:(ctrl,user)=>{
+				if(ctrl.getNextState()=='HEALTHY'){
+					try{
+						// mark ready before callback 
+						ready=true;
+						if(prm.cb_ready)prm.cb_ready(agent);
+					}
+					catch(e){
+						happen.happenProp({
+							class:'YgEs_Agent_Error',
+							cause:'throw from a callback',
+							src:getInfo('cb_ready'),
+							err:YgEs.fromError(e),
+						});
+					}
+				}
+			},
+		},
+		'HEALTHY':{
+			poll_keep:(ctrl,user)=>{
+				if(opencount<1 || restart){
+					ready=false;
+					return 'DOWN';
+				}
+				if(!happen.isCleaned())return 'TROUBLE';
+
+				try{
+					if(prm.poll_healthy)prm.poll_healthy(agent);
+				}
+				catch(e){
+					happen.happenProp({
+						class:'YgEs_Agent_Error',
+						cause:'throw from a callback',
+						src:getInfo('poll_healthy'),
+						err:YgEs.fromError(e),
+					});
+					return 'TROUBLE';
+				}
+			},
+		},
+		'TROUBLE':{
+			poll_keep:(ctrl,user)=>{
+				if(opencount<1 || restart){
+					ready=false;
+					return 'DOWN';
+				}
+				happen.cleanup();
+				if(happen.isCleaned())return 'HEALTHY';
+
+				try{
+					if(prm.poll_trouble)prm.poll_trouble(agent);
+				}
+				catch(e){
+					happen.happenProp({
+						class:'YgEs_Agent_Error',
+						cause:'throw from a callback',
+						src:getInfo('poll_trouble'),
+						err:YgEs.fromError(e),
+					});
+				}
+				if(!happen.isCleaned())return 'HALT';
+			},
+		},
+		'HALT':{
+			cb_start:(ctrl,user)=>{
+				halt=true;
+			},
+			poll_keep:(ctrl,user)=>{
+				if(opencount<1 || restart){
+					ready=false;
+					return 'DOWN';
+				}
+				happen.cleanup();
+				if(happen.isCleaned())return 'HEALTHY';
+			},
+			cb_end:(ctrl,user)=>{
+				halt=false;
+			},
+		},
+	}
+
+	let agent={
+		name:name,
+		User:user,
+
+		isOpen:()=>opencount>0,
+		isBusy:()=>!!ctrl || opencount>0,
+		isReady:()=>ready && opencount>0,
+		isHalt:()=>halt,
+		getState:()=>ctrl?ctrl.getCurState():'NONE',
+
+		getLauncher:()=>{return launcher;},
+		getHappeningManager:()=>{return happen;},
+		getDependencies:()=>{return prm.dependencies;},
+
+		waitFor:(cb)=>{wait.push(cb)},
+		restart:()=>{restart=true;},
+
+		fetch:()=>{
+			return handle(agent);
+		},
+		open:()=>{
+			let h=agent.fetch();
+			h.open();
+			return h;
+		},
+	}
+
+	let ctrlopt={
+		name:name+'_Control',
+		happen:happen,
+		launcher:launcher,
+		User:user,
+		cb_done:(user)=>{
+			ctrl=null;
+			aborted=false;
+			if(prm.cb_finish)prm.cb_finish(agent,happen.isCleaned());
+		},
+		cb_abort:(user)=>{
+			ctrl=null;
+			aborted=true;
+			if(prm.cb_abort)prm.cb_abort(agent);
+		},
+	}
+
+	let handle=(w)=>{
+		let in_open=false;
+		let h={
+			name:name+'_Handle',
+
+			getAgent:()=>{return agent;},
+			getLauncher:()=>agent.getLauncher(),
+			getHappeningManager:()=>agent.getHappeningManager(),
+			getDependencies:()=>agent.getDependencies(),
+
+			isOpenHandle:()=>in_open,
+			isOpenAgent:()=>agent.isOpen(),
+			isBusy:()=>agent.isBusy(),
+			isReady:()=>agent.isReady(),
+			isHalt:()=>agent.isHalt(),
+			getState:()=>agent.getState(),
+
+			restart:()=>agent.restart(),
+
+			open:()=>{
+				if(!in_open){
+					in_open=true;
+					++opencount;
+				}
+				if(!ctrl)ctrl=StateMachine.run('IDLE',states,ctrlopt);
+			},
+			close:()=>{
+				if(!in_open)return;
+				in_open=false;
+				--opencount;
+			},
+		}
+		return h;
+	}
+
+	return agent;
+}
+
+YgEs.AgentManager={
+	name:'YgEs_AgentManager',
+	User:{},
+
+	standby:_standby,
+	launch:(prm)=>{return _standby(prm).fetch();},
+	run:(prm)=>{return _standby(prm).open();},
+}
+
+})();
+
 // Quick HyperText for web -------------- //
 (()=>{ // local namespace 
 
@@ -1073,7 +1719,7 @@ YgEs.HTTPClient={
 	User:{},
 }
 
-function _yges_http_retry(ctx,hap){
+function _retry(ctx,hap){
 	hap.resolve();
 	return ctx.retry();
 }
@@ -1088,6 +1734,7 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 		opt:opt,
 		accepted:false,
 		end:false,
+		ok:false,
 		send_progress:0.0,
 		recv_progress:0.0,
 		progress:0.0,
@@ -1145,7 +1792,7 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 			catch(e){
 				var hap=happen.happenError(e,{
 					name:'YgEs_HTTP_Error',
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+					user:{retry:()=>_retry(ctx,hap)},
 				});
 				if(cbng)cbng(hap);
 				return;
@@ -1154,7 +1801,7 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 		else if(res.status>299){
 			var hap=happen.happenProp(res,{
 				name:'YgEs_HTTP_Bad',
-				user:{retry:()=>_yges_http_retry(ctx,hap)},
+				user:{retry:()=>_retry(ctx,hap)},
 			});
 			if(cbng)cbng(hap);
 			return;
@@ -1174,7 +1821,7 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 			if(e){
 				var hap=happen.happenError(e,{
 					name:'YgEs_HTTP_Error',
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+					user:{retry:()=>_retry(ctx,hap)},
 				});
 				if(cbng)cbng(hap);
 			}
@@ -1183,15 +1830,17 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 					name:'YgEs_HTTP_Invalid',
 					msg:'invalid response:',
 					res:req.response,
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+					user:{retry:()=>_retry(ctx,hap)},
 				});
 				if(cbng)cbng(hap);
 			}
 			else{
+				ctx.ok=true;
 				if(cbok)cbok(r);
 			}
 		}
 		else{
+			ctx.ok=true;
 			if(cbok)cbok(res.body);
 		}
 	});
@@ -1199,7 +1848,11 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 		if(ctx.end)return;
 		ctx.end=true;
 		res.msg='HTTP request error';
-		if(cbng)cbng(error_msg(res.msg));
+
+		if(cbng)cbng(happen.happenMsg(res.msg,{
+			name:'YgEs_HTTP_Error',
+			user:{retry:()=>_retry(ctx,hap)},
+		}));
 		else log_fatal(res.msg);
 	});
 	req.addEventListener('timeout',(ev)=>{
@@ -1207,14 +1860,22 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 		ctx.end=true;
 		res.timeout=true;
 		res.msg='HTTP timeout';
-		if(cbng)cbng(error_msg(res.msg));
+
+		if(cbng)cbng(happen.happenMsg(res.msg,{
+			name:'YgEs_HTTP_Error',
+			user:{retry:()=>_retry(ctx,hap)},
+		}));
 		else log_fatal(res.msg);
 	});
 	req.addEventListener('abort',(ev)=>{
 		if(ctx.end)return;
 		ctx.end=true;
 		res.msg='aborted';
-		if(cbng)cbng(error_msg(res.msg));
+
+		if(cbng)cbng(happen.happenMsg(res.msg,{
+			name:'YgEs_HTTP_Error',
+			user:{retry:()=>_retry(ctx,hap)},
+		}));
 		else log_notice(res.msg);
 	});
 
@@ -1343,203 +2004,308 @@ YgEs.HTTPClient.delete=(url,cbok=null,cbng=null,opt={})=>{
 
 })();
 
-// Downloader --------------------------- //
+// Download Manager --------------------- //
 (()=>{ // local namespace 
 
-function _yges_downloader_create(launcher){
+function _create(launcher,monitor=null){
 
-	let types={}
-	let procs={}
+	let plugs={}
+	let ctxs={}
 
 	let ctrl={
 		Ready:{},
 
-		setType:(type,prm)=>{
-			types[type]=prm;
+		plug:(type,p)=>{
+			p.Launcher=launcher;
+			plugs[type]=p;
 		},
 		unload:(label)=>{
-			if(!procs[label])return;
-			var ctx=procs[label];
-			types[ctx.type].cb_unload(ctx.ll,ctrl.Ready[label]);
-			delete procs[label];
-			delete ctrl.Ready[label];
+			if(!ctxs[label])return;
+			var ctx=ctxs[label];
+			if(ctx.state.sig_unload)return;
+			ctx.state.sig_unload=true;
+			ctx.state.ready=false;
+			if(ctx.view)ctx.view.unload();
 		},
-		load:(label,type,url,cb_ok=null,cb_ng=null)=>{
-			if(procs[label])procs[label].abort();
+		load:(label,type,url,depends=[],cb_ok=null,cb_ng=null)=>{
+			if(ctxs[label])ctxs[label].abort();
 
 			let ctx={
 				name:'YgEs_Downloader_Context',
 				User:{},
 				label:label,
 				type:type,
-				ll:null,
+				state:{
+					happening:null,
+					loaded:false,
+					ready:false,
+					unloaded:false,
+					sig_unload:false,
+				},
+				loader:null,
+				source:null,
+				view:null,
 				abort:()=>{
 					if(!ctx,proc)return;
 					ctx,proc.abort();
 					ctx,proc=null;
 				},
 			}
-			procs[label]=ctx;
+			ctxs[label]=ctx;
 
-			ctx.proc=launcher.launch({
+			let states={
+				'Setup':{
+					poll_keep:(smc,user)=>{
+						ctx.loader=plugs[type].cb_start(url,(src)=>{
+							ctx.source=src;
+							if(ctx.view)ctx.view.apply();
+							user.loaded=true;
+						},(hap)=>{
+							happening=hap;
+							let p=hap.getProp();
+							let msg=p.status?
+								('['+p.status+'] '+p.msg):
+								hap.toString();
+							if(ctx.view)ctx.view.happen(msg,()=>{
+								ctx.loader=hap.User.retry();
+							});
+						});
+						return 'Download';
+					},
+				},
+				'Download':{
+					poll_keep:(smc,user)=>{
+						if(user.happening)return 'Failure';
+						if(ctx.view)ctx.view.progress(ctx.loader.progress);
+						if(!user.loaded)return;
+						return 'WaitDeps';
+					},
+				},
+				'WaitDeps':{
+					poll_keep:(smc,user)=>{
+						for(let dep of depends){
+							if(ctrl.Ready[dep]===undefined)return;
+						}
+						return 'Apply';
+					},
+				},
+				'Apply':{
+					cb_ready:(smc,user)=>{
+						plugs[type].cb_init(ctx.source,(res)=>{
+							ctrl.Ready[label]=res;
+							user.ready=true;
+							if(ctx.view)ctx.view.done();
+						},(hap)=>{
+							let msg=hap.toString();
+							if(ctx.view)ctx.view.happen(msg,()=>{
+								ctx.loader=hap.User.retry();
+							});
+						});
+					},
+					poll_keep:(smc,user)=>{
+						if(user.happening)return 'Failure';
+						if(user.ready)return 'Ready';
+					},
+				},
+				'Failure':{
+					poll_keep:(smc,user)=>{
+						if(user.happening.isResolved()){
+							user.happening=null;
+							return 'Download';
+						}
+					},
+				},
+				'Ready':{
+					poll_keep:(smc,user)=>{
+						if(!user.ready)return 'Unload';
+					},
+				},
+				'Unload':{
+					cb_ready:(smc,user)=>{
+						plugs[ctx.type].cb_unload(ctrl.Ready[label],()=>{
+							user.unloaded=true;
+						},(hap)=>{
+							user.unloaded=true;
+						});
+					},
+					poll_keep:(smc,user)=>{
+						if(!user.unloaded)return;
+
+						if(ctx.view){
+							monitor.detach(ctx.view);
+							ctx.view=null;
+						}
+						delete ctxs[label];
+						delete ctrl.Ready[label];
+						return true;
+					},
+				},
+			}
+
+			ctx.proc=YgEs.StateMachine.run('Setup',states,{
 				name:'YgEs_Downloader_Proc',
-				cb_start:(user)=>{
-					ctx.ll=types[type].cb_setup(ctx,url,(src)=>{
-						let res=ctrl.Ready[label]=types[type].cb_init(ctx.ll,src);
-						if(res===undefined){
-							types[type].cb_bad(ctx.ll,src);
-						}
-						else{
-							if(cb_ok)cb_ok(res);
-						}
-					},(err)=>{
-						launcher.HappenTo.happenError(err);
-					});
-				},
-				cb_poll:(user)=>{
-					types[type].cb_poll(ctx.ll);
-					return ctrl.Ready[label]===undefined;
-				},
-				cb_done:(user)=>{},
-				cb_abort:(user)=>{
-					ctrl.unload(label);
-				},
+				launcher:launcher,
+				user:ctx.state,
 			});
 
+			if(monitor)ctx.view=monitor.attach(ctx);
+
 			return ctx;
+		},
+		isReady:()=>{
+			for(var label in ctxs){
+				if(!ctxs[label].state.ready)return false;
+			}
+			return true;
 		},
 	}
 	return ctrl;
 }
 
-function _yges_downloader_setupGUI(launcher,target,preset,modules=null){
+function _plugCSS(store){
 
-	let tbl=YgEs.newQHT({target:target,tag:'table',attr:{class:'yges_loadview_table',border:'border'}});
-	let head=YgEs.newQHT({target:tbl,tag:'tr',attr:{class:'yges_loadview_thr'},sub:[
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadview_th_type'},sub:['Type']}).Element,
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadview_th_name'},sub:['Name']}).Element,
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadview_th_cond'},sub:['Cond']}).Element,
-	]});
-
-	let loader=YgEs.Downloader.create(launcher);
-
-	loader.View={
-		table:tbl,
-		head:head,
-	}
-
-	const prm_default={
-		cb_setup:(ctx,url,cb_ok,cb_ng)=>{
-			let view_row=YgEs.newQHT({target:tbl,tag:'tr'});
-			YgEs.newQHT({target:view_row,tag:'td',sub:[ctx.type]});
-			YgEs.newQHT({target:view_row,tag:'td',sub:[ctx.label]});
-			let view_cond=YgEs.newQHT({target:view_row,tag:'td'});
-			let view_meter=YgEs.newQHT({target:view_cond,tag:'meter',attr:{min:0,max:100,value:0}});
-			let view_msg=YgEs.newQHT({target:view_cond,tag:'span'});
-
-			let setHappen=(hap,msg)=>{
-				view_msg.replace(' '+msg+' ');
-				let btn=YgEs.newQHT({target:view_msg,tag:'button',sub:['Retry']});
-				btn.Element.onclick=()=>{
-					ll.proc=hap.User.retry();
-				}
-			}
-
-			let ll={
-				proc:YgEs.HTTPClient.getText(url,(src)=>{
-					view_msg.replace(' [OK]');
-					if(cb_ok)cb_ok(src);
-				},(hap)=>{
-					let p=hap.getProp();
-					setHappen(hap,p.timeout?'[NG] Timeout ':
-						('['+p.status+'] '+p.msg));
-				}),
-				view_row:view_row,
-				view_cond:view_cond,
-				view_meter:view_meter,
-				view_msg:view_msg,
-				abort:()=>{
-					if(!ll.proc)return;
-					ll.proc.abort();
-					ll.proc=null;
-				},
-				remove:()=>{
-					ll.abort();
-					if(!ll.view_row)return;
-					ll.view_row.remove();
-					ll.view_row=null;
-					ll.view_cond=null;
-					ll.view_meter=null;
-					ll.view_msg=null;
-				},
-			}
-			return ll;
+	let plug={
+		cb_start:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
 		},
-		cb_unload:(ll,img)=>{
-			ll.remove();
+		cb_init:(src,cb_ok,cb_ng)=>{
+			cb_ok(YgEs.newQHT({target:store,tag:'style',sub:[src]}));
 		},
-		cb_poll:(ll)=>{
-			if(!ll)return;
-			if(!ll.view_meter)return;
-			ll.view_meter.Element.setAttribute('value',ll.proc.progress*100);
-		},
-		cb_init:(ll,src)=>{
-			return src;
-		},
-		cb_bad:(ll,src)=>{
-			setHappen(hap,'[NG] Bad Content');
-		},
-		cb_abort:(ll)=>{
-			ll.abort();
-			ll.view_msg.replace('Aborted');
-		},
-	}
-
-	let setType_org=loader.setType;
-	loader.setType=(type,prm)=>{
-		setType_org(type,Object.assign({},prm_default,prm));
-	}
-
-	if(!preset)return loader;
-
-	if(!modules)modules=YgEs.newQHT({target:target,tag:'div'});
-
-	loader.setType('CSS',{
-		cb_init:(ll,src)=>{
-			return YgEs.newQHT({target:modules,tag:'style',sub:[src]});
-		},
-		cb_unload:(ll,img)=>{
+		cb_unload:(img,cb_ok,cb_ng)=>{
 			img.remove();
-			ll.remove();
+			cb_ok();
 		},
-	});
-	loader.setType('JS',{
-		cb_init:(ll,src)=>{
-			return YgEs.newQHT({target:modules,tag:'script',sub:[src]});
-		},
-		cb_unload:(ll,img)=>{
-			img.remove();
-			ll.remove();
-		},
-	});
-	loader.setType('JSON',{
-		cb_init:(ll,src)=>{
-			try{
-				return JSON.parse(src);
-			}
-			catch(e){
-				return undefined;
-			}
-		},
-	});
-
-	return loader;
+	}
+	return plug;
 }
 
-YgEs.Downloader={
+function _plugJS(store){
 
-	create:_yges_downloader_create,
-	setupGUI:_yges_downloader_setupGUI,
+	let plug={
+		cb_start:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
+		},
+		cb_init:(src,cb_ok,cb_ng)=>{
+			cb_ok(YgEs.newQHT({target:store,tag:'script',sub:[src]}));
+		},
+		cb_unload:(img,cb_ok,cb_ng)=>{
+			img.remove();
+			cb_ok();
+		},
+	}
+	return plug;
+}
+
+function _plugJSON(){
+
+	let plug={
+		cb_start:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
+		},
+		cb_init:(src,cb_ok,cb_ng)=>{
+			try{
+				cb_ok(JSON.parse(src));
+			}
+			catch(e){
+				cb_ng(plug.Launcher.HappenTo.happenError(e));
+			}
+		},
+		cb_unload:(img,cb_ok,cb_ng)=>{
+			cb_ok();
+		},
+	}
+	return plug;
+}
+
+
+YgEs.DownloadManager={
+
+	create:_create,
+
+	plugCSS:_plugCSS,
+	plugJS:_plugJS,
+	plugJSON:_plugJSON,
+}
+
+})();
+
+// Download Monitor --------------------- //
+(()=>{ // local namespace 
+
+function _setup(target,show){
+
+	let visible=false;
+	let view=YgEs.newQHT({target:target,tag:'div',attr:{class:'yges_loadmon_view'}});
+	let tbl=YgEs.newQHT({tag:'table',attr:{class:'yges_loadmon_table',border:'border'}});
+	let head=YgEs.newQHT({target:tbl,tag:'tr',attr:{class:'yges_loadmon_thr'},sub:[
+		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_type'},sub:['Type']}).Element,
+		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_name'},sub:['Name']}).Element,
+		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_cond'},sub:['Cond']}).Element,
+	]});
+
+	let ctrl={
+		isVisible:()=>visible,
+		dispose:()=>{
+			view.remove();
+			view=null;
+			tbl=null;
+			head=null;
+			ctrl=null;
+		},
+		hide:()=>{
+			if(!visible)return;
+			visible=false;
+			view.clear();
+		},
+		show:()=>{
+			if(visible)return;
+			visible=true;
+			view.clear();
+			view.append(tbl.Element);
+		},
+		detach:(view)=>{
+			view.row.remove();
+		},
+		attach:(ctx)=>{
+			let v_row={
+			}
+
+			v_row.row=YgEs.newQHT({target:tbl,tag:'tr'});
+			YgEs.newQHT({target:v_row.row,tag:'td',sub:[ctx.type]});
+			YgEs.newQHT({target:v_row.row,tag:'td',sub:[ctx.label]});
+			v_row.cond=YgEs.newQHT({target:v_row.row,tag:'td'});
+			v_row.meter=YgEs.newQHT({target:v_row.cond,tag:'meter',attr:{min:0,max:100,value:0}});
+			v_row.msg=YgEs.newQHT({target:v_row.cond,tag:'span'});
+
+			v_row.progress=(val)=>{
+				v_row.meter.Element.setAttribute('value',val*100);
+			},
+			v_row.apply=()=>{
+				v_row.msg.replace('(applying)');
+			};
+			v_row.done=()=>{
+				v_row.msg.replace('[OK]');
+			};
+			v_row.happen=(msg,cb_retry)=>{
+				v_row.msg.replace(msg);
+				let btn=YgEs.newQHT({target:v_row.msg,tag:'button',sub:['Retry']});
+				btn.Element.onclick=()=>{
+					cb_retry();
+				}
+			};
+			v_row.unload=()=>{
+				v_row.msg.replace('(unloading)');
+			};
+
+			return v_row;
+		},
+	}
+	if(show)ctrl.show();
+	return ctrl;
+}
+
+YgEs.DownloadMonitor={
+	setup:_setup,
 }
 
 })();

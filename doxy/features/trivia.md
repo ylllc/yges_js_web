@@ -5,12 +5,15 @@
 JavaScript's variables lurked many trap.  
 avoid them with clear functions.  
 
-
+-----
 # Import
 
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.Util
 
 ## for Node/Deno
 
@@ -18,9 +21,12 @@ avoid them with clear functions.
 import Util from 'api/util.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.Util too.  
 
+-----
 # How to Use
 
+-----
 ## Just NaN
 
 ```
@@ -40,6 +46,7 @@ f = isNaN(v); // true
 f = Util.isJustNaN(v); // false 
 ```
 
+-----
 ## Just Infinity
 
 ```
@@ -68,6 +75,7 @@ f = !isFinite({}); // true
 
 ```
 
+-----
 ## Detect Empty
 
 ```
@@ -103,6 +111,7 @@ f = Util.isEmpty([]); // false
 f = Util.isEmpty({}); // false 
 ```
 
+-----
 ## Quick Validation
 
 ```
@@ -132,6 +141,7 @@ f = Util.isValid(NaN); // false
 
 ```
 
+-----
 ## Booleanize
 
 fix to bool.  
@@ -169,6 +179,7 @@ f = Util.booleanize("null",true); // false
 f = Util.booleanize("undefined",true); // false
 ```
 
+-----
 ## Trinarize
 
 fix to bool or null.  
@@ -206,6 +217,7 @@ f = Util.trinarize("null",null); // false
 f = Util.trinarize("undefined",null); // false
 ```
 
+-----
 ## Zero Filling
 
 ```
@@ -225,37 +237,7 @@ s = Util.zerofill(123.4,8,true); // +00123.4
 s = Util.zerofill(-123.4,8,true); // -00123.4
 ```
 
-## Just String
-
-```
-// toString()
-s = null.totring(); // (Error thrown) 
-s = undefined.totring(); // (Error thrown) 
-s = {a:-1,b:"xyz"}.toString(); // [object Object] 
-
-// justString() (useful for logging)
-s = Util.justString(null); // null 
-s = Util.justString(undefined); // undefined 
-s = Util.justString({a:-1,b:"xyz"}); // {"a":-1,"b":xyz} 
-```
-
-## Inspectable String
-
-```
-// JSON
-s = JSON.stringify(Infinity); // null 
-s = JSON.stringify(NaN); // null 
-s = JSON.stringify(undefined); // undefined 
-s = JSON.stringify([undefined]); // [null] 
-
-// inspect (useful for debug, strings are quoted)
-s = Util.inspect(Infinity); // Infinity
-s = Util.inspect(NaN); // NaN
-s = Util.inspect(undefined); // undefined 
-s = Util.inspect([undefined]); // [undefined] 
-```
-
-
+-----
 # Class Reference
 
 @sa @ref pg_class_util

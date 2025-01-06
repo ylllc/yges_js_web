@@ -5,28 +5,33 @@
 Attaching queue-like interface to array or arguments.  
 and can shift without trimming.  
 
-
+-----
 # Import
 
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+<script src="yges/quickqueue.js"></script>
+```
+use YgEs.QuickQueue
 
 ## for Node/Deno
 
 ```
-import QuickQueueContainer from 'api/quickqueue.js';
+import QuickQueue from 'api/quickqueue.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.QuickQueue too.  
 
-
+-----
 # How to Use
 
 ```
 var a=[1,true,'A',-1,1.1]
 
 // create a queue 
-var q=QuickQueueContainer.create(a);
+var q=QuickQueue.create(a);
 
 // will get 1 
 log.info(q.next());
@@ -51,7 +56,7 @@ log.info(q.next());
 
 ```
 
-
+-----
 # Class Reference
 
 @sa @ref pg_class_quickqueue @n

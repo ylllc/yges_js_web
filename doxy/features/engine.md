@@ -4,29 +4,36 @@
 
 it provides async procedure management.  
 
+-----
 ## Every async procedures launch them on the Engine.
 
 each procedures controlled by the Engine.  
 can see their life, can abort them.  
 
+-----
 ## Limit parallel running.
 
 in JavaScript, running in a big loop that has async,  
 means run parallel all them, e.g. 10000 HTTP requests.  
 the Engine can limit and run little by little.  
 
+-----
 ## Can exit at your wish
 
 Node.js often become a zombie.  
 you wish to exit, but something lives...  
 the Engine can shutdown with all internal procedures, and can exit.  
 
-
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.Engine
 
 ## for Node/Deno
 
@@ -34,16 +41,19 @@ the Engine can shutdown with all internal procedures, and can exit.
 import Engine from 'api/engine.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.Engine too.  
 
-
+-----
 # How to Use
 
+-----
 ## Start the Engine  
 
 ```
 Engine.start();
 ```
 
+-----
 ## Launch
 
 ```
@@ -75,6 +85,7 @@ var proc=Engine.launch({
 proc.User.lock=false;
 ```
 
+-----
 ## Sub-launcher
 
 ```
@@ -96,6 +107,7 @@ sub.sync((user)=>{
 });
 ```
 
+-----
 ## Instant delay
 
 it's useful everywhere.
@@ -113,6 +125,7 @@ var proc=Engine.delay(1000,(user)=>{
 proc.abort();
 ```
 
+-----
 ## Shutdown
 
 ```
@@ -122,7 +135,7 @@ Engine.shutdown();
 all procedures in the Engine are aborted.  
 and can exit.  
 
-
+-----
 # Class Reference
 
 @sa @ref pg_class_engine @n

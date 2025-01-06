@@ -4,11 +4,16 @@
 
 it provides basic timing controlling functions.  
 
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.Timing
 
 ## for Node/Deno
 
@@ -16,9 +21,12 @@ it provides basic timing controlling functions.
 import Timing from 'api/timing.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.Timing too.  
 
+-----
 # How to Use
 
+-----
 ## Delay
 
 ```
@@ -38,6 +46,7 @@ Timing.delay(800,()=>{
 });
 ```
 
+-----
 ## Polling
 
 ```
@@ -51,6 +60,7 @@ var cancel=Timing.poll(100,()=>{
 cancel();
 ```
 
+-----
 ## Synchronization
 
 ```
@@ -69,6 +79,7 @@ var cancel=Timing.sync(50,()=>{
 cancel();
 ```
 
+-----
 # Class Reference
 
 @sa @ref pg_class_timing @n

@@ -4,6 +4,7 @@
 
 it provides runtime error management, so rational.  
 
+-----
 ## Exception? don't.
 
 @startuml "Throwing Exception means abandon all"
@@ -45,6 +46,7 @@ buggy procedure
 endnote
 @enduml
 
+-----
 ## Manage all them
 
 @startuml "All Happening Managed by HappeningManager"
@@ -74,12 +76,16 @@ correct procedure
 endnote
 @enduml
 
-
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.HappeningManager
 
 ## for Node/Deno
 
@@ -87,9 +93,12 @@ endnote
 import HappeningManager from 'api/happening.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.HappeningManager too.  
 
+-----
 # How to Use
 
+-----
 ## Listen them
 
 ```
@@ -102,6 +111,7 @@ HappeningManager.Happened=(h)=>{
 }
 ```
 
+-----
 ## Feature side happening and suggestion
 
 ```
@@ -128,6 +138,7 @@ var h=HappeningManager.happenProp({type:'Test',msg:'Happened'},{
 });
 ```
 
+-----
 ## Polling unresolved
 
 ```
@@ -138,6 +149,7 @@ HappeningManager.poll((h)=>{
 });
 ```
 
+-----
 ## Local Happenning Manager
 
 can create local instance and categorize in your wish.
@@ -146,6 +158,7 @@ can create local instance and categorize in your wish.
 var lhap=HappeningManager.createLocal();
 ```
 
+-----
 ## Cleaning up
 
 Resolved instance still kept in HappeningManager and makes it dirty.  
@@ -153,6 +166,7 @@ HappeningManager.cleanup() removes resolved and abandoned instances
 and makes it clean.  
 
 
+-----
 ## Resolved vs Abandoned 
 
 Resolved give priority over Abandoned.  
@@ -160,6 +174,7 @@ Resolved instance cannot abandon.
 and Abandoned instance still can resolve and retract abandoned.  
 
 
+-----
 # Class Reference
 
 @sa @ref pg_class_happening @n

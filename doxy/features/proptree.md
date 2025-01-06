@@ -5,29 +5,35 @@
 PropTree means an meta-accessible structure.  
 useful to processing deep variants such as meta-programming. 
 
-
+-----
 # Import
 
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+<script src="yges/proptree.js"></script>
+```
+use YgEs.PropTree
 
 ## for Node/Deno
 
 ```
-import PropTreeContainer from 'api/proptree.js';
+import PropTree from 'api/proptree.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.PropTree too.  
 
-
+-----
 # How to Use
 
+-----
 ## Mono Mode
 
 store a only one value.  
 
 ```
-var t1=PropTreeContainer.create();
+var t1=PropTree.create();
 console.log(t1.getType()); // will get 0 (EMPTY)
 t1.set('Test'); // t1='Test' 
 console.log(t1.getType()); // will get 1 (MONO)
@@ -37,12 +43,13 @@ console.log(t1.get()); // will get undefined
 console.log(t1.getType()); // will get 0 (EMPTY)
 ```
 
+-----
 ## Array Mode
 
 for sequential store.  
 
 ```
-var t2=PropTreeContainer.create([],true);
+var t2=PropTree.create([],true);
 t2.push(1); // t2=[1]
 t2.push('2'); // t2=[1,'2'] 
 t2.unshift(-3); // t2=[-3,1,'2'] 
@@ -57,10 +64,11 @@ console.log(t2.shift()); // will get -3 and cut out
 console.log(t2.count()); // will get 1
 ```
 
+-----
 ## Prop Mode
 
 ```
-var t3=PropTreeContainer.create({},true);
+var t3=PropTree.create({},true);
 t3.set('a',1); // t3:a=1 
 t3.set('b','2'); // t3:b='2' 
 t3.set('c',-3); // t3:c=-3
@@ -70,6 +78,7 @@ cut('b'); // t3={a:1,c:-3}
 console.log(t3.count()); // will get 2
 ```
 
+-----
 ## Deep Access
 
 ```
@@ -80,6 +89,7 @@ console.log(t3.get('d','b')); // will get -2
 console.log(t3.get(['d','a'])); // will get -1
 ```
 
+-----
 ## Subinstance
 
 ```
@@ -91,6 +101,7 @@ var t3d=t3.ref('d'); // ref subinstance
 console.log(t3d.get('a')); // will get -1 
 ```
 
+-----
 ## Merging
 
 ```
@@ -109,6 +120,7 @@ console.log(t3.get('d2','e','g')); // will get undefined (cannot access by subin
 console.log(t3.get('d2').e.g); // will get 'HIJ'
 ```
 
+-----
 ## Store Type Conversion
 
 writeing methods may convert to do.  
@@ -126,12 +138,14 @@ console.log(t2.get('x')); // will gt undefined (converted to an array, and key i
 console.log(t2.get(2)); // will get true
 ```
 
+-----
 ## Iteration
 
 ```
 t3.each((k,t)=>{log.info('['+k+']='+JSON.stringify(t.export()));});
 ```
 
+-----
 ## Importing
 
 ```
@@ -145,13 +159,14 @@ var t5=proptree.create(src,true); // deep prop store
 console.log(t5.get('a')); // 10
 ```
 
+-----
 ## Exporting
 
 ```
 console.log(t3.export());
 ```
 
-
+-----
 # Class Reference
 
 @sa @ref pg_class_proptree @n

@@ -4,64 +4,65 @@
 
 @sa @ref pg_feat_urlbuild @n
 
-
+-----
 # Properties
 
-Name | Type | Means
------|------|------
-scheme | string | scheme name
-slashes | string | additional slashes after scheme separator
-user | string | user name
-pass | string | password
-host | string | host name
-port | string | port number
-path | string | path (URL encoded)
-query | string | query (URL encoded)
-fragment | string | fragment (URL encoded)
+| Name | Type | Means |
+|------|------|-------|
+| scheme | string | scheme name |
+| slashes | string | additional slashes after scheme separator |
+| user | string | user name |
+| pass | string | password |
+| host | string | host name |
+| port | string | port number |
+| path | string | path (URL encoded) |
+| query | string | query (URL encoded) |
+| fragment | string | fragment (URL encoded) |
 
-
+-----
 # Methods
 
+-----
 ## bake():string
 
 ### Returns
 
 baked URL
 
-
-## extractHost():array
+-----
+## extractHost():string[]
 
 ### Return
 
 extracted host name
 
-
+-----
 ## bakeHost(src)
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | array | baking source host name
+| Name | Type | Means |
+|------|------|-------|
+| src | string[] | baking source host name |
 
-
-## extractPath():array
+-----
+## extractPath():string[]
 
 ### Return
 
 extracted path name
 
-
+-----
 ## bakePath(src)
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | array | baking source path name
+| Name | Type | Means |
+|------|------|-------|
+| src | string[] | baking source path name |
 
-
-## extractArgs():array
+-----
+## extractArgs():string[]
 
 extract query as args
 
@@ -69,17 +70,17 @@ extract query as args
 
 extracted query
 
-
+-----
 ## bakeArgs(src)
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | array | baking source query
+| Name | Type | Means |
+|------|------|-------|
+| src | string[] | baking source query |
 
-
-## extractProp():dict
+-----
+## extractProp():dict<string,string>
 
 extract query as prop
 
@@ -87,11 +88,11 @@ extract query as prop
 
 extracted query
 
-
+-----
 ## bakeProp(src)
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | dict | baking source query
+| Name | Type | Means |
+|------|------|-------|
+| src | dict<string,string> | baking source query |

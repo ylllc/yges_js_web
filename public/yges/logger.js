@@ -1,6 +1,6 @@
 // † Yggdrasil Essense for JavaScript † //
 // ====================================== //
-// © 2024 Yggdrasil Leaves, LLC.          //
+// © 2024-5 Yggdrasil Leaves, LLC.        //
 //        All rights reserved.            //
 
 // Logger ------------------------------- //
@@ -8,12 +8,8 @@
 
 // log level 
 const _level_names=Object.freeze(['TICK','TRACE','DEBUG','INFO','NOTICE','WARN','FATAL','CRIT','ALERT','EMERG']);
-
 // make reverse lookup 
-let ll={}
-for(let i in _level_names)ll[_level_names[i]]=parseInt(i);
-ll['NEVER']=_level_names.length;
-const _level_lookup=Object.freeze(ll);
+const _level_lookup=YgEs.createEnum(_level_names.concat(['NEVER']));
 
 // default settings 
 const _default_showable=_level_lookup.INFO;
@@ -27,14 +23,39 @@ function _default_format(src){
 
 	let lev=_level_names[src.Lev]??('?'+src.Lev+'?');
 	let capt=src.Capt?('{'+src.Capt+'} '):'';
-	src.Msg=new Date().toISOString()+': ['+lev+'] '+capt+src.Msg;
+	src.Msg=src.Date+': ['+lev+'] '+capt+src.Msg;
 }
 
 function _default_way(src){
 
-	let msg=src.Msg;
-	if(src.Prop)msg+='; '+YgEs.inspect(src.Prop);
-	console.log(msg);
+	switch(src.Lev){
+		case Log.LEVEL.TICK:
+		case Log.LEVEL.TRACE:
+		case Log.LEVEL.DEBUG:
+		console.debug(src.Msg);
+		break;
+
+		case Log.LEVEL.INFO:
+		case Log.LEVEL.NOTICE:
+		console.info(src.Msg);
+		break;
+
+		case Log.LEVEL.WARN:
+		console.warn(src.Msg);
+		break;
+
+		case Log.LEVEL.FATAL:
+		case Log.LEVEL.CRIT:
+		case Log.LEVEL.ALERT:
+		case Log.LEVEL.EMERG:
+		console.error(src.Msg);
+		break;
+
+		default:
+		console.log(src.Msg);
+	}
+
+	if(src.Prop)console.dir(src.Prop);
 }
 
 // create local instance 
@@ -78,7 +99,12 @@ function _create_local(capt=null,showable=null,parent=null){
 		put:(lev,msg,prop=null)=>{
 			if(lev>=t.LEVEL_NAMES.length)return;
 			if(lev<t.getShowable())return;
-			let src={Capt:t.getCaption(),Lev:lev,Msg:msg}
+			let src={
+				Date:new Date().toISOString(),
+				Capt:t.getCaption(),
+				Lev:lev,
+				Msg:msg
+			}
 			if(prop)src.Prop=prop;
 			t.format(src);
 			t.write(src);
@@ -98,7 +124,7 @@ function _create_local(capt=null,showable=null,parent=null){
 	return t;
 }
 
-YgEs.Log=_create_local();
+const Log=YgEs.Log=_create_local();
 YgEs.Log.name='YgEs_GlobalLogger';
 
 })();

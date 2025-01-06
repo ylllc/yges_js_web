@@ -1,12 +1,10 @@
 // † Yggdrasil Essense for JavaScript † //
 // ====================================== //
-// © 2024 Yggdrasil Leaves, LLC.          //
+// © 2024-5 Yggdrasil Leaves, LLC.        //
 //        All rights reserved.            //
 
 // Utilities ---------------------------- //
 (()=>{ // local namespace 
-
-const HapMng=YgEs.HapMng;
 
 const _rx_zero=/^(0+(|\.)0*|0*(|\.)0+)$/;
 const _rx_null=/^null$/i;
@@ -16,11 +14,6 @@ const _rx_undefined=/^undefined$/i;
 let Util=YgEs.Util={
 	name:'YgEs_Utilities',
 	User:{},
-
-	createEnum:YgEs.createEnum,
-	fromError:YgEs.fromError,
-	justString:YgEs.justString,
-	inspect:YgEs.inspect,
 
 	isJustNaN:(val)=>{
 		if(typeof val!=='number')return false;

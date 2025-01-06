@@ -1,9 +1,10 @@
-﻿@page pg_feat_stmac Statemachine
+﻿@page pg_feat_stmac State Machine
 
 # What's It?
 
 it provides transitionning by between states.   
 
+-----
 ## Simple Transition
 
 each states have 3 internal states for initializing and finalizing.  
@@ -37,6 +38,7 @@ State2Keep -[dotted]-> [*]: completion order
 
 @enduml
 
+-----
 ## Branching
 
 abnormally, can make transition from Up or Down.  
@@ -68,6 +70,7 @@ State1Keep -[dotted]-> State2B: normal transition order
 
 @enduml
 
+-----
 ## Callbacks
 
 each states have some callbacks.  
@@ -107,29 +110,35 @@ cb_abort --> [*]
 each polling callback returns to control it.  
 
 | Value | Means |
-|---|---|
+|-------|-------|
 | null or undefined | keep polling |
 | true | step to next phase |
 | false | abortion |
 | string | switch to next state |
 
-
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.StateMachine
 
 ## for Node/Deno
 
 ```
-import StMac from 'api/stmac.js';
-import Engine from 'api/engine.js';
+import StateMachine from 'api/stmac.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.StateMachine too.  
 
+-----
 # How to Use
 
+-----
 ## Imprements
 
 ```
@@ -168,6 +177,7 @@ var states={
 
 ```
 
+-----
 ## Run States
 
 ```
@@ -175,7 +185,7 @@ var states={
 Engine.start();
 
 // run states from a state 
-StMac.run('StateName',states);
+StateMachine.run('StateName',states);
 
 // wait for end of procedures and stop the Engine 
 Engine.sync((dmy)=>{
@@ -184,7 +194,8 @@ Engine.sync((dmy)=>{
 
 ```
 
+-----
 # Class Reference
 
-@sa @ref pg_class_stmac_context @n
-	@ref pg_class_stmac_manager
+@sa @ref pg_class_stmac_control @n
+	@ref pg_class_stmac_container

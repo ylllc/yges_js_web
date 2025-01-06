@@ -10,12 +10,17 @@ advanced URL parser.
 - more extracting and baking host, path, and query.  
 - PHP's structured queries supported partially.  
 
-
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+<script src="yges/urlbuild.js"></script>
+```
+use YgEs.URLBuilder
 
 ## for Node/Deno
 
@@ -23,10 +28,12 @@ advanced URL parser.
 import URLBuilder from 'api/urlbuild.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.URLBuilder too.  
 
-
+-----
 # How to Use
 
+-----
 ## Parsing
 
 call url.parse() and store normally.  
@@ -45,7 +52,8 @@ log.info(a.query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf
 log.info(a.hash); // abc#xyz 
 ```
 
-### Extract & Bake Host
+-----
+## Extract & Bake Host
 
 ```
 log.info(a.host); // www.example.com
@@ -58,7 +66,8 @@ a.bakeHost(b);
 log.info(a.host); // test.www0.example.com 
 ```
 
-### Extract & Bake Path
+-----
+## Extract & Bake Path
 
 ```
 log.info(a.path); // /%7Ea/b%2Fc.html 
@@ -70,7 +79,8 @@ a.bakePath(b);
 log.info(a.path); // /~a/
 ```
 
-### Extract & Bake Query as Args
+-----
+## Extract & Bake Query as Args
 
 ```
 log.info(a.query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf 
@@ -82,7 +92,8 @@ a.bakeArgs(b);
 log.info(a.query); // q%3Dijk+lmn%26a%3D1%26b%5Ba%5D%5Bb%5D%5B%5D%3D123%26b%5Ba%5D%5Bc%5D%3D789%26b%5Ba%5D%5Bb%5D%5B%5D%3Dde%2Bf+xyz 
 ```
 
-### Extract & Bake Query as Prop
+-----
+## Extract & Bake Query as Prop
 
 ```
 log.info(a.query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf 
@@ -95,7 +106,7 @@ a.bakeProp(b);
 log.info(a.query); // q=ijk%2Blmn&a=1&b[a][b][]=123&b[a][b][]=de%2Bf&b[a][b][]=-3.14&b[a][c]=789&b[a][d]=xyz
 ```
 
-
+-----
 # Class Reference
 
 @sa @ref pg_class_urlbuilder @n

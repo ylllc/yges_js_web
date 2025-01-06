@@ -7,12 +7,16 @@ and forced tricky coding to avoid it.
 
 these are featureing to code plainly.  
 
-
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.Util
 
 ## for Node/Deno
 
@@ -20,9 +24,12 @@ these are featureing to code plainly.
 import Util from 'api/util.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.Util too.  
 
+-----
 # How to Use
 
+-----
 ## for stepping loop
 
 ```
@@ -41,6 +48,7 @@ util.safeStepIter(0,5,1,(i)=>{
 });
 ```
 
+-----
 ## for array iteration
 
 ```
@@ -61,6 +69,7 @@ util.safearrayiter(a,(v)=>{
 });
 ```
 
+-----
 ## for object iteration
 
 ```
@@ -81,6 +90,7 @@ util.safedictiter(b,(k,v)=>{
 });
 ```
 
+-----
 # Class Reference
 
 @sa @ref pg_class_util

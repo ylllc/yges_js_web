@@ -6,19 +6,31 @@
 
 this class is inherited from @ref pg_class_launcher  
 
+-----
+# Namespaces
+
+-----
+| Symbol | Purpose |
+|--------|---------|
+| YgEs.Engine | global launcher |
+
+-----
 # Additional Methods
 
+-----
 ## start()
 
 the Engine is started.  
 and cannot exit until call stop() or shutdown()  
 
+-----
 ## stop()
 
 stop the Engine.  
 and all procedures are aborted.  
 can start() again.  
 
+-----
 ## shutdown()
 
 stop the Engine.  

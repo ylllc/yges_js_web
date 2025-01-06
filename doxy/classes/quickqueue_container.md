@@ -4,11 +4,20 @@
 
 @sa @ref pg_feat_quickqueue @n
 
+-----
+# Namespaces
 
+-----
+| Symbol | Purpose |
+|--------|---------|
+| YgEs.QuickQueue | QuickQueue container |
+
+-----
 # Methods
 
+-----
 ## create(val):QuickQueue
 
 ### Returns
 
-a new QuickQueue instance
+a new @ref pg_class_quickqueue instance

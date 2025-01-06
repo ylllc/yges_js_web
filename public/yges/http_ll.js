@@ -11,7 +11,7 @@ YgEs.HTTPClient={
 	User:{},
 }
 
-function _yges_http_retry(ctx,hap){
+function _retry(ctx,hap){
 	hap.resolve();
 	return ctx.retry();
 }
@@ -26,6 +26,7 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 		opt:opt,
 		accepted:false,
 		end:false,
+		ok:false,
 		send_progress:0.0,
 		recv_progress:0.0,
 		progress:0.0,
@@ -83,7 +84,7 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 			catch(e){
 				var hap=happen.happenError(e,{
 					name:'YgEs_HTTP_Error',
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+					user:{retry:()=>_retry(ctx,hap)},
 				});
 				if(cbng)cbng(hap);
 				return;
@@ -92,7 +93,7 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 		else if(res.status>299){
 			var hap=happen.happenProp(res,{
 				name:'YgEs_HTTP_Bad',
-				user:{retry:()=>_yges_http_retry(ctx,hap)},
+				user:{retry:()=>_retry(ctx,hap)},
 			});
 			if(cbng)cbng(hap);
 			return;
@@ -112,7 +113,7 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 			if(e){
 				var hap=happen.happenError(e,{
 					name:'YgEs_HTTP_Error',
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+					user:{retry:()=>_retry(ctx,hap)},
 				});
 				if(cbng)cbng(hap);
 			}
@@ -121,15 +122,17 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 					name:'YgEs_HTTP_Invalid',
 					msg:'invalid response:',
 					res:req.response,
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+					user:{retry:()=>_retry(ctx,hap)},
 				});
 				if(cbng)cbng(hap);
 			}
 			else{
+				ctx.ok=true;
 				if(cbok)cbok(r);
 			}
 		}
 		else{
+			ctx.ok=true;
 			if(cbok)cbok(res.body);
 		}
 	});
@@ -137,7 +140,11 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 		if(ctx.end)return;
 		ctx.end=true;
 		res.msg='HTTP request error';
-		if(cbng)cbng(error_msg(res.msg));
+
+		if(cbng)cbng(happen.happenMsg(res.msg,{
+			name:'YgEs_HTTP_Error',
+			user:{retry:()=>_retry(ctx,hap)},
+		}));
 		else log_fatal(res.msg);
 	});
 	req.addEventListener('timeout',(ev)=>{
@@ -145,14 +152,22 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 		ctx.end=true;
 		res.timeout=true;
 		res.msg='HTTP timeout';
-		if(cbng)cbng(error_msg(res.msg));
+
+		if(cbng)cbng(happen.happenMsg(res.msg,{
+			name:'YgEs_HTTP_Error',
+			user:{retry:()=>_retry(ctx,hap)},
+		}));
 		else log_fatal(res.msg);
 	});
 	req.addEventListener('abort',(ev)=>{
 		if(ctx.end)return;
 		ctx.end=true;
 		res.msg='aborted';
-		if(cbng)cbng(error_msg(res.msg));
+
+		if(cbng)cbng(happen.happenMsg(res.msg,{
+			name:'YgEs_HTTP_Error',
+			user:{retry:()=>_retry(ctx,hap)},
+		}));
 		else log_notice(res.msg);
 	});
 

@@ -1,78 +1,70 @@
 ﻿@page pg_class_happening Happening
 
+-----
 # What's It?
 
-@sa @ref pg_feat_happening
+created and managed by @ref pg_class_happening_manager  
 
-
+-----
 # Properties
 
-Name | Type | Means
------|------|------
-GetProp | function<GetProp> | get props by object
-ToString |  function<ToString> | get message
-ToJSON | function<ToJSON> | get props by JSON
-Resolved | function<Resolved> | call on resolved
-Abandoned | function<Abandoned> | call on abandoned
-User | object | user definitions
+| Name | Type | Means |
+|------|------|-------|
+| User | dict<string,any> | user definitions |
 
-## Type: function<GetProp>():object
+-----
+# Methods
+
+-----
+## getProp():dict<string,any> {#Happening_getProp}
 
 ### Returns
 
 properties of the happening.  
 
-## Type: function<ToString>():string
+-----
+## toString():string {#Happening_toString}
 
 ### Returns
 
 message of the happening.  
 
-## Type: function<ToJSON>():string
+-----
+## toJSON():string {#Happening_toJSON}
 
 ### Returns
 
 properties by JSON.  
 
-## Type: function<Resolved>(hap)
+-----
+## toError():Error {#Happening_toError}
 
-call by resolved happening.  
+### Returns
 
-### Args
+convert to an Error.  
 
-Name | Type | Means
------|------|------
-hap | Happening | source happening
-
-## Type: function<Abandoned>(hap)
-
-call by abandoned happening.  
-
-### Args
-
-Name | Type | Means
------|------|------
-hap | Happening | source happening
-
-
-# Methods
-
-## isResolved():bool
+-----
+## isResolved():bool {#Happening_isResolved}
 
 ### Returns
 
 means the Happening is resolved.  
 
-## isAbandoned():bool
+-----
+## isAbandoned():bool {#Happening_isAbandoned}
+
+### Returns
 
 means the Happening is abandoned and not resolved.  
 (resolved Happening returns false)  
 
-## resolve()
+-----
+## resolve() {#Happening_resolve}
 
 the Happening marks resolved.  
 and retract abandoned.  
 
-## abandon()
+-----
+## abandon() {#Happening_abandon}
 
 the Happening marks abandoned.  

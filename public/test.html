@@ -39,7 +39,7 @@ async function ipl_ready(){
 
 	ipl_loading.remove();
 
-	let log=YgEs.Log.createLocal('YgEsTest',YgEs.Log.LEVEL.TRACE);
+	let log=YgEs.Log.createLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
 	let hapmng=YgEs.HappeningManager.createLocal({
 		name:'YgEsTestHaps',
 		happen:(hap)=>{log.fatal(hap.toJSON())},
@@ -47,19 +47,27 @@ async function ipl_ready(){
 
 	YgEs.Engine.start();
 	let launcher=YgEs.Engine.createLauncher({happen:hapmng});
-	let loader=YgEs.Downloader.setupGUI(launcher,mainboard,true,modules);
+	let monitor=YgEs.DownloadMonitor.setup(mainboard,true);
+	let loader=YgEs.DownloadManager.create(launcher,monitor);
+
+	loader.plug('CSS',YgEs.DownloadManager.plugCSS(modules));
+	loader.plug('JS',YgEs.DownloadManager.plugJS(modules));
+	loader.plug('JSON',YgEs.DownloadManager.plugJSON());
 
 	loader.load('test.css','CSS','test.css');
 	loader.load('quickqueue.js','JS','yges/quickqueue.js');
-	loader.load('proptree.js','JS','yges/proptree.js');
-	loader.load('urlbuild.js','JS','yges/urlbuild.js');
-	loader.load('stmac.js','JS','yges/stmac.js');
+	loader.load('proptree.js','JS','yges/proptree.js',['quickqueue.js']);
+	loader.load('urlbuild.js','JS','yges/urlbuild.js',['proptree.js']);
 	loader.load('agent.js','JS','yges/agent.js');
 	loader.load('unittest.js','JS','yges/unittest.js');
+	loader.load('unittest_view.js','JS','yges/unittest_view.js');
 	loader.load('TestInfo','JSON',TestBase);
-	await launcher.toPromise();
+	await YgEs.Timing.syncKit(10,()=>{return loader.isReady();}).promise();
+	monitor.dispose();
 
-	mainboard.clear();
-	YgEs.Test.setupGUI(launcher,mainboard,TestBase,loader.Ready.TestInfo);
+	let test=YgEs.Test.setup(launcher,modules,TestBase,loader.Ready.TestInfo);
+	let view=YgEs.TestView.setup(test,mainboard);
+
+//	YgEs.Test.setupGUI(launcher,mainboard,TestBase,loader.Ready.TestInfo);
 }
 //--></script></div></body></html>

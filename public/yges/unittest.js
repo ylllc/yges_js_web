@@ -1,6 +1,6 @@
 // † Yggdrasil Essense for JavaScript † //
 // ====================================== //
-// © 2024 Yggdrasil Leaves, LLC.          //
+// © 2024-5 Yggdrasil Leaves, LLC.        //
 //        All rights reserved.            //
 
 // Unit Test Utility for web ------------ //
@@ -15,6 +15,176 @@ function _assert(cond,msg){
 
 	if(cond)return;
 	throw new Error('Test Assertion: '+msg);
+}
+
+function _setupTestFile(launcher,target,url,stat,reportParent){
+
+	let result=null;
+	let runs=0;
+	let msg='';
+	let view=null;
+
+	const setMsg=(s)=>{
+		msg='';
+		if(view)view.setMsg(s);
+	}
+	const updateResult=(r)=>{
+		if(r===result)return;
+		result=r;
+		if(view)view.updateResult(result);
+		reportParent(r);
+	}
+	const report=(f)=>{
+		--runs;
+		if(!f)updateResult(false);
+		else if(result===false){}
+		else if(runs<1)updateResult(true);
+		else return;
+	}
+
+	let states={
+		'Download':{
+			cb_start:(ctrl,user)=>{
+				setMsg('(download)');
+				YgEs.HTTPClient.getText(url,(src)=>{
+					setMsg('(install)');
+					src='YgEs.Test.scenaria["'+url+'"]=(()=>{'+src+'return scenaria;})();';
+					YgEs.newQHT({target:target,tag:'script',sub:[src]});
+					if(!YgEs.Test.scenaria[url]){
+						user.hap=launcher.HappenTo.happenMsg('Syntex Error');
+					}
+					else{
+						for(let scn of YgEs.Test.scenaria[url]){
+							++runs;
+							let sct={
+								scn:scn,
+								view:null,
+								setView:(v)=>{
+									sct.view=v;
+									if(v)v.updateResult(result);
+								},
+							}
+							user.scenaria.push(sct);
+						}
+						user.done=true;
+						if(view)view.setScenaria(user.scenaria);
+					}
+				},(hap)=>{
+					user.hap=hap;
+				});
+			},
+			poll_keep:(ctrl,user)=>{
+				if(user.hap){
+					setMsg('(error) '+hap.toString());
+					return false;
+				}
+				if(user.done)return 'Run';
+			},
+		},
+		'Run':{
+			cb_start:(ctrl,user)=>{
+				setMsg('(standby)');
+				YgEs.Timing.toPromise(async ()=>{
+
+					let puf=false;
+					for(let i=0;i<user.scenaria.length;++i){
+						let sct=user.scenaria[i];
+						if(!sct.scn.pickup)continue;
+						puf=true;
+						break;
+					}
+
+					setMsg('(running)');
+					for(let i=0;i<user.scenaria.length;++i){
+						let sct=user.scenaria[i];
+						try{
+							if(sct.scn.filter===false || (puf && !sct.scn.pickup)){
+								--runs;
+								if(sct.view){
+									sct.view.skip();
+									if(result==null && runs<1)report(true);
+								}
+								continue;
+							}
+
+							await sct.scn.proc({
+								Launcher:launcher.createLauncher(),
+								Log:YgEs.Log.createLocal(sct.scn.title,YgEs.Log.LEVEL.DEBUG),
+							});
+							if(sct.view)sct.view.updateResult(true);
+							report(true);
+						}
+						catch(e){
+							if(sct.view)sct.view.setError(e);
+							report(false);
+						}
+					}
+					setMsg('');
+				});
+			},
+		},
+	}
+
+	let user={
+		scenaria:[],
+		hap:null,
+		done:false,
+	}
+	let proc=YgEs.StateMachine.run('Download',states,{
+		name:'YgEs_UnitTest_Proc',
+		launcher:launcher,
+		user:user,
+	});
+
+	user.setView=(v)=>{
+		view=v;
+		if(view){
+			view.updateResult(result);
+			view.setMsg(msg);
+			if(user.done)view.setScenaria(user.scenaria);
+		}
+	}
+
+	return user;
+}
+
+function _setupTestDir(launcher,target,url,src,reportParent){
+
+	let result=null;
+	let runs=0;
+	let ctrl={dirs:{},files:{}}
+	let view=null;
+
+	const updateResult=(r)=>{
+		if(r===result)return;
+		result=r;
+		if(view)view.updateResult(result);
+		reportParent(r);
+	}
+
+	const report=(f)=>{
+		--runs;
+		if(!f)updateResult(false);
+		else if(result===false){}
+		else if(runs<1)updateResult(true);
+		else return;
+	}
+
+	for(let fn in src.files){
+		++runs;
+		ctrl.files[fn]=_setupTestFile(launcher,target,url+fn,src.files[fn],report);
+	}
+	for(let dn in src.dirs){
+		++runs;
+		ctrl.dirs[dn]=_setupTestDir(launcher,target,url+dn+'/',src.dirs[dn],report);
+	}
+
+	ctrl.setView=(v)=>{
+		view=v;
+		if(view)view.updateResult(result);
+	}
+
+	return ctrl;
 }
 
 YgEs.Test={
@@ -35,102 +205,10 @@ YgEs.Test={
 		// dummy 
 	},
 
-	setupView:(launcher,target,baseurl,dirent,cb_result)=>{
-
-		let runs=0;
-		let errored=false;
-
-		let ul=YgEs.newQHT({target:target,tag:'ul',attr:{class:'yges_test_layer'}});
-		for(let fn in dirent.files){
-			++runs;
-			let li=YgEs.newQHT({target:ul,tag:'li',attr:{class:'yges_test_file'}});
-			let st=YgEs.newQHT({target:li,tag:'span',attr:{class:'yges_test_stat_loading'},sub:['(loading)']});
-			YgEs.newQHT({target:li,tag:'span',attr:{class:'yges_test_caption'},sub:[fn]});
-			let url=baseurl+fn;
-			YgEs.HTTPClient.getText(url,(src)=>{
-				// install test source 
-				st.replace('(install)');
-				st.Element.setAttribute('class','yges_test_stat_install');
-				src='YgEs.Test.scenaria["'+url+'"]=(()=>{'+src+'return scenaria;})();';
-				YgEs.newQHT({target:li,tag:'script',sub:[src]});
-
-				st.replace('(running)');
-				st.Element.setAttribute('class','yges_test_stat_running');
-				let ul2=YgEs.newQHT({target:li,tag:'ul'});
-				let puf=false;
-				let que=[]
-				for(let scn of YgEs.Test.scenaria[url]){
-					if(scn.pickup)puf=true;
-					let li2=YgEs.newQHT({target:ul2,tag:'li',attr:{class:'yges_test_scn'}});
-					let st2=YgEs.newQHT({target:li2,tag:'span',attr:{class:'yges_test_stat_standby'},sub:['(standby)']});
-					YgEs.newQHT({target:li2,tag:'span',attr:{class:'yges_test_caption'},sub:[scn.title]});
-					que.push({
-						scn:scn,
-						stat:st2,
-						content:li2,
-					});
-				}
-				YgEs.Timing.toPromise(async ()=>{
-					let ng=false;
-					for(let q of que){
-						if(q.scn.filter===false || (puf && !q.scn.pickup)){
-							q.stat.replace('(skip)');
-							q.stat.Element.setAttribute('class','yges_test_stat_skip');
-							continue;
-						}
-						try{
-							q.stat.replace('(running)');
-							q.stat.Element.setAttribute('class','yges_test_stat_running');
-							await q.scn.proc({
-								Launcher:YgEs.Engine.createLauncher(),
-								Log:YgEs.Log.createLocal(q.scn.title,YgEs.Log.LEVEL.DEBUG),
-							});
-							q.stat.replace('[OK]');
-							q.stat.Element.setAttribute('class','yges_test_stat_ok');
-						}
-						catch(e){
-							q.stat.replace('[NG]');
-							q.stat.Element.setAttribute('class','yges_test_stat_ng');
-							YgEs.newQHT({target:q.content,tag:'div',attr:{class:'yges_test_error'},sub:e.toString()});
-							ng=true;
-						}
-					}
-					st.replace(ng?'[NG]':'[OK]');
-					st.Element.setAttribute('class','yges_test_stat_'+(ng?'ng':'ok'));
-					if(ng)errored=true;
-					if(--runs<=0)cb_result(errored);
-				});
-			},(hap)=>{
-				st.replace('(error)');
-				st.Element.setAttribute('class','yges_test_stat_error');
-				YgEs.newQHT({target:li,tag:'div',attr:{class:'yges_test_error'},sub:hap.toString()});
-			});
-		}
-		for(let dn in dirent.dirs){
-			++runs;
-			let li=YgEs.newQHT({target:ul,tag:'li',attr:{class:'yges_test_dir'}});
-			let st=YgEs.newQHT({target:li,tag:'span',attr:{class:'yges_test_stat_loading'},sub:['[...]']});
-			YgEs.newQHT({target:li,tag:'span',attr:{class:'yges_test_caption'},sub:[dn]});
-			YgEs.Test.setupView(launcher,li,baseurl+dn+'/',dirent.dirs[dn],(ng)=>{
-				st.replace(ng?'[NG]':'[OK]');
-				st.Element.setAttribute('class','yges_test_stat_'+(ng?'ng':'ok'));
-				if(ng)errored=true;
-				if(--runs<=0)cb_result(errored);
-			});
-		}
-		if(runs<=0)cb_result(true);
+	setup:(launcher,target,url,src)=>{
+		return _setupTestDir(launcher,target,url,src,()=>{});
 	},
 
-	setupGUI:(launcher,target,baseurl,dirent)=>{
-
-		let view=YgEs.newQHT({target:target,tag:'div'});
-		let ctrl={
-			View:view,
-		}
-		YgEs.Test.setupView(launcher,view,baseurl,dirent,(result)=>{
-		});
-		return ctrl;
-	},
 };
 
 })();
