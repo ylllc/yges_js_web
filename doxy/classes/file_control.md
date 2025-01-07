@@ -16,7 +16,7 @@
 # Structures
 
 -----
-## StatOption {#StatOption}
+## StatOption {#FileControl_StatOption}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -24,7 +24,7 @@
 | ... | any | unwrapped extra spec |
 
 -----
-## LoadOption {#LoadOption}
+## LoadOption {#FileControl_LoadOption}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -33,7 +33,7 @@
 | ... | any | unwrapped extra spec |
 
 -----
-## SaveOption {#SaveOption}
+## SaveOption {#FileControl_SaveOption}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -46,7 +46,7 @@
 # Unions
 
 -----
-## Path {#Path}
+## Path {#FileControl_Path}
 
 | Type | Means |
 |------|-------|
@@ -54,7 +54,7 @@
 | other | unwrapped extra spec |
 
 -----
-## SaveSource {#SaveSource}
+## SaveSource {#FileControl_SaveSource}
 
 | Type | Means |
 |------|-------|
@@ -75,9 +75,13 @@
 # Methods
 
 -----
-## exists(path):bool {#exists}
+## Exists {#FileControl_Exists}
 
 check path exists immediately.  
+
+### Spec
+
+Exists(path):bool
 
 ### Args
 
@@ -90,9 +94,13 @@ check path exists immediately.
 path exists
 
 -----
-## isFile(path):Promise<bool?> {#isFile}
+## IsFile {#FileControl_IsFile}
 
 check path is file via Promise.  
+
+### Spec
+
+IsFile(path):Promise<bool?>
 
 ### Args
 
@@ -113,9 +121,13 @@ a Promise of procedure
 | null | not exists |
 
 -----
-## stat(path,opt={}):Promise<FileStat> {#stat}
+## Stat {#FileControl_Stat}
 
 detect file stat.  
+
+### Spec
+
+Stat(path,opt={}):Promise<FileStat>
 
 ### Args
 
@@ -133,9 +145,13 @@ a Promise of procedure
 file stat info wrapped to @ref pg_class_file_stat
 
 -----
-## load(path,opt={}):Promise {#load}
+## Load {#FileControl_Load}
 
 load a file  
+
+### Spec
+
+Load(path,opt={}):Promise
 
 ### Args
 
@@ -153,9 +169,13 @@ a Promise of procedure
 loaded data  
 
 -----
-## save(path,data,opt={}):Promise {#save}
+## Save {#FileControl_Save}
 
 save to file  
+
+### Spec
+
+Save(path,data,opt={}):Promise
 
 ### Args
 
@@ -170,9 +190,13 @@ save to file
 a Promise of procedure  
 
 -----
-## remove(path,opt={}):Promise {#remove}
+## Remove {#FileControl_Remove}
 
 remove target file  
+
+### Spec
+
+Remove(path,opt={}):Promise
 
 ### Args
 
@@ -186,9 +210,13 @@ remove target file
 a Promise of procedure  
 
 -----
-## glob(dir,ptn='*'):Promise<string[]> {#glob}
+## Glob {#FileControl_Glob}
 
 find files on a directory  
+
+### Spec
+
+Glob(dir,ptn='*'):Promise<string[]>
 
 ### Args
 

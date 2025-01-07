@@ -31,28 +31,28 @@ and can use YgEs.QuickQueue too.
 var a=[1,true,'A',-1,1.1]
 
 // create a queue 
-var q=QuickQueue.create(a);
+var q=QuickQueue.Create(a);
 
 // will get 1 
-log.info(q.next());
+log.Info(q.Next());
 
 // will get true 
-log.info(q.next());
+log.Info(q.Next());
 
 // will get 'A' (but not step)
-log.info(q.peek());
+log.Info(q.Peek());
 
 // will get 'A' again
-log.info(q.next());
+log.Info(q.Next());
 
 // will get -1
-log.info(q.next());
+log.Info(q.Next());
 
 // reset it 
-q.reset();
+q.Reset();
 
 // will get 1 again
-log.info(q.next());
+log.Info(q.Next());
 
 ```
 

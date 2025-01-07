@@ -16,7 +16,7 @@
 # Structures
 
 -----
-## MkDirOption {#MkDirOption}
+## PrepareOption {#DirControl_PrepareOption}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -24,7 +24,7 @@
 | mode | int? | permission |
 
 -----
-## StatOption {#StatOption}
+## StatOption {#DirControl_StatOption}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -43,7 +43,11 @@
 # Methods
 
 -----
-## exists(path):bool {#exists}
+## Exists {#DirControl_Exists}
+
+### Spec
+
+Exists(path):bool
 
 check path exists immediately.  
 
@@ -58,7 +62,11 @@ check path exists immediately.
 path exists
 
 -----
-## isDir(path):Promise<bool?> {#isDir}
+## IsDir {#DirControl_IsDir}
+
+### Spec
+
+IsDir(path):Promise<bool?>
 
 check path is directory via Promise.  
 
@@ -81,7 +89,11 @@ a Promise of procedure
 | null | not exists |
 
 -----
-## stat(path,opt={}):Promise<FileStat> {#stat}
+## Stat {#DirControl_Stat}
+
+### Spec
+
+Stat(path,opt={}):Promise<FileStat>
 
 detect file stat.  
 
@@ -101,21 +113,29 @@ a Promise of procedure
 file stat info wrapped to @ref pg_class_file_stat
 
 -----
-## mkdir(path,opt={}):Promise {#mkdir}
+## MkDir {#DirControl_MkDir}
+
+## Spec
+
+MkDir(path,opt={}):Promise
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | path | string | target path |
-| opt | MkDirOption | optional params |
+| opt | PrepareOption | optional params |
 
 ### Returns
 
 a Promise of procedure  
 
 -----
-## target(dir,prepare):DirTarget {#target}
+## Target {#DirControl_Target}
+
+### Spec
+
+Target(dir,prepare):DirTarget
 
 ### Args
 

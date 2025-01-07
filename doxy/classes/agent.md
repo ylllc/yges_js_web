@@ -2,15 +2,19 @@
 
 # What's It?
 
-@sa @ref pg_feat_agent @n
+created by @ref pg_class_agent_manager
 
 -----
 # Callbacks
 
 -----
-## CBWait
+## CB_Wait {#Agent_CB_Wait}
 
 check condition in your procedure
+
+### Spec
+
+CB_Wait():bool
 
 ### Returns
 
@@ -23,14 +27,22 @@ check condition in your procedure
 # Methods
 
 -----
-## getState():string
+## GetState {#Agent_GetState}
+
+### Spec
+
+GetState():string
 
 ### Returns
 
 current state  
 
 -----
-## isBusy():bool
+## IsBusy {#Agent_GetState}
+
+### Spec
+
+IsBusy():bool
 
 ### Returns
 
@@ -40,7 +52,11 @@ current state
 | false | not runnning |
 
 -----
-## isOpen():bool
+## IsOpen {#Agent_IsOpen}
+
+### Spec
+
+IsOpen():bool
 
 ### Returns
 
@@ -50,7 +66,11 @@ current state
 | false | closed from all handles |
 
 -----
-## isReady():bool
+## IsReady {#Agent_IsReady}
+
+### Spec
+
+IsReady():bool
 
 ### Returns
 
@@ -60,7 +80,11 @@ current state
 | false | in down or not running |
 
 -----
-## isHalt():bool
+## IsHalt {#Agent_IsHalt}
+
+### Spec
+
+IsHalt():bool
 
 ### Returns
 
@@ -70,28 +94,44 @@ current state
 | false | otherwise |
 
 -----
-## getLauncher():Launcher
+## GetLauncher {#Agent_GetLauncher}
+
+### Spec
+
+GetLauncher():Launcher
 
 ### Returns
 
 procedures running on it  
 
 -----
-## getHappeningManager():HappeningManager
+## GetHappeningManager {#Agent_GetHappeningManager}
+
+### Spec
+
+GetHappeningManager():HappeningManager
 
 ### Returns
 
 happenings reported in it
 
 -----
-## getDependencies():dict<string,AgentHandle>
+## GetDependencies {#Agent_GetDependencies}
+
+### Spec
+
+GetDependencies():dict<string,AgentHandle>
 
 ### Returns
 
 dependencies of this Agent
 
 -----
-## waitFor(cb_wait)
+## WaitFor {#Agent_WaitFor}
+
+### Spec
+
+WaitFor(cb_wait)
 
 in UP,DOWN and REPAIR.  
 add required condition to complete its phase.  
@@ -103,19 +143,31 @@ add required condition to complete its phase.
 | cb_wait | CBWait | condition checking |
 
 -----
-## restart()
+## Restart {#Agent_Restart}
+
+### Spec
+
+Restart()
 
 do DOWN and UP in this Agent  
 
 -----
-## fetch():AgentHandle
+## Fetch {#Agent_Fetch}
+
+### Spec
+
+Fetch():AgentHandle
 
 ### Returns
 
 create a new AgentHandle.  
 
 -----
-## open():AgentHandle
+## Open {#Agent_Open}
+
+### Spec
+
+Open():AgentHandle
 
 ### Returns
 

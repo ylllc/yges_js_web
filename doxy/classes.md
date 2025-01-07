@@ -28,7 +28,7 @@
 - @subpage pg_class_quickqueue
 - @subpage pg_class_quickqueue_container
 - @subpage pg_class_stmac_container
-- @subpage pg_class_stmac_control
+- @subpage pg_class_stmac_context
 - @subpage pg_class_unittest
 - @subpage pg_class_timing
 - @subpage pg_class_urlbuilder

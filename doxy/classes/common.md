@@ -22,13 +22,13 @@ Error caught in @ref pg_class_happening
 
 | Name | Type | Means |
 |------|------|-------|
-| name | string | error class name |
-| msg | string | error message |
-| file | string? | happened source file path |
-| line | int? | happened source file line |
-| col | int? | happened source file column |
-| stack | any | stack tarace |
-| src | Error? | error instance |
+| Name | string | error class name |
+| Msg | string | error message |
+| File | string? | happened source file path |
+| Line | int? | happened source file line |
+| Col | int? | happened source file column |
+| Stack | any | stack tarace |
+| Src | Error? | error instance |
 
 -----
 # Properties
@@ -42,7 +42,11 @@ Error caught in @ref pg_class_happening
 # Methods
 
 -----
-## createEnum(src):dict<string,int> {#Common_createEnum}
+## CreateEnum {#Common_CreateEnum}
+
+### Spec
+
+CreateEnum(src):dict<string,int>
 
 ### Args
 
@@ -55,7 +59,11 @@ Error caught in @ref pg_class_happening
 reverse lookup table of src.  
 
 -----
-## fromError(err):@ref Common_HappenedError {#Common_fromError}
+## FromError {#Common_FromError}
+
+### Spec
+
+FromError(err):@ref Common_HappenedError
 
 ### Args
 
@@ -68,7 +76,11 @@ reverse lookup table of src.
 extract for @ref pg_class_happening
 
 -----
-## justString(val):string {#Common_justString}
+## JustString {#Common_JustString}
+
+### Spec
+
+JustString(val):string
 
 ### Args
 
@@ -82,7 +94,11 @@ fix to string.
 uses for logging instead of toString().  
 
 -----
-## inspect(val):string {#Common_inspect}
+## Inspect {#Common_Inspect}
+
+### Spec
+
+Inspect(val):string
 
 ### Args
 

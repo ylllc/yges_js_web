@@ -16,42 +16,67 @@ created and managed by @ref pg_class_happening_manager
 # Methods
 
 -----
-## getProp():dict<string,any> {#Happening_getProp}
+## GetProp {#Happening_GetProp}
+
+### Spec
+
+GetProp():dict<string,any>
 
 ### Returns
 
 properties of the happening.  
 
 -----
-## toString():string {#Happening_toString}
+## ToString {#Happening_ToString}
+
+### Spec
+
+ToString():string  
+toString():string  
 
 ### Returns
 
 message of the happening.  
 
 -----
-## toJSON():string {#Happening_toJSON}
+## ToJSON {#Happening_ToJSON}
+
+### Spec
+
+ToJSON():string
 
 ### Returns
 
 properties by JSON.  
 
 -----
-## toError():Error {#Happening_toError}
+## ToError {#Happening_ToError}
+
+### Spec
+
+ToError():Error
 
 ### Returns
 
 convert to an Error.  
 
 -----
-## isResolved():bool {#Happening_isResolved}
+## IsResolved {#Happening_IsResolved}
+
+### Spec
+
+IsResolved():bool
 
 ### Returns
 
 means the Happening is resolved.  
 
 -----
-## isAbandoned():bool {#Happening_isAbandoned}
+## IsAbandoned {#Happening_IsAbandoned}
+
+### Spec
+
+IsAbandoned():bool
 
 ### Returns
 
@@ -59,12 +84,20 @@ means the Happening is abandoned and not resolved.
 (resolved Happening returns false)  
 
 -----
-## resolve() {#Happening_resolve}
+## Resolve {#Happening_Resolve}
+
+### Spec
+
+Resolve()
 
 the Happening marks resolved.  
 and retract abandoned.  
 
 -----
-## abandon() {#Happening_abandon}
+## Abandon {#Happening_Abandon}
+
+### Spec
+
+Abandon()
 
 the Happening marks abandoned.  

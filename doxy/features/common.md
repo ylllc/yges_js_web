@@ -27,10 +27,17 @@ and can use YgEs too.
 # How to Use
 
 -----
-## Create Reverse Lookup Table
+## Reverse Lookup Table
 
 ```
+src=['ZERO','ONE','TWO','THREE','FOUR',
+	'FIVE','SIX','SEVEN','EIGHT','NINE','TEN']
+lut=YgEs.CreateEnum(src);
 
+console.log(lut.ZERO); // 0
+console.log(lut.ONE); // 1
+	:
+console.log(lut.TEN); // 10
 
 ```
 
@@ -43,10 +50,10 @@ s = null.totring(); // (Error thrown)
 s = undefined.totring(); // (Error thrown) 
 s = {a:-1,b:"xyz"}.toString(); // [object Object] 
 
-// justString() (useful for logging)
-s = YgEs.justString(null); // null 
-s = YgEs.justString(undefined); // undefined 
-s = YgEs.justString({a:-1,b:"xyz"}); // {"a":-1,"b":xyz} 
+// JustString() (useful for logging)
+s = YgEs.JustString(null); // null 
+s = YgEs.JustString(undefined); // undefined 
+s = YgEs.JustString({a:-1,b:"xyz"}); // {"a":-1,"b":xyz} 
 ```
 
 -----
@@ -60,10 +67,10 @@ s = JSON.stringify(undefined); // undefined
 s = JSON.stringify([undefined]); // [null] 
 
 // inspect (useful for debug, strings are quoted)
-s = YgEs.inspect(Infinity); // Infinity
-s = YgEs.inspect(NaN); // NaN
-s = YgEs.inspect(undefined); // undefined 
-s = YgEs.inspect([undefined]); // [undefined] 
+s = YgEs.Inspect(Infinity); // Infinity
+s = YgEs.Inspect(NaN); // NaN
+s = YgEs.Inspect(undefined); // undefined 
+s = YgEs.Inspect([undefined]); // [undefined] 
 ```
 
 -----

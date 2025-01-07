@@ -44,7 +44,7 @@ let hw=YgEs.newQHT({
 ## Remove an element
 
 ```
-hw.remove();
+hw.Remove();
 ```
 
 -----

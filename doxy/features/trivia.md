@@ -34,16 +34,16 @@ and can use YgEs.Util too.
 v = NaN;
 f = (v==NaN); // false 
 f = (v===NaN); // false 
-f = Util.isJustNaN(v); // true 
+f = Util.IsJustNaN(v); // true 
 
 // isNaN(v) means isNaN(v.toString()) 
 v = undefined;
 f = isNaN(v); // true 
-f = Util.isJustNaN(v); // false 
+f = Util.IsJustNaN(v); // false 
 
 v = {};
 f = isNaN(v); // true 
-f = Util.isJustNaN(v); // false 
+f = Util.IsJustNaN(v); // false 
 ```
 
 -----
@@ -55,12 +55,12 @@ f = Util.isJustNaN(v); // false
 v = Infinity;
 f = (v=="Infinity"); // true
 f = (v==="Infinity"); // false
-f = Util.isJustInfinity(v); // true 
+f = Util.IsJustInfinity(v); // true 
 
-// isJustInfinity judges to both Infinity 
+// IsJustInfinity() judges to both Infinity 
 v = -Infinity;
 f = (v===Infinity); // false
-f = Util.isJustInfinity(v); // true 
+f = Util.IsJustInfinity(v); // true 
 
 // isFinite() is wondering... 
 f = !isFinite(NaN); // true 
@@ -71,7 +71,7 @@ f = !isFinite([]); // false
 f = !isFinite([0]); // false 
 f = !isFinite([false]); // true 
 f = !isFinite({}); // true 
-// Util.isJustInfinity() returns false them.  
+// Util.IsJustInfinity() returns false them.  
 
 ```
 
@@ -103,12 +103,12 @@ f = undefined==""; // false
 f = undefined==[]; // false 
 f = undefined=={}; // false 
 
-// isEmpty() (means none or empty string) 
-f = Util.isEmpty(null); // true 
-f = Util.isEmpty(undefined); // true 
-f = Util.isEmpty(""); // true 
-f = Util.isEmpty([]); // false 
-f = Util.isEmpty({}); // false 
+// IsEmpty() (means none or empty string) 
+f = Util.IsEmpty(null); // true 
+f = Util.IsEmpty(undefined); // true 
+f = Util.IsEmpty(""); // true 
+f = Util.IsEmpty([]); // false 
+f = Util.IsEmpty({}); // false 
 ```
 
 -----
@@ -127,17 +127,17 @@ f = !![]; // true
 f = !!{}; // true
 f = !!NaN; // false
 
-// isValid() (means not invalid)
-f = Util.isValid(0); // true
-f = Util.isValid(1); // true
-f = Util.isValid(""); // true
-f = Util.isValid("0"); // true
-f = Util.isValid(false); // true
-f = Util.isValid(null); // false
-f = Util.isValid(undefined); // false
-f = Util.isValid([]); // true
-f = Util.isValid({}); // true
-f = Util.isValid(NaN); // false
+// IsValid() (means not invalid)
+f = Util.IsValid(0); // true
+f = Util.IsValid(1); // true
+f = Util.IsValid(""); // true
+f = Util.IsValid("0"); // true
+f = Util.IsValid(false); // true
+f = Util.IsValid(null); // false
+f = Util.IsValid(undefined); // false
+f = Util.IsValid([]); // true
+f = Util.IsValid({}); // true
+f = Util.IsValid(NaN); // false
 
 ```
 
@@ -147,23 +147,23 @@ f = Util.isValid(NaN); // false
 fix to bool.  
 
 ```
-f = Util.booleanize(0); // false
-f = Util.booleanize(1); // true
-f = Util.booleanize(""); // false
-f = Util.booleanize("0"); // true
-f = Util.booleanize(".00"); // true
-f = Util.booleanize("A"); // true
-f = Util.booleanize(false); // false
-f = Util.booleanize("false"); // true
-f = Util.booleanize("FaLsE"); // true
-f = Util.booleanize(null); // false
-f = Util.booleanize("null"); // true
-f = Util.booleanize(undefined); // false
-f = Util.booleanize("undefined"); // true
-f = Util.booleanize([]); // true
-f = Util.booleanize({}); // true
-f = Util.booleanize(NaN); // true
-f = Util.booleanize("NaN"); // true
+f = Util.Booleanize(0); // false
+f = Util.Booleanize(1); // true
+f = Util.Booleanize(""); // false
+f = Util.Booleanize("0"); // true
+f = Util.Booleanize(".00"); // true
+f = Util.Booleanize("A"); // true
+f = Util.Booleanize(false); // false
+f = Util.Booleanize("false"); // true
+f = Util.Booleanize("FaLsE"); // true
+f = Util.Booleanize(null); // false
+f = Util.Booleanize("null"); // true
+f = Util.Booleanize(undefined); // false
+f = Util.Booleanize("undefined"); // true
+f = Util.Booleanize([]); // true
+f = Util.Booleanize({}); // true
+f = Util.Booleanize(NaN); // true
+f = Util.Booleanize("NaN"); // true
 ```
 
 ### Unstring Booleanize
@@ -171,12 +171,12 @@ f = Util.booleanize("NaN"); // true
 include stringified values.  
 
 ```
-f = Util.booleanize("0",true); // false
-f = Util.booleanize(".00",true); // false
-f = Util.booleanize("false",true); // false
-f = Util.booleanize("FaLsE",true); // false
-f = Util.booleanize("null",true); // false
-f = Util.booleanize("undefined",true); // false
+f = Util.Booleanize("0",true); // false
+f = Util.Booleanize(".00",true); // false
+f = Util.Booleanize("false",true); // false
+f = Util.Booleanize("FaLsE",true); // false
+f = Util.Booleanize("null",true); // false
+f = Util.Booleanize("undefined",true); // false
 ```
 
 -----
@@ -185,23 +185,23 @@ f = Util.booleanize("undefined",true); // false
 fix to bool or null.  
 
 ```
-f = Util.trinarize(0); // false
-f = Util.trinarize(1); // true
-f = Util.trinarize(""); // false
-f = Util.trinarize("0"); // true
-f = Util.trinarize(".00"); // true
-f = Util.trinarize("A"); // true
-f = Util.trinarize(false); // false
-f = Util.trinarize("false"); // true
-f = Util.trinarize("FaLsE"); // true
-f = Util.trinarize(null); // null
-f = Util.trinarize("null"); // true
-f = Util.trinarize(undefined); // null
-f = Util.trinarize("undefined"); // true
-f = Util.trinarize([]); // true
-f = Util.trinarize({}); // true
-f = Util.trinarize(NaN); // true
-f = Util.trinarize("NaN"); // true
+f = Util.Trinarize(0); // false
+f = Util.Trinarize(1); // true
+f = Util.Trinarize(""); // false
+f = Util.Trinarize("0"); // true
+f = Util.Trinarize(".00"); // true
+f = Util.Trinarize("A"); // true
+f = Util.Trinarize(false); // false
+f = Util.Trinarize("false"); // true
+f = Util.Trinarize("FaLsE"); // true
+f = Util.Trinarize(null); // null
+f = Util.Trinarize("null"); // true
+f = Util.Trinarize(undefined); // null
+f = Util.Trinarize("undefined"); // true
+f = Util.Trinarize([]); // true
+f = Util.Trinarize({}); // true
+f = Util.Trinarize(NaN); // true
+f = Util.Trinarize("NaN"); // true
 ```
 
 ### Unstring Booleanize
@@ -209,12 +209,12 @@ f = Util.trinarize("NaN"); // true
 include stringified values.  
 
 ```
-f = Util.trinarize("0",true); // false
-f = Util.trinarize(".00",true); // false
-f = Util.trinarize("false",true); // false
-f = Util.trinarize("FaLsE",true); // false
-f = Util.trinarize("null",null); // false
-f = Util.trinarize("undefined",null); // false
+f = Util.Trinarize("0",true); // false
+f = Util.Trinarize(".00",true); // false
+f = Util.Trinarize("false",true); // false
+f = Util.Trinarize("FaLsE",true); // false
+f = Util.Trinarize("null",null); // false
+f = Util.Trinarize("undefined",null); // false
 ```
 
 -----
@@ -226,15 +226,15 @@ s = (''+0).padStart(8,'0'); // 00000000
 s = (''+123.4).padStart(8,'0'); // 000123.4 
 s = (''+(-123.4)).padStart(8,'0'); // 00-123.4 (is bad)
 
-// zerofill
-s = Util.zerofill(0,8); // 00000000
-s = Util.zerofill(123.4,8); // 000123.4
-s = Util.zerofill(-123.4,8); // -00123.4 (correct)
+// FillZero
+s = Util.FillZero(0,8); // 00000000
+s = Util.FillZero(123.4,8); // 000123.4
+s = Util.FillZero(-123.4,8); // -00123.4 (correct)
 
-// zerofill can put + sign
-s = Util.zerofill(0,8,true); // +0000000
-s = Util.zerofill(123.4,8,true); // +00123.4
-s = Util.zerofill(-123.4,8,true); // -00123.4
+// FillZero can put + sign
+s = Util.FillZero(0,8,true); // +0000000
+s = Util.FillZero(123.4,8,true); // +00123.4
+s = Util.FillZero(-123.4,8,true); // -00123.4
 ```
 
 -----

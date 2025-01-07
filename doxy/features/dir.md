@@ -23,19 +23,19 @@ and can use YgEs.Dir insted of.
 
 ```
 // base directory from CWD 
-let basedir=Dir.target('.',false);
+let basedir=Dir.Target('.',false);
 // prepare tmp directory on base 
-let tmpdir=basedir.subdir('tmp',true);
+let tmpdir=basedir.SubDir('tmp',true);
 ```
 
 -----
 ## Prepareing
 
 ```
-let h=tmpdir.open();
-YgEs.Timing.sync(100,()=>{
+let h=tmpdir.Open();
+YgEs.Timing.Sync(100,()=>{
 	// wait for tmpdir is ready 
-	return h.isReady();
+	return h.IsReady();
 },()=>{
 	// tmpdir is ready 
 },()=>{
@@ -50,10 +50,10 @@ YgEs.Timing.sync(100,()=>{
 
 ```
 // close it 
-h.close();
-YgEs.Timing.sync(100,()=>{
+h.Close();
+YgEs.Timing.Sync(100,()=>{
 	// wait for tmpdir is close completely 
-	return !h.isBusy();
+	return !h.IsBusy();
 },()=>{
 	// tmpdir is close 
 },()=>{

@@ -36,14 +36,14 @@ and can use YgEs.Util too.
 // broken
 for(var i=0;i<5;++i){
 	setTimeout(()=>{
-		log.warn('bad loop: '+i);
+		log.Warn('bad loop: '+i);
 	},100);
 }
 
 // corrected 
-util.safeStepIter(0,5,1,(i)=>{
+util.SafeStepIter(0,5,1,(i)=>{
 	setTimeout(()=>{
-		log.info('safe loop: '+i);
+		log.Info('safe loop: '+i);
 	},100);
 });
 ```
@@ -57,14 +57,14 @@ var a=[5,2.3,'x',5,-11]
 // broken
 for(var v of a){
 	setTimeout(()=>{
-		log.warn('bad iteration: '+v);
+		log.Warn('bad iteration: '+v);
 	},100);
 }
 
 // corrected 
 util.safearrayiter(a,(v)=>{
 	setTimeout(()=>{
-		log.info('safe iteration: '+v);
+		log.Info('safe iteration: '+v);
 	},100);
 });
 ```
@@ -78,14 +78,14 @@ var b={'a':'B',4.4:-0.6,true:false}
 // broken
 for(var k in b){
 	setTimeout(()=>{
-		log.info('bad iteration: '+k+':'+b[k]);
+		log.Info('bad iteration: '+k+':'+b[k]);
 	},100);
 });
 
 // corrected 
 util.safedictiter(b,(k,v)=>{
 	setTimeout(()=>{
-		log.info('safe iteration: '+k+':'+v);
+		log.Info('safe iteration: '+k+':'+v);
 	},100);
 });
 ```

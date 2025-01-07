@@ -182,14 +182,14 @@ var states={
 
 ```
 // states running on the Engine 
-Engine.start();
+Engine.Start();
 
 // run states from a state 
-StateMachine.run('StateName',states);
+StateMachine.Run('StateName',states);
 
 // wait for end of procedures and stop the Engine 
-Engine.sync((dmy)=>{
-	Engine.stop();
+Engine.Sync((dmy)=>{
+	Engine.Stop();
 });
 
 ```

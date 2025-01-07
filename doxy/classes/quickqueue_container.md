@@ -13,11 +13,23 @@
 | YgEs.QuickQueue | QuickQueue container |
 
 -----
+# Properties
+
+-----
+| Name | Type | Means |
+|------|------|-------|
+| User | dict<string,any> | user definitions |
+
+-----
 # Methods
 
 -----
-## create(val):QuickQueue
+## Create {#QuickQueue_Create}
+
+### Spec
+
+Create(val):@ref pg_class_quickqueue
 
 ### Returns
 
-a new @ref pg_class_quickqueue instance
+a new instance

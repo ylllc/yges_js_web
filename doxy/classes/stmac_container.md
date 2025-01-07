@@ -13,10 +13,10 @@
 | YgEs.StateMachine | statemachine container |
 
 -----
-# Types
+# Structures
 
 -----
-## StateSwitching {#StateSwitching}
+## StateSwitching {#StMac_StateSwitching}
 
 | Type | Means |
 |------|-------|
@@ -26,7 +26,7 @@
 | string | switch to next state |
 
 -----
-## StateSettings {#StateSettings}
+## StateSettings {#StMac_StateSettings}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -38,11 +38,11 @@
 | poll_down | func<@ref pg_class_stmac_control,@ref UserShared>:@ref StateSwitching | call by each polling in down phase |
 | cb_end | func<@ref pg_class_stmac_control,@ref UserShared> | call at end of current state down |
 
-## UserShared {#UserShared}
+## UserShared {#StMac_UserShared}
 
 user defined object kept in a control
 
-## StatesOption {#StatesOption}
+## StatesOption {#StMac_StatesOption}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -57,7 +57,11 @@ user defined object kept in a control
 # Methods
 
 -----
-## run(start,states,opt):StateMachineContext
+## Run {#StMac_Run}
+
+### Spec
+
+Run(start,states,opt):StateMachineContext
 
 ### Args
 

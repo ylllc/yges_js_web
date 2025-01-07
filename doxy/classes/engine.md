@@ -15,23 +15,35 @@ this class is inherited from @ref pg_class_launcher
 | YgEs.Engine | global launcher |
 
 -----
-# Additional Methods
+# Methods
 
 -----
-## start()
+## Start {#Engine_Start}
+
+### Spec
+
+Start():void
 
 the Engine is started.  
-and cannot exit until call stop() or shutdown()  
+and cannot exit until call Stop() or ShutDown()  
 
 -----
-## stop()
+## Stop {#Engine_Stop}
+
+### Spec
+
+Stop():void
 
 stop the Engine.  
 and all procedures are aborted.  
-can start() again.  
+can Start() again.  
 
 -----
-## shutdown()
+## ShutDown {#Engine_ShutDown}
+
+### Spec
+
+ShutDown():void
 
 stop the Engine.  
 and all procedures are aborted.  

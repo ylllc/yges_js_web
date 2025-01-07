@@ -22,7 +22,7 @@ and can use YgEs.File insted of.
 ## Quick Load & Save
 
 ```
-let data=await File.load(srcpath);
+let data=await File.Load(srcpath);
 await File.save(dstpath,data);
 ```
 

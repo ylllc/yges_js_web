@@ -2,48 +2,70 @@
 
 # What's It?
 
-@sa @ref pg_feat_agent @n
+created by @ref pg_class_agent
 
 -----
 # Methods
 
 -----
-## getAgent():Agent
+## GetAgent {#Agent_GetAgent}
+
+### Spec
+
+GetAgent():Agent
 
 ### Returns
 
 target Agent  
 
 -----
-## getLauncher():Launcher
+## GetLauncher {#Agent_GetLauncher}
+
+### Spec
+
+GetLauncher():Launcher
 
 ### Returns
 
 procedures running on target Agent  
 
 -----
-## getHappeningManager():HappeningManager
+## GetHappeningManager {#Agent_GetHappeningManager}
+
+### Spec
+
+GetHappeningManager():HappeningManager
 
 ### Returns
 
 happenings reported in target Agent
 
 -----
-## getDependencies():dict<string,AgentHandle>
+## GetDependencies {#Agent_GetDependencies}
+
+### Spec
+
+GetDependencies():dict<string,AgentHandle>
 
 ### Returns
 
 dependencies of target Agent
 
 -----
-## getState():string
+## GetState {#Agent_GetState}
+
+GetState():string
 
 ### Returns
 
 current state  
 
 -----
-## isBusy():bool
+## IsBusy {#Agent_IsBusy}
+
+### Spec
+
+IsBusy():bool
 
 ### Returns
 
@@ -53,7 +75,11 @@ current state
 | false | not runnning |
 
 -----
-## isOpen():bool
+## IsOpen {#Agent_IsOpen}
+
+### Spec
+
+IsOpen():bool
 
 ### Returns
 
@@ -63,7 +89,11 @@ current state
 | false | closed from all handles |
 
 -----
-## isReady():bool
+## IsReady {#Agent_IsReady}
+
+### Spec
+
+IsReady():bool
 
 ### Returns
 
@@ -73,7 +103,11 @@ current state
 | false | in down or not running |
 
 -----
-## isHalt():bool
+## IsHalt {#Agent_IsHalt}
+
+### Spec
+
+IsHalt():bool
 
 ### Returns
 
@@ -83,23 +117,39 @@ current state
 | false | otherwise |
 
 -----
-## restart()
+## Restart {#Agent_Restart}
+
+### Spec
+
+Restart()
 
 do DOWN and UP in this Agent  
 
 -----
-## fetch():AgentHandle
+## Fetch {#Agent_Fetch}
+
+### Spec
+
+Fetch():AgentHandle
 
 ### Returns
 
 create a new AgentHandle.  
 
 -----
-## open()
+## Open {#Agent_Open}
+
+### Spec
+
+Open()
 
 open this handle.  
 
 -----
-## close()
+## Close {#Agent_Close}
+
+### Spec
+
+Close()
 
 close this handle.  

@@ -50,14 +50,14 @@ and can use YgEs.Engine too.
 ## Start the Engine  
 
 ```
-Engine.start();
+Engine.Start();
 ```
 
 -----
 ## Launch
 
 ```
-var proc=Engine.launch({
+var proc=Engine.Launch({
 	user:{
 		// initial variables 
 		name:'async sample',
@@ -72,11 +72,11 @@ var proc=Engine.launch({
 	},
 	cb_done:(user)=>{
 		// called on done 
-		log.info(user.name+' is done');
+		log.Info(user.name+' is done');
 	},
 	cb_abort:(user)=>{
 		// called on abort 
-		log.warn(user.name+' is aborted');
+		log.Warn(user.name+' is aborted');
 	}
 });
 		:
@@ -89,21 +89,21 @@ proc.User.lock=false;
 ## Sub-launcher
 
 ```
-var sub=Engine.createLauncher({
+var sub=Engine.CreateLauncher({
 	// limit parallel running 
 	// more procedures are held until end of running procedures 
 	limit:5,
 });
 
 // can launch too 
-sub.launch(...);
+sub.Launch(...);
 
 		:
 
 // wait for end of procedures in sub 
-sub.sync((user)=>{
+sub.Sync((user)=>{
 	// sub is abandoned 
-	sub.abandon();
+	sub.Abandon();
 });
 ```
 
@@ -113,7 +113,7 @@ sub.sync((user)=>{
 it's useful everywhere.
 
 ```
-var proc=Engine.delay(1000,(user)=>{
+var proc=Engine.Delay(1000,(user)=>{
 	// run after 1 sec 
 },(user)=>{
 	// on abort delayig 
@@ -122,14 +122,14 @@ var proc=Engine.delay(1000,(user)=>{
 		:
 
 // can abort delaying 
-proc.abort();
+proc.Abort();
 ```
 
 -----
 ## Shutdown
 
 ```
-Engine.shutdown();
+Engine.ShutDown();
 ```
 
 all procedures in the Engine are aborted.  

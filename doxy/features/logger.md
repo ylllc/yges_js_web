@@ -34,20 +34,21 @@ and can use YgEs.Log too.
 Log.Showable=Log.LEVEL.DEBUG;
 
 // put log 
-Log.tick('TICK Log'); // will be suppressed 
-Log.trace('TRACE Log'); // will be suppressed 
-Log.debug('DEBUG Log');
-Log.info('INFO Log');
-Log.notice('NOTICE Log');
-Log.warn('WARN Log');
-Log.fatal('FATAL Log');
-Log.alert('ALERT Log');
-Log.emerg('EMERG Log');
+Log.Tick('TICK Log'); // will be suppressed 
+Log.Trace('TRACE Log'); // will be suppressed 
+Log.Debug('DEBUG Log');
+Log.Info('INFO Log');
+Log.Notice('NOTICE Log');
+Log.Warn('WARN Log');
+Log.Fatal('FATAL Log');
+Log.Crit('CRIT Log');
+Log.Alert('ALERT Log');
+Log.Emerg('EMERG Log');
 
 // put log with variable level
-Log.put(Log.LEVEL.INFO,'INFO Log too');
+Log.Put(Log.LEVEL.INFO,'INFO Log too');
 // overlevel logs are always suppressed 
-Log.put(Log.LEVEL.NEVER,'NEVER Log');
+Log.Put(Log.LEVEL.NEVER,'NEVER Log');
 ```
 
 -----
@@ -55,12 +56,12 @@ Log.put(Log.LEVEL.NEVER,'NEVER Log');
 
 ```
 // create local log instance 
-var ll1=Log.createLocal('Local',Log.LEVEL.TRACE);
+var ll1=Log.CreateLocal('Local',Log.LEVEL.TRACE);
 
 // put local log 
-ll1.tick('Local TICK Log'); // will be suppressed 
-ll1.trace('Local TRACE Log');
-ll1.put(Log.LEVEL.DEBUG,'Local DEBUG Log');
+ll1.Tick('Local TICK Log'); // will be suppressed 
+ll1.Trace('Local TRACE Log');
+ll1.Put(Log.LEVEL.DEBUG,'Local DEBUG Log');
 ```
 
 -----
@@ -91,11 +92,11 @@ it processed by YgEs.inspect()
 ```
 // can output an object directly, without JSON.stringify(), more correct   
 var obj={a:1,b:NaN,c:Infinity,d:[undefined]}
-log.debug(obj);
+log.Debug(obj);
 
 // for web, 2nd arg put through to browser's inspector without serialization.  
 // for backend, 2nd arg is still serizlized and appended.  
-log.debug('Inspecting',obj);
+log.Debug('Inspecting',obj);
 ```
 
 -----
@@ -108,7 +109,7 @@ put message creating function instead of it.
 ```
 // can postpone creating message 
 // it don't call for suppressed log 
-log.debug(()=>'deferred message creation: '+Math.pow(1.234,5.678));
+log.Debug(()=>'deferred message creation: '+Math.pow(1.234,5.678));
 ```
 
 -----
@@ -122,17 +123,17 @@ Log.Format=(src)=>{
 Log.Way=(src)=>{
 	console.dir(src);
 }
-Log.debug('Global override log');
+Log.Debug('Global override log');
 // overridings affect to unoverridden local log 
-ll1.debug('Local override log');
+ll1.Debug('Local override log');
 
 // local overridings are selected first 
-var ll2=ll1.createLocal('Local2');
+var ll2=ll1.CreateLocal('Local2');
 ll2.Format=(src)=>{};
 ll2.Way=(src)=>{
 	console.log(src.Msg);
 }
-ll2.info('super-overridden local log');
+ll2.Info('super-overridden local log');
 ```
 
 -----

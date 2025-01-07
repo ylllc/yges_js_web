@@ -21,8 +21,8 @@
 | Name | Type | Means |
 |------|------|-------|
 | name | string | user class name of HappeningManager |
-| issues | dict<string,any>[] | getProp() of each unresolved happenings |
-| children | @ref HappeningManager_HappeningInfo[] | getInfo() of each children |
+| issues | dict<string,any>[] | GetProp() of each unresolved happenings |
+| children | @ref HappeningManager_HappeningInfo[] | GetInfo() of each children |
 
 -----
 ## HappeningOption {#HappeningManager_HappeningOption}
@@ -39,14 +39,14 @@
 
 | Name | Type | Means |
 |------|------|-------|
-| Happened | func<@ref pg_class_happening> | call on happened |
+| CB_Happened | func<@ref pg_class_happening> | call on happened |
 | User | dict<string,any> | user definitions |
 
 -----
 # Methods
 
 -----
-## createLocal(name='YgEs_HappeningManager'):@ref pg_class_happening_manager {#HappeningManager_createLocal}
+## CreateLocal(name='YgEs_HappeningManager'):@ref pg_class_happening_manager {#HappeningManager_CreateLocal}
 
 create a child HappeningManager  
 
@@ -61,21 +61,33 @@ create a child HappeningManager
 created instance  
 
 -----
-## getParent():@ref pg_class_happening_manager? {#HappeningManager_getParent}
+## GetParent {#HappeningManager_GetParent}
+
+### Spec
+
+GetParent():@ref pg_class_happening_manager?
 
 ### Returns
 
 parent instance (null from global instance)  
 
 -----
-## getChildren():@ref pg_class_happening_manager[] {#HappeningManager_getChildren}
+## GetChildren {#HappeningManager_GetChildren}
+
+### Spec
+
+GetChildren():@ref pg_class_happening_manager[]
 
 ### Returns
 
 child instances  
 
 -----
-## getIssues():@ref pg_class_happening[] {#HappeningManager_getIssues}
+## GetIssues {#HappeningManager_GetIssues}
+
+### Spec
+
+GetIssues():@ref pg_class_happening[]
 
 ### Returns
 
@@ -83,13 +95,21 @@ Happening instances in this instance.
 include dirty resolved happens.  
 
 -----
-## abandon() {#HappeningManager_abandon}
+## Abandon {#HappeningManager_Abandon}
+
+### Spec
+
+Abandon():void
 
 abandon all happens in this instance
 and all child HappeningManager.  
 
 -----
-## countIssues() {#HappeningManager_countIssues}
+## CountIssues {#HappeningManager_countIssues}
+
+### Spec
+
+CountIssues():int
 
 ### Returns
 
@@ -97,27 +117,43 @@ count happens in this instance and all child HappeningManager.
 include dirty resolved happens.  
 
 -----
-## isCleaned() {#HappeningManager_isCleaned}
+## IsCleaned {#HappeningManager_IsCleaned}
+
+### Spec
+
+IsCleaned():bool
 
 ### Returns
 
 true means no happens in this instance and all child HappeningManager.  
-(same to countIssues() returns 0)  
+(same to CountIssues() returns 0)  
 
 -----
-## cleanup() {#HappeningManager_cleanup}
+## Cleanup {#HappeningManager_Cleanup}
+
+### Spec
+
+Cleanup():void
 
 remove dirty resolved happens in this instance and all child HappeningManager.  
 
 -----
-## getInfo():@ref HappeningManager_HappeningInfo {#HappeningManager_getInfo}
+## GetInfo {#HappeningManager_GetInfo}
+
+### Spec
+
+GetInfo():@ref HappeningManager_HappeningInfo
 
 ### Returns
 
 unresolved happenings info in an object.  
 
 -----
-## poll(cb) {#HappeningManager_poll}
+## Poll {#HappeningManager_poll}
+
+### Spec
+
+Poll(cb):void
 
 iterate all unresolved Happening include all child HappeningManager.  
 
@@ -126,7 +162,11 @@ iterate all unresolved Happening include all child HappeningManager.
 | cb | func<@ref pg_class_happening> | call by each Happening |
 
 -----
-## happenMsg(msg,init=null):@ref pg_class_happening {#HappeningManager_happenMsg}
+## HappenMsg {#HappeningManager_HappenMsg}
+
+### Spec
+
+HappenMsg(msg,init=null):@ref pg_class_happening
 
 add a Happening from a message.  
 
@@ -142,7 +182,11 @@ add a Happening from a message.
 the Happening instance
 
 -----
-## happenProp(prop,init=null):@ref pg_class_happening {#HappeningManager_happenProp}
+## HappenProp {#HappeningManager_HappenProp}
+
+### Spec
+
+HappenProp(prop,init=null):@ref pg_class_happening
 
 add a Happening from properties.  
 
@@ -158,7 +202,11 @@ add a Happening from properties.
 the Happening instance
 
 -----
-## happenError(err,init=null):@ref pg_class_happening {#HappeningManager_happenError}
+## HappenError {#HappeningManager_HappenError}
+
+### Spec
+
+HappenError(err,init=null):@ref pg_class_happening
 
 add a Happening from Error instance.  
 

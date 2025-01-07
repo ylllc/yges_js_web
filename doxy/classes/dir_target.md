@@ -7,24 +7,36 @@ created by [DirControl.target()](pg_class_dir_control.html#target)
 it inherited from @ref pg_class_agent  
 
 -----
-# Additional Mathods
+# Methods
 
 -----
-## getPath():string {#getPath}
+## GetPath {#DirTarget_GetPath}
+
+### Spec
+
+GetPath():string
 
 ### Returns 
 
 target directory path  
 
 -----
-## exists():bool {#exists}
+## Exists {#DirTarget_Exists}
+
+### Spec
+
+Exists():bool
 
 ### Returns
 
 target directry is exist  
 
 -----
-## relative(path):string {#relative}
+## Relative {#DirTarget_Relative}
+
+### Spec
+
+Relative(path):string
 
 ### Args
 
@@ -37,7 +49,11 @@ target directry is exist
 combined path  
 
 -----
-## subdir(path,prepare):DirTarget {#subdir}
+## SubDir {#DirTarget_SubDir}
+
+### Spec
+
+SubDir(path,prepare):DirTarget
 
 ### Args
 
@@ -51,7 +67,11 @@ combined path
 new @ref pg_class_dir_target instance of a subdirectory  
 
 -----
-## glob(ptn='*'):Promise<string[]> {#glob}
+## Glob {#DirTarget_Glob}
+
+### Spec
+
+Glob(ptn='*'):Promise<string[]>
 
 find files on target directory  
 

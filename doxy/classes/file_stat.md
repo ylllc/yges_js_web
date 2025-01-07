@@ -2,28 +2,40 @@
 
 # What's It?
 
-result of [DirControl.stat()](pg_class_dir_control.html#stat)  
-and [FileControl.stat()](pg_class_file_control.html#stat)  
+result of [DirControl.Stat()](pg_class_dir_control.html#Stat)  
+and [FileControl.Stat()](pg_class_file_control.html#Stat)  
 
 -----
 # Methods
 
 -----
-## getPath():string {#getPath}
+## GetPath {#FileStat_GetPath}
+
+### Spec
+
+GetPath():string
 
 ### Returns
 
 source path  
 
 -----
-## getLowLevel():any {#getLowLevel}
+## GetLowLevel {#FileStat_GetLowLevel}
+
+### Spec
+
+GetLowLevel():any
 
 ### Returns
 
 low level result  
 
 -----
-## isFile():bool? {#isFile}
+## IsFile {#FileStat_IsFile}
+
+### Spec
+
+IsFile():bool?
 
 ### Returns
 
@@ -34,7 +46,11 @@ low level result
 | null | not exists |
 
 -----
-## isDir():bool? {#isDir}
+## IsDir {#FileStat_IsDir}
+
+### Spec
+
+IsDir():bool?
 
 ### Returns
 
@@ -45,7 +61,11 @@ low level result
 | null | not exists |
 
 -----
-## isSymLink():bool? {#isSymLink}
+## IsSymLink {#FileStat_IsSymLink}
+
+### Spec
+
+IsSymLink():bool?
 
 ### Returns
 
@@ -56,70 +76,110 @@ low level result
 | null | not exists |
 
 -----
-## getDevID():int? {#getDevID}
+## GetDevID {#FileStat_GetDevID}
+
+### Spec
+
+GetDevID():int?
 
 ### Returns
 
 device ID, is exists  
 
 -----
-## getInode():int? {#getInode}
+## GetInode {#FileStat_GetInode}
+
+### Spec
+
+GetInode():int?
 
 ### Returns
 
 node number, is exists
 
 -----
-## getMode():int? {#getMode}
+## GetMode {#FileStat_GetMode}
+
+### Spec
+
+GetMode():int?
 
 ### Returns
 
 file mode, is exists
 
 -----
-## getGID():int? {#getGID}
+## GetGID {#FileStat_GetGID}
+
+### Spec
+
+GetGID():int?
 
 ### Returns
 
 group ID, is exists  
 
 -----
-## getUID():int? {#getUID}
+## GetUID {#FileStat_GetUID}
+
+### Spec
+
+GetUID():int?
 
 ### Returns
 
 user ID, is exists  
 
 -----
-## getSize():int? {#getSize}
+## GetSize {#FileStat_GetSize}
+
+### Spec
+
+GetSize():int?
 
 ### Returns
 
 file size, is exists  
 
 -----
-## getAccessTime():Date? {#getAccessTime}
+## GetAccessTime {#FileStat_GetAccessTime}
+
+### Spec
+
+GetAccessTime():Date?
 
 ### Returns
 
 last accessed time, is exists  
 
 -----
-## getModifyTime():Date? {#getModifyTime}
+## GetModifyTime {#FileStat_GetModifyTime}
+
+### Spec
+
+GetModifyTime():Date?
 
 ### Returns
 
 last modified time, is exists  
 
 -----
-## getChangeTime():Date? {#getChangeTime}
+## GetChangeTime {#FileStat_GetChangeTime}
+
+### Spec
+
+GetChangeTime():Date?
 
 ### Returns
 
 last status changed time, is exists  
 
 -----
-## getBirthTime():Date? {#getBirthTime}
+## GetBirthTime {#FileStat_GetBirthTime}
+
+### Spec
+
+GetBirthTime():Date?
 
 ### Returns
 

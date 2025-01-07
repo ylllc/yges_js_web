@@ -2,26 +2,18 @@
 
 # What's It?
 
-@sa @ref pg_feat_engine
+created by @ref pg_class_engine
 
 -----
-# Namespaces
+# Structures
 
 -----
-| Symbol | Purpose |
-|--------|---------|
-| YgEs.Engine | global launcher |
-
------
-# Types
-
------
-## UserShared
+## UserShared {#Launcher_UserShared}
 
 user definied object kept on a @ref pg_class_procedure instance  
 
 -----
-## LauncherPrm
+## LauncherPrm {#Launcher_LauncherPrm}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -32,7 +24,7 @@ user definied object kept on a @ref pg_class_procedure instance
 | user | UserShared | user definitions |
 
 -----
-## ProcedurePrm
+## ProcedurePrm {#Launcher_ProcedurePrm}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -53,46 +45,70 @@ user definied object kept on a @ref pg_class_procedure instance
 | HappenTo | HappeningManager | happenings managed on |
 | Limit | int | parallel running capacity |
 | Cycle | int | polling cycle msec |
-| User | object | user definitions |
+| User | dict<string,any> | user definitions |
 
 -----
 # Methods
 
 -----
-## isEnd():bool
+## IsEnd {#Launcher_IsEnd}
+
+### Spec
+
+IsEnd():bool
 
 ### Returns
 
 no procedure in this launcher.
 
 -----
-## isAbandoned():bool
+## IsAbandoned {#Launcher_IsAbandoned}
+
+### Spec
+
+IsAbandoned():bool
 
 ### Returns
 
 this launcher is abandoned.
 
 -----
-## countActive():int
+## CountActive {#Launcher_CountActive}
+
+### Spec
+
+CountActive():int
 
 ### Returns
 
 running procedures in this launcher.
 
 -----
-## countHeld():int
+## CountHeld {#Launcher_CountActive}
+
+### Spec
+
+CountHeld():int
 
 ### Returns
 
 unstarted procedures in this launcher.
 
 -----
-## abandon()
+## Abandon {#Launcher_CountActive}
+
+### Spec
+
+Abandon()
 
 this launcher is no longer launch procedures.
 
 -----
-## createLauncher(prm={}):Launcher
+## CreateLauncher {#Launcher_CreateLauncher}
+
+### Spec
+
+CreateLauncher(prm={}):Launcher
 
 ### Args
 
@@ -105,7 +121,11 @@ prm | LauncherPrm | settings
 sub-launcher
 
 -----
-## launch(prm={}):Procedure
+## Launch {#Launcher_Launch}
+
+### Spec
+
+Launch(prm={}):Procedure
 
 ### Args
 
@@ -118,19 +138,31 @@ prm | ProcedurePrm | settings
 procedure instance
 
 -----
-## abort()
+## Abort {#Launcher_Abort}
+
+### Spec
+
+Abort():void
 
 abort all procedures in this
 
 -----
-## poll()
+## Poll {#Launcher_Abort}
+
+### Spec
+
+Poll():void
 
 poll a individual launcher.  
 usually called from the Engine.  
 and not necessary to call manually.  
 
 -----
-## sync(cb_sync,interval=null)
+## Sync {#Launcher_Sync}
+
+### Spec
+
+Sync(cb_sync,interval=null):void
 
 wait for end of all procedures in this launcher and call cb_sync
 
@@ -142,7 +174,11 @@ wait for end of all procedures in this launcher and call cb_sync
 | interval | int? | poll interval msec (null=DEFAULT_SYNC_CYCLE) |
 
 -----
-## toPromise(breakable,interval=null):Promise
+## ToPromise {#Launcher_ToPromise}
+
+### Spec
+
+ToPromise(breakable,interval=null):Promise
 
 ### Args
 
@@ -153,10 +189,14 @@ wait for end of all procedures in this launcher and call cb_sync
 
 ### Returns
 
-a Promise include caling sync()
+a Promise include caling Sync()
 
 -----
-## delay(time,cb_done,cb_abort=null) 
+## Delay {#Launcher_Delay}
+
+### Spec
+
+Delay(time,cb_done,cb_abort=null) 
 
 | Name | Type | Means |
 |------|------|-------|

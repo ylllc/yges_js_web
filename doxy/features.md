@@ -20,7 +20,7 @@
 - Structures
 	- @subpage pg_feat_quickqueue
 	- @subpage pg_feat_proptree
-	- @subpage pg_feat_urlbuild
+	- @subpage pg_feat_urlbuilder
 - Misc.
 	- @subpage pg_feat_common
 	- @subpage pg_feat_trivia

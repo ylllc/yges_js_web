@@ -27,7 +27,7 @@
 # Methods
 
 -----
-## remove()
+## Remove()
 
 remove this Element.  
 

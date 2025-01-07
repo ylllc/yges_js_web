@@ -13,10 +13,21 @@
 | YgEs.Timing | global Timing |
 
 -----
-# Types
+# Structures
 
 -----
-## AsyncProc {#AsyncProc}
+## AsyncControl {#Timing_AsyncControl}
+
+| Name | Type | Means |
+|------|------|-------|
+| cancel | func | cancel source procedure |
+| promise | func:Promise | convert to a Promise |
+
+-----
+# Callbacks
+
+-----
+## AsyncProc {#Timing_AsyncProc}
 
 typical async procedure
 
@@ -27,28 +38,28 @@ typical async procedure
 | ok | func<any> | call on done |
 | ng | func<Error> | call on failed |
 
------
-## AsyncControl {#AsyncControl}
+### Implements
 
-| Name | Type | Means |
-|------|------|-------|
-| cancel | func | cancel source procedure |
-| promise | func:Promise | convert to a Promise |
+your procedure in async  
 
 -----
 # Properties
 
 | Name | Type | Means |
 |------|------|-------|
-| User | object | user definitions |
+| User | dict<string,any> | user definitions |
 
 -----
 # Methods
 
 -----
-## fromPromise(promise,cb_ok=null,cb_ng=null):Promise
+## FromPromise {#Timing_FromPromise}
 
 wait for a Promise.  
+
+### Spec
+
+FromPromise(promise,cb_ok=null,cb_ng=null):Promise
 
 ### Args
 
@@ -63,9 +74,13 @@ wait for a Promise.
 socketting Promise
 
 -----
-## toPromise(cb_proc,cb_ok=null,cb_ng=null):Promise
+## ToPromise {#Timing_ToPromise}
 
 convert to a Promise
+
+### Spec
+
+ToPromise(cb_proc,cb_ok=null,cb_ng=null):Promise
 
 | Name | Type | Means |
 |------|------|-------|
@@ -78,9 +93,13 @@ convert to a Promise
 wrapped Promise
 
 -----
-## delay(msec,cb_done,cb_abort=null):func
+## Delay {#Timing_Delay}
 
 call cb_done after about msec.  
+
+### Spec
+
+Delay(msec,cb_done,cb_abort=null):func
 
 ### Args
 
@@ -95,9 +114,13 @@ call cb_done after about msec.
 aborting function
 
 -----
-## poll(msec,cb_poll,cb_abort=null):func
+## Poll {#Timing_Poll}
 
 call cb_poll repeatedly every about msec.  
+
+### Spec
+
+Poll(msec,cb_poll,cb_abort=null):func
 
 ### Args
 
@@ -112,9 +135,13 @@ call cb_poll repeatedly every about msec.
 aborting function
 
 -----
-## sync(msec,cb_chk,cb_done=null,cb_abort=null):func
+## Sync {#Timing_Sync}
 
 wait for cb_chk returns true.  
+
+### Spec
+
+Sync(msec,cb_chk,cb_done=null,cb_abort=null):func
 
 ### Args
 
@@ -130,9 +157,13 @@ wait for cb_chk returns true.
 aborting function
 
 -----
-## delayKit(msec,cb_done=null,cb_abort=null):AsyncControl
+## DelayKit {#Timing_DelayKit}
 
 call cb_done after about msec.  
+
+### Spec
+
+DelayKit(msec,cb_done=null,cb_abort=null):AsyncControl
 
 ### Args
 
@@ -147,9 +178,13 @@ call cb_done after about msec.
 control kit instance
 
 -----
-## syncKit(msec,cb_chk,cb_done,cb_abort):AsyncControl
+## SyncKit {#Timing_SyncKit}
 
 wait for cb_chk returns true.  
+
+### Spec
+
+SyncKit(msec,cb_chk,cb_done,cb_abort):AsyncControl
 
 ### Args
 

@@ -30,7 +30,7 @@ and can use YgEs.Timing too.
 ## Delay
 
 ```
-Timing.delay(500,()=>{
+Timing.Delay(500,()=>{
 	// run after about 500ms 
 });
 ```
@@ -38,10 +38,10 @@ Timing.delay(500,()=>{
 and can cancel easily.  
 
 ```
-var cancel=Timing.delay(10000,()=>{
+var cancel=Timing.Delay(10000,()=>{
 	// not run by cancel 
 });
-Timing.delay(800,()=>{
+Timing.Delay(800,()=>{
 	cancel();
 });
 ```
@@ -50,7 +50,7 @@ Timing.delay(800,()=>{
 ## Polling
 
 ```
-var cancel=Timing.poll(100,()=>{
+var cancel=Timing.Poll(100,()=>{
 	// run repeatedly every about 100ms 
 });
 
@@ -64,7 +64,7 @@ cancel();
 ## Synchronization
 
 ```
-var cancel=Timing.sync(50,()=>{
+var cancel=Timing.Sync(50,()=>{
 	// run repeatedly every about 50ms until is_done is true 
 	return is_done;
 },()=>{

@@ -58,7 +58,7 @@ var scenaria=[
 	// more ...
 ]
 
-Test.run(scenaria);
+Test.Run(scenaria);
 
 ```
 

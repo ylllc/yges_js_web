@@ -14,10 +14,24 @@
 | YgEs.Util | utilities |
 
 -----
+# Properties
+
+-----
+| Name | Type | Means |
+|------|------|-------|
+| User | dict<string,any> | user definitions |
+
+-----
 # Callbacks
 
 -----
-## CBStepIter {#CBStepIter}
+## CB_StepIter {#Util_CB_StepIter}
+
+### Spec
+
+CB_StepIter(cnt):bool?
+
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -30,8 +44,18 @@
 | false | break iter |
 | other | continue |
 
+### Implements
+
+loop procedure from @ref Util_SafeStepIter  
+
 -----
-## CBArrayIter {#CBArrayIter}
+## CB_ArrayIter {#Util_CB_ArrayIter}
+
+### Spec
+
+CB_ArrayIter(val):bool?
+
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -44,8 +68,18 @@
 | false | break iter |
 | other | continue |
 
+### Implements
+
+loop procedure from @ref Util_SafeArrayIter  
+
 -----
-## CBDictIter {#CBDictIter}
+## CB_DictIter {#Util_CB_DictIter}
+
+### Spec
+
+CB_DictIter(val):bool?
+
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -59,25 +93,59 @@
 | false | break iter |
 | other | continue |
 
+### Implements
+
+loop procedure from @ref Util_SafeDictIter  
+
 -----
 # Methods
 
 -----
-## isJustNaN(val):bool
+## IsJustNaN {#Util_IsJustNaN}
+
+### Spec
+
+IsJustNaN(val):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | any | check source |
 
 ### Returns
 
 just NaN.  
 
 -----
-## isJustInfinity(val):bool
+## IsJustInfinity {#Util_IsJustInfinity}
+
+### Spec
+
+IsJustInfinity(val):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | any | check source |
 
 ### Returns
 
 just Infinity or -Infinity.  
 
 -----
-## isEmpty(val):bool
+## IsEmpty {#Util_IsEmpty}
+
+### Spec
+
+IsEmpty(val):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | any | check source |
 
 ### Returns
 
@@ -85,7 +153,17 @@ null, undefined, empty string returns true.
 otherwise false.  
 
 -----
-## isValid(val):bool
+## IsValid {#Util_IsValid}
+
+### Spec
+
+IsValid(val):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | any | check source |
 
 ### Returns
 
@@ -93,7 +171,11 @@ null, undefined, NaN returns false.
 otherwise true.  
 
 -----
-## booleanize(val,stringable=false):bool
+## Booleanize {#Util_Booleanize}
+
+### Spec
+
+Booleanize(val,stringable=false):bool
 
 ### Args
 
@@ -116,7 +198,11 @@ other string means not empty.
 empty array and object bcome true.  
 
 -----
-## trinarize(val,stringable=false):bool?
+## Trinarize {#Util_Trinarize}
+
+### Spec
+
+Trinarize(val,stringable=false):bool?
 
 ### Args
 
@@ -129,10 +215,14 @@ empty array and object bcome true.
 
 fix to bool or null.  
 null and undefined become null, stringified too.  
-otherwize sami to booleanize()
+otherwize sami to Booleanize()
 
 -----
-## zerofill(val,col,sgn=false):string
+## FillZero {#Util_FillZero}
+
+### Spec
+
+FillZero(val,col,sgn=false):string
 
 ### Args
 
@@ -148,10 +238,14 @@ zero filled string.
 can uses for negative numbers.  
 
 -----
-## safeStepIter(bgn,end,step,cbiter):number
+## SafeStepIter {#Util_SafeStepIter}
 
 async-safe step loop,  
 instead of for(var cnt=bgn;(step<0)?(cnt>end):(cnt<end);cnt+=step)  
+
+### Spec
+
+SafeStepIter(bgn,end,step,cb_iter):number
 
 ### Args
 
@@ -160,34 +254,42 @@ instead of for(var cnt=bgn;(step<0)?(cnt>end):(cnt<end);cnt+=step)
 | bgn | number | start value |
 | end | number | end value |
 | step | number | step delta |
-| cbiter | @ref CBStepIter | loop procedure |
+| cb_iter | @ref Util_CB_StepIter | loop procedure |
 
 ### Returns
 
 next counter (same to for() counter)
 
 -----
-## safearrayiter(src,cbiter)
+## SafeArrayIter {#Util_SafeArrayIter}
 
 async-safe array iterator,  
 instead of for(var val of array)  
+
+### Spec
+
+SafeArrayIter(src,cb_iter):void
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | src | any[] | source array |
-| cbiter | @ref CBArrayIter | loop procedure |
+| cb_iter | @ref Util_CB_ArrayIter | loop procedure |
 
 -----
-## safedictiter(src,cbiter)
+## SafeDictIter {#Util_SafeDictIter}
 
 async-safe object iterator,  
 instead of for(var key in object)  
+
+### Spec
+
+SafeDictIter(src,cb_iter):void
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | src | object | source object |
-| cbiter | @ref CBDictIter | loop procedure |
+| cb_iter | @ref Util_CB_DictIter | loop procedure |

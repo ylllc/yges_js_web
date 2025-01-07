@@ -2,44 +2,85 @@
 
 # What's It?
 
-@sa @ref pg_feat_quickqueue @n
+created by @ref pg_class_quickqueue_container
+
+-----
+# Properties
+
+-----
+| Name | Type | Means |
+|------|------|-------|
+| User | dict<string,any> | user definitions |
 
 -----
 # Methods
 
 -----
-## isEnd():bool
+## IsEnd {#QuickQueue_IsEnd}
+
+### Spec
+
+IsEnd():bool
 
 ### Returns
 
 this queue reaches to end.  
 
 -----
-## count():int
+## Count {#QuickQueue_Count}
+
+### Spec
+
+Count():int
 
 ### Returns
 
 count target queue entries.  
 
 -----
-## pos():int
+## Pos {#QuickQueue_Pos}
+
+### Spec
+
+Pos():int
 
 ### Returns
 
 queue position of target.  
 
 -----
-## reset()
+## Reset {#QuickQueue_Reset}
 
 this queue position is moved at start.  
 
+### Spec
+
+Reset():void
+
 -----
-## peek():any
+## Peek {#QuickQueue_Peek}
 
 read from target queue position.  
 
+### Spec
+
+Peek():any
+
+### Returns
+
+read value.  
+
 -----
-## next():any
+## Next {#QuickQueue_Next}
 
 read from target queue position.  
 and queue position is moved to next.  
+
+### Spec
+
+Next():any
+
+### Returns
+
+read value.  
+

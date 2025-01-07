@@ -103,10 +103,10 @@ and can use YgEs.HappeningManager too.
 
 ```
 // can override common happening management procedure 
-HappeningManager.Happened=(h)=>{
+HappeningManager.CB_Happened=(h)=>{
 	//		: 
 	// instant recovery when possible
-	// and call h.resolve()
+	// and call h.Resolve()
 	//		: 
 }
 ```
@@ -115,18 +115,18 @@ HappeningManager.Happened=(h)=>{
 ## Feature side happening and suggestion
 
 ```
-var h=HappeningManager.happenProp({type:'Test',msg:'Happened'},{
+var h=HappeningManager.HappenProp({type:'Test',msg:'Happened'},{
 	// user resolving protocol 
 	User:{
 		retry:()=>{
 			// retry procedure 
 			//		:
-			h.resolve();
+			h.Resolve();
 		},
 		ignore:()=>{
 			// ignore procedure 
 			//		:
-			h.abandon();
+			h.Abandon();
 		},
 	},
 	Resolved:()=>{
@@ -142,7 +142,7 @@ var h=HappeningManager.happenProp({type:'Test',msg:'Happened'},{
 ## Polling unresolved
 
 ```
-HappeningManager.poll((h)=>{
+HappeningManager.Poll((h)=>{
 	//		: 
 	// user procedure by decision
 	//		: 
@@ -155,14 +155,14 @@ HappeningManager.poll((h)=>{
 can create local instance and categorize in your wish.
 
 ```
-var lhap=HappeningManager.createLocal();
+var lhap=HappeningManager.CreateLocal();
 ```
 
 -----
 ## Cleaning up
 
 Resolved instance still kept in HappeningManager and makes it dirty.  
-HappeningManager.cleanup() removes resolved and abandoned instances
+HappeningManager.CleanUp() removes resolved and abandoned instances
 and makes it clean.  
 
 

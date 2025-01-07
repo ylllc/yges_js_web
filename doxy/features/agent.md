@@ -159,7 +159,7 @@ and can use YgEs.AgentManager too.
 ## Imprements
 
 ```
-var agent=AgentManager.standby({
+var agent=AgentManager.StandBy({
 	name:'MyAgent',
 	HappenTo:YourHappeningManager,
 	User:{YourStructure},
@@ -181,18 +181,18 @@ var agent=AgentManager.standby({
 
 ```
 // fetch&open 
-var h1=agent.fetch();
-h1.open();
+var h1=agent.Fetch();
+h1.Open();
 
 // auto open 
-var h2=agent.open();
+var h2=agent.Open();
 
 	:
 
 // close 
-h1.close();
+h1.Close();
 // still work by h2 
-h2.close();
+h2.Close();
 // truly closed 
 
 ```
@@ -206,24 +206,24 @@ and closed on the Agent closing.
 to the Agent is ready, dependencies are required in ready.  
 
 ```
-var agent1=AgentManager.standby({
+var agent1=AgentManager.StandBy({
 
 	:
 
 });
 
-var agent2=AgentManager.standby({
-	dependencies:{w1:agent1.fetch()},
+var agent2=AgentManager.StandBy({
+	dependencies:{w1:agent1.Fetch()},
 
 	:
 
 });
 
 // open agent2. and its dependencies open too. 
-var h2=agent2.open();
+var h2=agent2.Open();
 
 // close h2. and its dependencies close too.  
-h2.close();
+h2.Close();
 
 ```
 
@@ -233,17 +233,17 @@ h2.close();
 to open a agent, requires all Happenings are resolved.  
 
 ```
-var agent=AgentManager.standby({
+var agent=AgentManager.StandBy({
 
 	cb_repair:(agent)=>{
 
 		// instant resolving as possible 
-		for(var hap of agent.getHappeningManager()){
+		for(var hap of agent.GetHappeningManager()){
 			:
 		}
 
 		// need time to resolve, add conditions. 
-		agent.waitFor(()=>{/* return true after resolved */});
+		agent.WaitFor(()=>{/* return true after resolved */});
 	},
 
 });
@@ -257,12 +257,12 @@ happens in working, polling switched to poll_trouble.
 resolve them to recover it.  
 
 ```
-var agent=AgentManager.standby({
+var agent=AgentManager.StandBy({
 
 	poll_trouble:(agent)=>{
 
 		// as possible, resolve them 
-		for(var hap of agent.getHappeningManager()){
+		for(var hap of agent.GetHappeningManager()){
 			:
 		}
 	},
@@ -276,7 +276,7 @@ happens in poll_trouble(), its Agent is halt and stop polling.
 to recover it, need resolving from other procedure.  
 
 ```
-var agent1=AgentManager.standby({
+var agent1=AgentManager.StandBy({
 
 		:
 	// in HALT
@@ -284,12 +284,12 @@ var agent1=AgentManager.standby({
 
 });
 
-var agent2=AgentManager.standby({
+var agent2=AgentManager.StandBy({
 
 	cb_poll_healthy:(agent)=>{
 
 		// rescue Agent1 
-		for(var hap of agent1.getHappeningManager()){
+		for(var hap of agent1.GetHappeningManager()){
 			:
 		}
 	},

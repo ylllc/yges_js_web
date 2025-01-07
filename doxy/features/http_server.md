@@ -60,8 +60,8 @@ var route2=HTTPServer.serve(PUBLIC_ROOT,{
 
 ```
 // can listen parallel ports 
-var srv1=HTTPServer.setup(8080,route1).fetch();
-var srv2=HTTPServer.setup(8888,route2).fetch();
+var srv1=HTTPServer.setup(8080,route1).Fetch();
+var srv2=HTTPServer.setup(8888,route2).Fetch();
 ```
 
 -----
@@ -69,14 +69,14 @@ var srv2=HTTPServer.setup(8888,route2).fetch();
 
 ```
 // start listening 
-srv1.open();
-srv2.open();
+srv1.Open();
+srv2.Open();
 
 	:
 
 // stop listening 
-srv1.close();
-srv2.close();
+srv1.Close();
+srv2.Close();
 
 ```
 

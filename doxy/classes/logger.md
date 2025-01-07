@@ -20,11 +20,12 @@
 
 | Name | Type | Means |
 |------|------|-------|
-| date | string | date by ISO8601 |
-| capt | string | caption |
-| lev | int | log level |
-| msg | union<@ref Log_LogSource> | message |
-| prop | dict<string,any>? | properties |
+| Date | string | date by ISO8601 |
+| Capt | string | caption |
+| Lev | int | log level |
+| Msg | @ref Log_LogSource | message |
+| Prop | dict<string,any>? | properties |
+| Text | string? | formatted value |
 
 -----
 # Unions
@@ -54,18 +55,60 @@
 | Name | Type | Means |
 |------|------|-------|
 | Showable | int? | minimum showable log level |
-| Caption | string | a caption |
-| Format | func<@ref Log_LogEntry> | formatter |
-| Way | func<@ref Log_LogEntry> | output way |
-| User | object | user definitions |
+| Caption | string | caption |
+| Format | @ref Log_CB_LogFormat | formatter |
+| Way | @ref Log_CB_LogWay | output way |
+| User | dict<string,any> | user definitions |
+
+-----
+# Callbacks
+
+-----
+## CB_LogFormat {#Log_CB_LogFormat}
+
+### Spec
+
+CB_LogFormat(src):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| src | @ref LogEntry | target log entry |
+
+### Implements
+
+format from src and put to src.Text  
+
+-----
+## CB_LogWay {#Log_CB_LogWay}
+
+### Spec
+
+CB_LogWay(src):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| src | @ref LogEntry | target log entry |
+
+### Implements
+
+output from src  
+usually, put src.Text  
 
 -----
 # Methods
 
 -----
-## createLocal(capt=null,showable=null):@ref pg_class_logger {#Log_createLocal}
+## CreateLocal {#Log_CreateLocal}
 
-create new local log instance
+create a new local log instance  
+
+### Spec
+
+CreateLocal(capt=null,showable=null):@ref pg_class_logger
 
 ### Args
 
@@ -76,50 +119,53 @@ create new local log instance
 
 ### Returns
 
-local logger instance
+local logger instance.  
+its settings inherited from this.  
 
 -----
-## getCaption():string {#Log_getCaption}
+## GetParent {#Log_GetParent}
+
+### Spec
+
+GetParent():@ref pg_class_logger?
 
 ### Returns
 
-caption for this instance
+parent instance or null.  
 
 -----
-## getShowable():int {#Log_getShowable}
+## GetCaption {#Log_GetCaption}
+
+### Spec
+
+GetCaption():string
 
 ### Returns
 
-showable log level for this instance
+caption for this instance.  
+it's this Caption when already set or parent setting.   
 
 -----
-## format(src) {#Log_format}
+## GetShowable {#Log_GetShowable}
 
-format a log element  
-usually, src.Msg is replaced by this function  
+### Spec
 
-### Args
+GetShowable():int
 
-| Name | Type | Means |
-|------|------|-------|
-| src | @ref Log_LogEntry | source log entry |
+### Returns
 
------
-## write(src) {#Log_write}
-
-write a formatted log value  
-
-### Args
-
-| Name | Type | Means |
-|------|------|-------|
-| src | @ref Log_LogEntry | source log entry |
+showable log level for this instance.  
+it's this Showable when already set or parent setting.   
 
 -----
-## put(lev,msg,prop=null) {#Log_put}
+## Put {#Log_Put}
 
 log width variable level.  
 suppressed when lower than showable.  
+
+### Spec
+
+Put(lev,msg,prop=null):void
 
 ### Args
 
@@ -130,10 +176,14 @@ suppressed when lower than showable.
 | prop | dict<string,any>? | properties |
 
 -----
-## tick(msg) {#Log_tick}
+## Tick {#Log_Tick}
 
 put TICK log
 
+### Spec
+
+Tick(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -142,10 +192,14 @@ put TICK log
 | prop | dict<string,any>? | properties |
 
 -----
-## trace(msg) {#Log_trace}
+## Trace {#Log_Trace}
 
 put TRACE log
 
+### Spec
+
+Trace(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -154,10 +208,14 @@ put TRACE log
 | prop | dict<string,any>? | properties |
 
 -----
-## debug(msg) {#Log_debug}
+## Debug {#Log_Debug}
 
 put DEBUG log
 
+### Spec
+
+Debug(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -166,10 +224,14 @@ put DEBUG log
 | prop | dict<string,any>? | properties |
 
 -----
-## info(msg) {#Log_info}
+## Info {#Log_Info}
 
 put INFO log
 
+### Spec
+
+Info(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -178,10 +240,14 @@ put INFO log
 | prop | dict<string,any>? | properties |
 
 -----
-## notice(msg) {#Log_notice}
+## Notice {#Log_Notice}
 
 put NOTICE log
 
+### Spec
+
+Notice(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -190,10 +256,14 @@ put NOTICE log
 | prop | dict<string,any>? | properties |
 
 -----
-## warn(msg) {#Log_warn}
+## Warn {#Log_Warn}
 
 put WARN log
 
+### Spec
+
+Warn(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -202,10 +272,14 @@ put WARN log
 | prop | dict<string,any>? | properties |
 
 -----
-## fatal(msg) {#Log_fatal}
+## Fatal {#Log_Fatal}
 
 put FATAL log
 
+### Spec
+
+Fatal(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -214,10 +288,14 @@ put FATAL log
 | prop | dict<string,any>? | properties |
 
 -----
-## crit(msg) {#Log_crit}
+## Crit {#Log_Crit}
 
 put CRIT log
 
+### Spec
+
+Crit(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -226,10 +304,14 @@ put CRIT log
 | prop | dict<string,any>? | properties |
 
 -----
-## alert(msg) {#Log_alert}
+## Alert {#Log_Alert}
 
 put ALERT log
 
+### Spec
+
+Alert(msg,prop=null):void
+
 ### Args
 
 | Name | Type | Means |
@@ -238,9 +320,13 @@ put ALERT log
 | prop | dict<string,any>? | properties |
 
 -----
-## emerg(msg) {#Log_emerg}
+## Emerg {#Log_Emerg}
 
 put EMERG log
+
+### Spec
+
+Emerg(msg,prop=null):void
 
 ### Args
 

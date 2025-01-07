@@ -13,15 +13,15 @@
 | YgEs.Agent | agent manager |
 
 -----
-# Types
+# Structures
 
 -----
-## UserShared {#UserShared}
+## UserShared {#Agent_UserShared}
 
 user defined object kept in an agent
 
 -----
-## AgentParam {#AgentParam}
+## AgentParam {#Agent_AgentParam}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -34,7 +34,11 @@ user defined object kept in an agent
 # Methods
 
 -----
-## standby(prm):Agent
+## Standby {#Agent_Standby}
+
+### Spec
+
+Standby(prm):@ref pg_class_agent
 
 create a new Agent.  
 
@@ -49,9 +53,13 @@ create a new Agent.
 a new @ref pg_class_agent
 
 -----
-## launch(prm):AgentHandle
+## Launch {#Agent_Launch}
 
-create a new @ref pg_class_agent_handle driven by a new @ref pg_class_agent. 
+### Spec
+
+Launch(prm):@ref pg_class_agent_handle
+
+create a new handle driven by a new @ref pg_class_agent. 
 
 ### Args
 
@@ -64,10 +72,14 @@ create a new @ref pg_class_agent_handle driven by a new @ref pg_class_agent.
 a new @ref pg_class_agent_handle
 
 -----
-## run(prm):AgentHandle
+## Run {#Agent_Run}
 
-create a new @ref pg_class_agent_handle driven by a new @ref pg_class_agent.  
-this @ref pg_class_agent_handle openes now.  
+### Spec
+
+Run(prm):@ref pg_class_agent_handle
+
+create a new handle driven by a new @ref pg_class_agent.  
+this handle openes now.  
 
 ### Args
 

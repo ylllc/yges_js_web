@@ -157,7 +157,7 @@ check ABS(v1-v2) <= range
 | msg | string | message for AssertionError |
 
 -----
-## run(scn)
+## Run(scn)
 
 (for Node,Deno)  
 run test scenaria.  
