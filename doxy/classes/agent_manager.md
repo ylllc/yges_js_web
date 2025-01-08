@@ -25,10 +25,18 @@ user defined object kept in an agent
 
 | Name | Type | Means |
 |------|------|-------|
-| name | string? | user class name |
-| happen | @ref pg_class_happening_manager? | happenings reported in it |
-| launcher | @ref pg_class_launcher? | procedures running on it |
-| user | @ref UserShared? | share on Agent.User |
+| Name | string? | user class name |
+| HappenTo | @ref pg_class_happening_manager? | happenings reported in it |
+| Launcher | @ref pg_class_launcher? | procedures running on it |
+| Dependencies | @ref pg_class_agent_handle[] | relaying open and close |
+| OnRepair | func<@ref pg_class_agent> | on open when broken, try cleaning up |
+| OnOpen | func<@ref pg_class_agent> | on open from cleaned up |
+| OnReady | func<@ref pg_class_agent> | on opening completed |
+| OnPollInHealthy | func<@ref pg_class_agent> | in polling after ready in cleaned up |
+| OnPollInTrouble | func<@ref pg_class_agent> | in polling after ready during happening |
+| OnClose | func<@ref pg_class_agent> | on close from ready |
+| OnBack | func<@ref pg_class_agent> | on close from opening unsatisfactory |
+| User | @ref Agent_UserShared? | share on created @ref pg_class_agent |
 
 -----
 # Methods
@@ -46,7 +54,7 @@ create a new Agent.
 
 | Name | Type | Means |
 |------|------|-------|
-| prm | @ref AgentParam | initializing parameter. |
+| prm | @ref Agent_AgentParam | initializing parameter. |
 
 ### Returns
 
@@ -65,7 +73,7 @@ create a new handle driven by a new @ref pg_class_agent.
 
 | Name | Type | Means |
 |------|------|-------|
-| prm | @ref AgentParam | initializing parameter. |
+| prm | @ref Agent_AgentParam | initializing parameter. |
 
 ### Returns
 
@@ -85,7 +93,7 @@ this handle openes now.
 
 | Name | Type | Means |
 |------|------|-------|
-| prm | @ref AgentParam | initializing parameter. |
+| prm | @ref Agent_AgentParam | initializing parameter. |
 
 ### Returns
 

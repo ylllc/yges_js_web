@@ -28,7 +28,13 @@
 
 ### Spec
 
-Create(val):@ref pg_class_quickqueue
+Create(init):@ref pg_class_quickqueue
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| init | any[] | initial values, can use arguments of a function |
 
 ### Returns
 

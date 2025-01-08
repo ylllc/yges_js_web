@@ -10,31 +10,31 @@ created by @ref pg_class_engine
 -----
 ## UserShared {#Launcher_UserShared}
 
-user definied object kept on a @ref pg_class_procedure instance  
+user definied object kept in a @ref pg_class_procedure instance  
 
 -----
 ## LauncherPrm {#Launcher_LauncherPrm}
 
 | Name | Type | Means |
 |------|------|-------|
-| name | string? | user class name |
-| happen | HappeningManager? | user happening handler |
-| limit | int | parallel running capacity |
-| cycle | int | polling cycle msec |
-| user | UserShared | user definitions |
+| Name | string? | user class name |
+| HappenTo | HappeningManager? | user happening handler |
+| Limit | int | parallel running capacity |
+| Cycle | int | polling cycle msec |
+| User | @ref Launcher_UserShared | user definitions |
 
 -----
 ## ProcedurePrm {#Launcher_ProcedurePrm}
 
 | Name | Type | Means |
 |------|------|-------|
-| name | string? | class name |
-| happen | HappeningManager? | user happening handler |
-| user | UserShared | user definitions |
-| cb_start | func<UserShared> | called on beginning of the procedure |
-| cb_poll | func<UserShared> | called repetition until end of the procedure |
-| cb_done | func<UserShared> | called on finished of the procedure |
-| cb_abort | func<UserShared> | called on aborted of the procedure |
+| Name | string? | class name |
+| HappenTo | HappeningManager? | user happening handler |
+| OnStart | func<@ref Launcher_UserShared> | called on beginning of the procedure |
+| OnPoll | func<@ref Launcher_UserShared> | called repetition until end of the procedure |
+| OnDone | func<@ref Launcher_UserShared> | called on finished of the procedure |
+| OnAbort | func<@ref Launcher_UserShared> | called on aborted of the procedure |
+| User | @ref Launcher_UserShared | user definitions |
 
 -----
 # Properties
@@ -99,7 +99,7 @@ unstarted procedures in this launcher.
 
 ### Spec
 
-Abandon()
+Abandon():void
 
 this launcher is no longer launch procedures.
 
@@ -108,13 +108,13 @@ this launcher is no longer launch procedures.
 
 ### Spec
 
-CreateLauncher(prm={}):Launcher
+CreateLauncher(prm={}):@ref pg_class_procedure
 
 ### Args
 
 Name | Type | Means
 -----|------|------
-prm | LauncherPrm | settings
+prm | @ref Launcher_LauncherPrm | settings
 
 ### Returns
 
@@ -125,13 +125,13 @@ sub-launcher
 
 ### Spec
 
-Launch(prm={}):Procedure
+Launch(prm={}):@ref pg_class_procedure
 
 ### Args
 
 Name | Type | Means
 -----|------|------
-prm | ProcedurePrm | settings
+prm | @ref Launcher_ProcedurePrm | settings
 
 ### Returns
 
@@ -170,7 +170,7 @@ wait for end of all procedures in this launcher and call cb_sync
 
 | Name | Type | Means |
 |------|------|-------|
-| cb_sync | func<UserShared> | called on end of sync |
+| cb_sync | func<@ref Launcher_UserShared> | called on end of sync |
 | interval | int? | poll interval msec (null=DEFAULT_SYNC_CYCLE) |
 
 -----
@@ -201,5 +201,5 @@ Delay(time,cb_done,cb_abort=null)
 | Name | Type | Means |
 |------|------|-------|
 | time | int | wait msec |
-| cb_done | func<UserShared> | called on finished from delaying |
-| cb_abort | func<UserShared> | called on aborted from delaying (null=same to cb_done) |
+| cb_done | func<@ref Launcher_UserShared> | called on finished from delaying |
+| cb_abort | func<@ref Launcher_UserShared> | called on aborted from delaying (null=same to cb_done) |

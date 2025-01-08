@@ -16,17 +16,17 @@
 # Types
 
 -----
-## TestScenario {#TestScenario}
+## TestScenario {#Test_TestScenario}
 
 | Name | Type | Means |
 |------|------|-------|
-| title | string | test title |
-| proc | func<@ref TestTools> | test procedure |
-| pickup | bool? | in puckup mode, true to run |
-| filter | bool? | when defined, true to run |
+| Title | string | test title |
+| Proc | func<@ref TestTools> | test procedure |
+| PickUp | bool? | in puckup mode, true to run |
+| Filter | bool? | when defined, true to run |
 
 -----
-## TestTools {#TestTools}
+## TestTools {#Test_TestTools}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -44,7 +44,11 @@
 # Methods
 
 -----
-## never(msg=null)
+## Never {#Test_Never}
+
+### Spec
+
+Never(msg=null)
 
 mark always failed
 
@@ -55,7 +59,11 @@ mark always failed
 | msg | string | message for AssertionError |
 
 -----
-## chk(cond,msg=null)
+## Chk {#Test_Chk}
+
+### Spec
+
+Chk(cond,msg=null)
 
 ### Args
 
@@ -65,10 +73,14 @@ mark always failed
 | msg | string | message for AssertionError |
 
 -----
-## chk_loose(v1,v2,msg=null)
+## ChkLoose {#Test_ChkLoose}
 
 check v1 == v2
 
+### Spec
+
+ChkLoose(v1,v2,msg=null)
+
 ### Args
 
 | Name | Type | Means |
@@ -78,10 +90,14 @@ check v1 == v2
 | msg | string | message for AssertionError |
 
 -----
-## chk_strict(v1,v2,msg=null)
+## ChkStrict {#Test_ChkStrict}
 
 check v1 === v2
 
+### Spec
+
+ChkStrict(v1,v2,msg=null)
+
 ### Args
 
 | Name | Type | Means |
@@ -91,12 +107,16 @@ check v1 === v2
 | msg | string | message for AssertionError |
 
 -----
-## chk_less(v1,v2,msg,msg=null)
-
-### Args
+## ChkLess {#Test_ChkLess}
 
 check v1 < v2
 
+### Spec
+
+ChkLess(v1,v2,msg,msg=null)
+
+### Args
+
 | Name | Type | Means |
 |------|------|-------|
 | v1 | any | 1st value |
@@ -104,12 +124,16 @@ check v1 < v2
 | msg | string | message for AssertionError |
 
 -----
-## chk_less_eq(v1,v2,msg=null)
-
-### Args
+## ChkLessEq {#Test_ChkLessEq}
 
 check v1 <= v2
 
+### Spec
+
+ChkLessEq(v1,v2,msg=null)
+
+### Args
+
 | Name | Type | Means |
 |------|------|-------|
 | v1 | any | 1st value |
@@ -117,12 +141,16 @@ check v1 <= v2
 | msg | string | message for AssertionError |
 
 -----
-## chk_great(v1,v2,msg=null)
-
-### Args
+## ChkGreat {#Test_ChkGreat}
 
 check v1 > v2
 
+### Spec
+
+ChkGreat(v1,v2,msg=null)
+
+### Args
+
 | Name | Type | Means |
 |------|------|-------|
 | v1 | any | 1st value |
@@ -130,12 +158,16 @@ check v1 > v2
 | msg | string | message for AssertionError |
 
 -----
-## chk_great_eq(v1,v2,msg=null)
-
-### Args
+## ChkGreatEq {#Test_ChkGreatEq}
 
 check v1 >= v2
 
+### Spec
+
+ChkGreatEq(v1,v2,msg=null)
+
+### Args
+
 | Name | Type | Means |
 |------|------|-------|
 | v1 | any | 1st value |
@@ -143,11 +175,15 @@ check v1 >= v2
 | msg | string | message for AssertionError |
 
 -----
-## chk_great_eq(v1,v2,range,msg=null)
+## ChkApprox {#Test_ChkApprox}
+
+check |v1-v2| <= range
+
+### Spec
+
+ChkApprox(v1,v2,range,msg=null)
 
 ### Args
-
-check ABS(v1-v2) <= range
 
 | Name | Type | Means |
 |------|------|-------|
@@ -170,16 +206,3 @@ it's dummy.
 | Name | Type | Means |
 |------|------|-------|
 | scn | @ref TestScenario[] | test scenaria |
-
------
-## setupGUI(launcher,target,baseurl,dirent)
-
-(for web only)  
-build Test Runner view and run tests.  
-
-| Name | Type | Means |
-|------|------|-------|
-| launcher | @ref pg_class_launcher | test scenaria run on it |
-| target | QHT | build view in it |
-| baseurl | string | test scripts are downloaded from it |
-| dirent | DirEnt | file entries on a test directory |

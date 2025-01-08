@@ -3,7 +3,7 @@
 # What's It?
 
 means a directory  
-created by [DirControl.target()](pg_class_dir_control.html#target)  
+created by @ref pg_class_dir_control  
 it inherited from @ref pg_class_agent  
 
 -----
@@ -53,18 +53,17 @@ combined path
 
 ### Spec
 
-SubDir(path,prepare):DirTarget
+SubDir(path):@ref pg_class_dir_target
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | path | string | relative path from target directory |
-| prepare | bool | auto creation when not exists in opening this |
 
 ### Returns
 
-new @ref pg_class_dir_target instance of a subdirectory  
+new instance of a subdirectory  
 
 -----
 ## Glob {#DirTarget_Glob}

@@ -16,7 +16,11 @@
 # Callbacks
 
 -----
-## CBFilterFile(dir,name,stat):bool {#CBFilterFile}
+## CB_FilterFile {#HTTPServer_CB_FilterFile}
+
+### Spec
+
+CB_FilterFile(dir,name,stat):bool
 
 ### Args
 
@@ -32,7 +36,11 @@
 enable include the file  
 
 -----
-## CBPresent(walker)
+## CB_Present {#HTTPServer_CB_Present}
+
+### Spec
+
+CB_Present(walker):void
 
 HTTP presentation function.  
 build a response from a HTTP request.  
@@ -43,50 +51,54 @@ build a response from a HTTP request.
 |------|------|-------|
 | walker | @ref pg_class_http_walker | HTTP route walker |
 
+### Implements
+
+make HTTP response to walker.Response
+
 -----
 # Structures
 
 -----
-## PresentOption {#PresentOption}
+## PresentOption {#HTTPServer_PresentOption}
 
 | Name | Type | Means |
 |------|------|-------|
-| user | @ref UserShared? | user definition |
+| User | @ref HTTPServer_UserShared? | user definition |
 
 -----
-## RouteOption {#RouteOption}
+## RouteOption {#HTTPServer_RouteOption}
 
 | Name | Type | Means |
 |------|------|-------|
-| user | @ref UserShared? | user definition |
+| User | @ref HTTPServer_UserShared? | user definition |
 
 -----
-## ServeOption {#ServeOption}
+## ServeOption {#HTTPServer_ServeOption}
 
 | Name | Type | Means |
 |------|------|-------|
-| route | dict<string,@ref pg_class_http_route>? | overlay routing |
-| dirent | bool? | allow enumerate files in a directory |
-| deepent | int? | include subdirectory layer level (0=none, -1=all level) |
-| filter | CBFilterFile? | file entry filter |
-| mtime | bool? | include modufy time |
-| ctime | bool? | include change time |
-| atime | bool? | include access time |
-| btime | bool? | include birth time |
-| user | @ref UserShared? | user definition |
+| Route | dict<string,@ref pg_class_http_route>? | overlay routing |
+| DirEnt | bool? | allow enumerate files in a directory |
+| DeepEnt | int? | include subdirectory layer level (0=none, -1=all level) |
+| Filter | CB_FilterFile? | file entry filter |
+| MTime | bool? | include modufy time |
+| CTime | bool? | include change time |
+| ATime | bool? | include access time |
+| BTime | bool? | include birth time |
+| User | @ref HTTPServer_UserShared? | user definition |
 
 -----
-## ServerOption {#ServerOption}
+## ServerOption {#HTTPServer_ServerOption}
 
 | Name | Type | Means |
 |------|------|-------|
-| logger | @ref pg_class_logger? | log to |
-| happen | @ref pg_class_happening_manager? | happeings reported to |
-| launcher | @ref pg_class_launcher? | procedures run on |
-| user | @ref UserShared? | user definition |
+| Log | @ref pg_class_logger? | log to |
+| HappenTo | @ref pg_class_happening_manager? | happeings reported to |
+| Launcher | @ref pg_class_launcher? | procedures run on |
+| User | @ref HTTPServer_UserShared? | user definition |
 
 -----
-## UserShared {#UserShared}
+## UserShared {#HTTPServer_UserShared}
 
 user definition kept on a @ref pg_class_http_listener instance  
 
@@ -97,14 +109,18 @@ user definition kept on a @ref pg_class_http_listener instance
 
 | Name | Type | Means |
 |------|------|-------|
-| User | object | user definitions |
 | DefaultCharset | string | default charset of HTML |
+| User | dict<string,any> | user definitions |
 
 -----
 # Methods
 
 -----
-## setup(port,route,opt={}):HTTPListener
+## SetUp {#HTTPServer_SetUp}
+
+### Spec
+
+SetUp(port,route,opt={}):HTTPListener
 
 ### Args
 
@@ -112,14 +128,18 @@ user definition kept on a @ref pg_class_http_listener instance
 |------|------|-------|
 | port | int | listening port |
 | route | dict<string,@ref pg_class_http_route> | route definition |
-| opt | @ref ServerOption | optional |
+| opt | @ref HTTPServer_ServerOption | optional |
 
 ### Returns
 
 @ref pg_class_http_listener instance  
 
 -----
-## serve(dir,opt={}):HTTPRoute
+## Serve {#HTTPServer_Serve}
+
+### Spec
+
+Serve(dir,opt={}):HTTPRoute
 
 routing target makes relative file path from base directory.  
 this response of the HTTP request means transfering target file.  
@@ -127,21 +147,29 @@ this response of the HTTP request means transfering target file.
 | Name | Type | Means |
 |------|------|-------|
 | dir | string | base directory |
-| opt | @ref ServeOption | optional |
+| opt | @ref HTTPServer_ServeOption | optional |
 
 -----
-## present(meth,opt={}):HTTPRoute
+## Present {#HTTPServer_Serve}
+
+### Spec
+
+Present(meth,opt={}):HTTPRoute
 
 routing terminal of this HTTP request.  
 calling meth[HTTP method] to makes a response by method.  
 
 | Name | Type | Means |
 |------|------|-------|
-| meth | dict<string,@ref CBPresent> | presentation by method |
-| opt | @ref PresentOption | optional |
+| meth | dict<string,@ref CB_Present> | presentation by method |
+| opt | @ref HTTPServer_UserShared | optional |
 
 -----
-## route(map,opt={}):HTTPRoute
+## Route {#HTTPServer_Route}
+
+### Spec
+
+Route(map,opt={}):HTTPRoute
 
 stepping route of this HTTP request.  
 branching by HTTP path layer.  
@@ -149,4 +177,4 @@ branching by HTTP path layer.
 | Name | Type | Means |
 |------|------|-------|
 | map | dict<string,@ref pg_class_http_route> | route branch |
-| opt | @ref RouteOption | optional |
+| opt | @ref HTTPServer_UserShared | optional |

@@ -16,37 +16,46 @@
 # Structures
 
 -----
+## HappeningManagerPrm {#HappeningManager_HappeningManagerPrm}
+
+| Name | Type | Means |
+|------|------|-------|
+| Name | string? | user class name |
+| OnHappen | func<@ref pg_class_happening> | call on happened |
+| User | dict<string,any> | user difinition |
+
+-----
 ## HappeningInfo {#HappeningManager_HappeningInfo}
 
 | Name | Type | Means |
 |------|------|-------|
-| name | string | user class name of HappeningManager |
-| issues | dict<string,any>[] | GetProp() of each unresolved happenings |
-| children | @ref HappeningManager_HappeningInfo[] | GetInfo() of each children |
+| Name | string | user class name of HappeningManager |
+| Issues | dict<string,any>[] | GetProp() of each unresolved happenings |
+| Children | @ref HappeningManager_HappeningInfo[] | GetInfo() of each children |
 
 -----
 ## HappeningOption {#HappeningManager_HappeningOption}
 
 | Name | Type | Means |
 |------|------|-------|
-| name | string? | instance name |
-| cb_resolved | func<@ref pg_class_happening>? | call on resolved |
-| cb_abandoned | func<@ref pg_class_happening>? | call on abandoned |
-| user | dict<string,any>? | other user definitions kept on created @ref pg_class_happening |
+| Name | string? | instance name |
+| OnResolved | func<@ref pg_class_happening>? | call on resolved |
+| OnAbandoned | func<@ref pg_class_happening>? | call on abandoned |
+| User | dict<string,any>? | other user definitions kept on created @ref pg_class_happening |
 
 -----
 # Properties
 
 | Name | Type | Means |
 |------|------|-------|
-| CB_Happened | func<@ref pg_class_happening> | call on happened |
+| OnHappen | func<@ref pg_class_happening> | call on happened |
 | User | dict<string,any> | user definitions |
 
 -----
 # Methods
 
 -----
-## CreateLocal(name='YgEs_HappeningManager'):@ref pg_class_happening_manager {#HappeningManager_CreateLocal}
+## CreateLocal(prm={}):@ref pg_class_happening_manager {#HappeningManager_CreateLocal}
 
 create a child HappeningManager  
 
@@ -54,7 +63,7 @@ create a child HappeningManager
 
 | Name | Type | Means |
 |------|------|-------|
-| name | string? | instance name |
+| prm | @ref HappeningManager_HappeningManagerPrm | settings |
 
 ### Returns
 

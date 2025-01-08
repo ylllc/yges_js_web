@@ -8,7 +8,7 @@ HTTP route walker by requests.
 # Structures
 
 -----
-## UserShared {#UserShared}
+## UserShared {#HTTPWalker_UserShared}
 
 user definition  
 
@@ -18,10 +18,10 @@ user definition
 -----
 | Name | Type | Means |
 |------|------|-------|
-| User | @ref UserShared | user definition |
 | Listener | @ref pg_class_http_listener | HTTP listener |
 | Request | http.ClientRequest | HTTP request |
 | Response | http.ServerSesponse | HTTP response |
 | ParsedURL | @ref pg_class_parsedurl | parsed requet URL |
 | Layer | string[] | HTTP path spiltted by / |
 | Level | int | stepping level at the layer |
+| User | @ref HTTPWalker_UserShared | user definition |

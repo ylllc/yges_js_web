@@ -57,7 +57,7 @@ and closed automatically at the Agent stop.
 at the Agent ready, dependencies are ready too.  
 but at the Agent finished, dependencies may still working.  
 
-the Agent can add extra waiting functions from cb_open, cb_close and cb_repair.  
+the Agent can add extra waiting functions from OnOpen, OnClose and OnRepair.  
 imprement them as required.  
 
 @startuml "Shared Agent Open/Close"
@@ -140,7 +140,6 @@ BROKEN <-- DOWN : dirty
 
 ```
 <script src="yges/ipl.js"></script>
-<script src="yges/agent.js"></script>
 ```
 use YgEs.AgentManager
 
@@ -160,18 +159,18 @@ and can use YgEs.AgentManager too.
 
 ```
 var agent=AgentManager.StandBy({
-	name:'MyAgent',
+	Name:'MyAgent',
 	HappenTo:YourHappeningManager,
 	User:{YourStructure},
-	dependencles:[AutoOpenHandles],
+	Dependencles:[AutoOpenHandles],
 
-	cb_open:(agent)=>{/* startup and */ return true;},
-	cb_repair:(agent)=>{/* start repairing and */return true;},
-	cb_abort:(agent)=>{/* aborted */},
-	cb_finish:(agent,clean)=>{/* end of procedure */},
+	OnOpen:(agent)=>{/* startup and */ return true;},
+	OnRepair:(agent)=>{/* start repairing and */return true;},
+	OnAbort:(agent)=>{/* aborted */},
+	OnFinish:(agent,clean)=>{/* end of procedure */},
 
-	cb_poll_healthy:(agent)=>{},
-	cb_poll_trouble:(agent)=>{},
+	OnPollInHealthy:(agent)=>{},
+	OnPollInTrouble:(agent)=>{},
 });
 
 ```
@@ -235,7 +234,7 @@ to open a agent, requires all Happenings are resolved.
 ```
 var agent=AgentManager.StandBy({
 
-	cb_repair:(agent)=>{
+	OnRepair:(agent)=>{
 
 		// instant resolving as possible 
 		for(var hap of agent.GetHappeningManager()){
@@ -286,7 +285,7 @@ var agent1=AgentManager.StandBy({
 
 var agent2=AgentManager.StandBy({
 
-	cb_poll_healthy:(agent)=>{
+	OnPollInHealthy:(agent)=>{
 
 		// rescue Agent1 
 		for(var hap of agent1.GetHappeningManager()){

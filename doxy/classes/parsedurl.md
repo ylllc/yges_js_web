@@ -2,42 +2,54 @@
 
 # What's It?
 
-@sa @ref pg_feat_urlbuild @n
+created by @ref pg_class_urlbuilder
 
 -----
 # Properties
 
 | Name | Type | Means |
 |------|------|-------|
-| scheme | string | scheme name |
-| slashes | string | additional slashes after scheme separator |
-| user | string | user name |
-| pass | string | password |
-| host | string | host name |
-| port | string | port number |
-| path | string | path (URL encoded) |
-| query | string | query (URL encoded) |
-| fragment | string | fragment (URL encoded) |
+| Scheme | string | scheme name |
+| Slashes | string | additional slashes after scheme separator |
+| User | string | user name |
+| Pass | string | password |
+| Host | string | host name |
+| Port | string | port number |
+| Path | string | path (URL encoded) |
+| Query | string | query (URL encoded) |
+| Fragment | string | fragment (URL encoded) |
 
 -----
 # Methods
 
 -----
-## bake():string
+## Bake {#ParsedURL_Bake}
+
+### Spec
+
+Bake():string
 
 ### Returns
 
 baked URL
 
 -----
-## extractHost():string[]
+## ExtractHost {#ParsedURL_ExtractHost}
+
+### Spec
+
+ExtractHost():string[]
 
 ### Return
 
 extracted host name
 
 -----
-## bakeHost(src)
+## BakeHost {#ParsedURL_BakeHost}
+
+### Spec
+
+BakeHost(src)
 
 ### Args
 
@@ -46,14 +58,22 @@ extracted host name
 | src | string[] | baking source host name |
 
 -----
-## extractPath():string[]
+## ExtractPath {#ParsedURL_ExtractPath}
+
+### Spec
+
+ExtractPath():string[]
 
 ### Return
 
 extracted path name
 
 -----
-## bakePath(src)
+## BakePath {#ParsedURL_BakePath}
+
+### Spec
+
+BakePath(src)
 
 ### Args
 
@@ -62,7 +82,11 @@ extracted path name
 | src | string[] | baking source path name |
 
 -----
-## extractArgs():string[]
+## ExtractArgs {#ParsedURL_ExtractArgs}
+
+### Spec
+
+ExtractArgs():string[]
 
 extract query as args
 
@@ -71,7 +95,11 @@ extract query as args
 extracted query
 
 -----
-## bakeArgs(src)
+## BakeArgs {#ParsedURL_BakeArgs}
+
+### Spec
+
+BakeArgs(src)
 
 ### Args
 
@@ -80,7 +108,11 @@ extracted query
 | src | string[] | baking source query |
 
 -----
-## extractProp():dict<string,string>
+## ExtractProp {#ParsedURL_ExtractProp}
+
+### Spec
+
+ExtractProp():dict<string,string>
 
 extract query as prop
 
@@ -89,7 +121,11 @@ extract query as prop
 extracted query
 
 -----
-## bakeProp(src)
+## BakeProp {#ParsedURL_ExtractProp}
+
+### Spec
+
+BakeProp(src)
 
 ### Args
 

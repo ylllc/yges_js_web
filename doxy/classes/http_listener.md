@@ -3,14 +3,14 @@
 # What's It?
 
 HTTP listener instance  
-created by @ref pg_feat_http_server.setup()  
+created by @ref pg_feat_http_server  
 it inherited from @ref pg_class_agent  
 
 -----
 # Callbacks
 
 -----
-## CBError
+## CB_Error {#HTTPListener_CB_Error}
 
 build a response of HTTP error  
 
@@ -22,20 +22,28 @@ build a response of HTTP error
 | code | int | status code |
 | msg | string | message |
 
+### Implements
+
+make a HTTP error response to res
+
 -----
 # Properties
 
 -----
 | Name | Type | Means |
 |------|------|-------|
-| Route | @ref pg_feat_http_server#RouteDefinition | route settings |
-| Error | @ref CBError | error view generator |
+| Route | dict<string,@ref pg_class_http_route> | route settings |
+| Error | @ref HTTPListener_CB_Error | error view generator |
 
 -----
 # Methods
 
 -----
-## getPort():int
+## GetPort {#HTTPListener_GetPort}
+
+### Spec
+
+GetPort():int
 
 ### Returns
 

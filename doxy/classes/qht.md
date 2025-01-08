@@ -2,18 +2,10 @@
 
 # What's It?
 
-@sa @ref pg_feat_qht @n
+created by @ref pg_class_qht_container
 
 -----
 # Types
-
------
-## QHTContent {#QHTContent}
-
-| Type | Means |
-|------|-------|
-| Element | HTML element |
-| string | plain string |
 
 -----
 # Properties
@@ -27,33 +19,49 @@
 # Methods
 
 -----
-## Remove()
+## Remove {#QHT_Remove}
 
 remove this Element.  
 
+### Spec
+
+Remove():void
+
 -----
-## clear()
+## Clear {#QHT_Remove}
 
 clear inner contents.  
 
+### Spec
+
+Clear():void
+
 -----
-## append(src)
+## Append {#QHT_Append}
 
 append to inner contents.  
 
+### Spec
+
+Append(src):void
+
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
-| src | QHTContent | source content |
+| src | @ref QHT_QHTContent | source content |
 
 -----
-## replace(src)
+## Replace {#QHT_Replace}
 
 replace to inner contents.  
 
+### Spec
+
+Replace(src)
+
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
-| src | QHTContent | source content |
+| src | @ref QHT_QHTContent | source content |

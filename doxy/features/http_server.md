@@ -30,23 +30,23 @@ function hello_world(walker){
 	walker.Response.end('Hello World!');
 }
 // any GET access presented Hello World! 
-var route1=HTTPServer.present({GET:hello_world});
+var route1=HTTPServer.Present({GET:hello_world});
 
 // Server 2: Document View & Test Runner
 // serve from public root 
-var route2=HTTPServer.serve(PUBLIC_ROOT,{
+var route2=HTTPServer.Serve(PUBLIC_ROOT,{
 	// overlay route settings 
 	// /doc & /test served other directory instead of. 
-	route:{
+	Route:{
 		// from documentation directory 
-		'doc':HTTPServer.serve(DOCS_ROOT),
+		'doc':HTTPServer.Serve(DOCS_ROOT),
 		// from test directory 
 		// and allow enumerate file entries, include all subdirectories 
-		'test':HTTPServer.serve(TEST_ROOT,{
-			dirent:true,
-			deepent:-1,
-			mtime:true,
-			filter:(srcdir,name,stat)=>{
+		'test':HTTPServer.Serve(TEST_ROOT,{
+			DirEnt:true,
+			DeepEnt:-1,
+			MTime:true,
+			Filter:(srcdir,name,stat)=>{
 				// exclude starting with . 
 				return name.at(0)!='.';
 			},
@@ -60,8 +60,8 @@ var route2=HTTPServer.serve(PUBLIC_ROOT,{
 
 ```
 // can listen parallel ports 
-var srv1=HTTPServer.setup(8080,route1).Fetch();
-var srv2=HTTPServer.setup(8888,route2).Fetch();
+var srv1=HTTPServer.SetUp(8080,route1).Fetch();
+var srv2=HTTPServer.SetUp(8888,route2).Fetch();
 ```
 
 -----

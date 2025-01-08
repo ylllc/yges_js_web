@@ -6,62 +6,69 @@
 // Quick HyperText for web -------------- //
 (()=>{ // local namespace 
 
-YgEs.toQHT=(el)=>{
+YgEs.ToQHT=(el)=>{
 
 	let qht={
-		name:'YgEs_QuickHyperText',
+		name:'YgEs.QuickHyperText',
+		_yges_qht_:true,
 		User:{},
 		Element:el,
 
-		remove:()=>{
+		Remove:()=>{
 			qht.Element.remove();
 			qht.Element=null;
 		},
-		clear:()=>{
+		Clear:()=>{
 			if(!qht.Element)return;
 			qht.Element.innerHTML='';
 		},
-		append:(src)=>{
+		Append:(src)=>{
 			if(!qht.Element)return;
 			if(src==null)return;
-			if(typeof src==='object')qht.Element.append(src);
+			if(typeof src==='object'){
+				if(src._yges_qht_)qht.Element.append(src.Element);
+				else qht.Element.append(src);
+			}
 			else qht.Element.innerHTML+=src;
 		},
-		replace:(src)=>{
+		Replace:(src)=>{
 			if(!qht.Element)return;
 			qht.Element.innerHTML='';
-			qht.append(src);
+			qht.Append(src);
 		},
 	}
 	return qht;
 }
 
-YgEs.newQHT=(prm)=>{
+YgEs.NewQHT=(prm)=>{
 
-	if(!prm.tag)return null;
+	if(!prm.Tag)return null;
 
-	let el=document.createElement(prm.tag);
+	let el=document.createElement(prm.Tag);
 
-	if(prm.attr){
-		for(let k in prm.attr){
-			el.setAttribute(k,prm.attr[k]);
+	if(prm.Attr){
+		for(let k in prm.Attr){
+			el.setAttribute(k,prm.Attr[k]);
 		}
 	}
-	if(prm.style){
-		for(let k in prm.style){
-			el.style[k]=prm.style[k];
+	if(prm.Style){
+		for(let k in prm.Style){
+			el.style[k]=prm.Style[k];
 		}
 	}
-	if(prm.sub){
-		for(let t of prm.sub){
+	if(prm.Sub){
+		for(let t of prm.Sub){
 			if(t===null){}
-			else if(typeof t==='object')el.append(t);
+			else if(typeof t==='object'){
+				if(t._yges_qht_)el.append(t.Element);
+				else el.append(t);
+			}
 			else el.innerHTML+=t;
 		}
 	}
-	if(prm.target)prm.target.append(el);
+	if(prm.Target)prm.Target.Append(el);
 
-	return YgEs.toQHT(el);
+	return YgEs.ToQHT(el);
 }
 
 })();

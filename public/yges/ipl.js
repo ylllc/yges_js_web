@@ -11,26 +11,27 @@ let YgEs={
 	User:{},
 }
 
-YgEs.createEnum=(src)=>{
+YgEs.CreateEnum=(src)=>{
 
 	let ll={}
 	for(let i=0;i<src.length;++i)ll[src[i]]=i;
-	return Object.freeze(ll);
+	return ll;
 }
 
-YgEs.fromError=(err)=>{
+YgEs.FromError=(err)=>{
 	return {
-		name:err.name,
-		msg:err.message,
-		file:err.fileName,
-		line:err.lineNumber,
-		col:err.columnNumber,
-		stack:err.stack,
-		src:err,
+		Name:err.name,
+		Msg:err.message,
+		Cause:err.cause,
+		File:err.fileName,
+		Line:err.lineNumber,
+		Col:err.columnNumber,
+		Stack:err.stack,
+		Src:err,
 	}
 }
 
-YgEs.justString=(val)=>{
+YgEs.JustString=(val)=>{
 	switch(typeof val){
 		case 'undefined': return 'undefined';
 		case 'boolean': return val?'true':'false';
@@ -41,12 +42,12 @@ YgEs.justString=(val)=>{
 		if(val===null)return 'null';
 		else if(Array.isArray(val)){
 			let sub=[]
-			for(let v of val)sub.push(YgEs.justString(v));
+			for(let v of val)sub.push(YgEs.JustString(v));
 			return '['+sub.join(',')+']';
 		}
 		else{
 			let sub=[]
-			for(let k in val)sub.push([JSON.stringify(k),YgEs.justString(val[k])]);
+			for(let k in val)sub.push([JSON.stringify(k),YgEs.JustString(val[k])]);
 			let sub2=[]
 			for(let s of sub)sub2.push(s.join(':'));
 			return '{'+sub2.join(',')+'}';
@@ -56,7 +57,7 @@ YgEs.justString=(val)=>{
 	return val.toString();
 }
 
-YgEs.inspect=(val)=>{
+YgEs.Inspect=(val)=>{
 	switch(typeof val){
 		case 'undefined': return 'undefined';
 		case 'number': return val.toString();
@@ -65,12 +66,12 @@ YgEs.inspect=(val)=>{
 		if(val===null)return 'null';
 		else if(Array.isArray(val)){
 			let sub=[]
-			for(let v of val)sub.push(YgEs.inspect(v));
+			for(let v of val)sub.push(YgEs.Inspect(v));
 			return '['+sub.join(',')+']';
 		}
 		else{
 			let sub=[]
-			for(let k in val)sub.push([JSON.stringify(k),YgEs.inspect(val[k])]);
+			for(let k in val)sub.push([JSON.stringify(k),YgEs.Inspect(val[k])]);
 			let sub2=[]
 			for(let s of sub)sub2.push(s.join(':'));
 			return '{'+sub2.join(',')+'}';
@@ -86,7 +87,7 @@ YgEs.inspect=(val)=>{
 // log level 
 const _level_names=Object.freeze(['TICK','TRACE','DEBUG','INFO','NOTICE','WARN','FATAL','CRIT','ALERT','EMERG']);
 // make reverse lookup 
-const _level_lookup=YgEs.createEnum(_level_names.concat(['NEVER']));
+const _level_lookup=Object.freeze(YgEs.CreateEnum(_level_names.concat(['NEVER'])));
 
 // default settings 
 const _default_showable=_level_lookup.INFO;
@@ -95,51 +96,45 @@ function _default_format(src){
 
 	switch(typeof src.Msg){
 		case 'function': src.Msg=src.Msg(); break;
-		case 'object': src.Msg=YgEs.inspect(src.Msg); break;
+		case 'object': src.Msg=YgEs.Inspect(src.Msg); break;
 	}
 
 	let lev=_level_names[src.Lev]??('?'+src.Lev+'?');
 	let capt=src.Capt?('{'+src.Capt+'} '):'';
-	src.Msg=src.Date+': ['+lev+'] '+capt+src.Msg;
+	src.Text=src.Date+': ['+lev+'] '+capt+src.Msg;
 }
 
 function _default_way(src){
 
-	switch(src.Lev){
-		case Log.LEVEL.TICK:
-		case Log.LEVEL.TRACE:
-		case Log.LEVEL.DEBUG:
-		console.debug(src.Msg);
-		break;
-
-		case Log.LEVEL.INFO:
-		case Log.LEVEL.NOTICE:
-		console.info(src.Msg);
-		break;
-
-		case Log.LEVEL.WARN:
-		console.warn(src.Msg);
-		break;
-
-		case Log.LEVEL.FATAL:
-		case Log.LEVEL.CRIT:
-		case Log.LEVEL.ALERT:
-		case Log.LEVEL.EMERG:
-		console.error(src.Msg);
-		break;
-
-		default:
-		console.log(src.Msg);
-	}
-
-	if(src.Prop)console.dir(src.Prop);
+	let s=src.Text;
+	if(src.Prop)s+='; '+YgEs.Inspect(src.Prop);
+	console.log(s);
 }
 
 // create local instance 
 function _create_local(capt=null,showable=null,parent=null){
 
+	const format=(src)=>{
+		for(let inst=t;inst;inst=inst.GetParent()){
+			if(inst.Format!==null){
+				inst.Format(src);
+				return;
+			}
+		}
+		_default_format(src);
+	}
+	const write=(src)=>{
+		for(let inst=t;inst;inst=inst.GetParent()){
+			if(inst.Way!==null){
+				inst.Way(src);
+				return;
+			}
+		}
+		_default_way(src);
+	}
+
 	let t={
-		name:'YgEs_Logger',
+		name:'YgEs.LocalLog',
 		User:{},
 
 		Showable:showable,
@@ -150,59 +145,52 @@ function _create_local(capt=null,showable=null,parent=null){
 		LEVEL_NAMES:_level_names,
 		LEVEL:_level_lookup,
 
-		createLocal:(capt=null,showable=null)=>_create_local(capt,showable,t),
+		CreateLocal:(capt=null,showable=null)=>_create_local(capt,showable,t),
 
-		getCaption:()=>{
-			if(t.Caption!==null)return t.Caption;
-			if(parent)return parent.getCaption();
+		GetParent:()=>parent,
+		GetCaption:()=>{
+			for(let inst=t;inst;inst=inst.GetParent()){
+				if(inst.Caption!==null)return inst.Caption;
+			}
 			return '';
 		},
-		getShowable:()=>{
-			if(t.Showable!==null)return t.Showable;
-			if(parent)return parent.getShowable();
+		GetShowable:()=>{
+			for(let inst=t;inst;inst=inst.GetParent()){
+				if(inst.Showable!==null)return inst.Showable;
+			}
 			return _default_showable;
 		},
-		format:(src)=>{
-			if(t.Format!==null)t.Format(src);
-			else if(parent)parent.format(src);
-			else _default_format(src);
-		},
-		write:(src)=>{
-			if(t.Way!==null)t.Way(src);
-			else if(parent)parent.write(src);
-			else _default_way(src);
-		},
 
-		put:(lev,msg,prop=null)=>{
+		Put:(lev,msg,prop=null)=>{
 			if(lev>=t.LEVEL_NAMES.length)return;
-			if(lev<t.getShowable())return;
+			if(lev<t.GetShowable())return;
 			let src={
 				Date:new Date().toISOString(),
-				Capt:t.getCaption(),
+				Capt:t.GetCaption(),
 				Lev:lev,
 				Msg:msg
 			}
 			if(prop)src.Prop=prop;
-			t.format(src);
-			t.write(src);
+			format(src);
+			write(src);
 		},
 
-		tick:(msg,prop=null)=>{t.put(t.LEVEL.TICK,msg,prop);},
-		trace:(msg,prop=null)=>{t.put(t.LEVEL.TRACE,msg,prop);},
-		debug:(msg,prop=null)=>{t.put(t.LEVEL.DEBUG,msg,prop);},
-		info:(msg,prop=null)=>{t.put(t.LEVEL.INFO,msg,prop);},
-		notice:(msg,prop=null)=>{t.put(t.LEVEL.NOTICE,msg,prop);},
-		warn:(msg,prop=null)=>{t.put(t.LEVEL.WARN,msg,prop);},
-		fatal:(msg,prop=null)=>{t.put(t.LEVEL.FATAL,msg,prop);},
-		crit:(msg,prop=null)=>{t.put(t.LEVEL.CRIT,msg,prop);},
-		alert:(msg,prop=null)=>{t.put(t.LEVEL.ALERT,msg,prop);},
-		emerg:(msg,prop=null)=>{t.put(t.LEVEL.EMERG,msg,prop);},
+		Tick:(msg,prop=null)=>{t.Put(t.LEVEL.TICK,msg,prop);},
+		Trace:(msg,prop=null)=>{t.Put(t.LEVEL.TRACE,msg,prop);},
+		Debug:(msg,prop=null)=>{t.Put(t.LEVEL.DEBUG,msg,prop);},
+		Info:(msg,prop=null)=>{t.Put(t.LEVEL.INFO,msg,prop);},
+		Notice:(msg,prop=null)=>{t.Put(t.LEVEL.NOTICE,msg,prop);},
+		Warn:(msg,prop=null)=>{t.Put(t.LEVEL.WARN,msg,prop);},
+		Fatal:(msg,prop=null)=>{t.Put(t.LEVEL.FATAL,msg,prop);},
+		Crit:(msg,prop=null)=>{t.Put(t.LEVEL.CRIT,msg,prop);},
+		Alert:(msg,prop=null)=>{t.Put(t.LEVEL.ALERT,msg,prop);},
+		Emerg:(msg,prop=null)=>{t.Put(t.LEVEL.EMERG,msg,prop);},
 	}
 	return t;
 }
 
 const Log=YgEs.Log=_create_local();
-YgEs.Log.name='YgEs_GlobalLogger';
+YgEs.Log.name='YgEs.GlobalLog';
 
 })();
 
@@ -215,35 +203,35 @@ const _rx_false=/^false$/i;
 const _rx_undefined=/^undefined$/i;
 
 let Util=YgEs.Util={
-	name:'YgEs_Utilities',
+	name:'YgEs.Util',
 	User:{},
 
-	isJustNaN:(val)=>{
+	IsJustNaN:(val)=>{
 		if(typeof val!=='number')return false;
 		return isNaN(val);
 	},
 
-	isJustInfinity:(val)=>{
+	IsJustInfinity:(val)=>{
 		if(val===Infinity)return true;
 		if(val===-Infinity)return true;
 		return false;
 	},
 
-	isEmpty:(val)=>{
+	IsEmpty:(val)=>{
 		if(val===null)return true;
 		if(val===undefined)return true;
 		if(val==='')return true;
 		return false;
 	},
 
-	isValid:(val)=>{
+	IsValid:(val)=>{
 		if(val===null)return false;
 		if(val===undefined)return false;
-		if(Util.isJustNaN(val))return false;
+		if(Util.IsJustNaN(val))return false;
 		return true;
 	},
 
-	booleanize:(val,stringable=false)=>{
+	Booleanize:(val,stringable=false)=>{
 		if(val===null)return false;
 		if(val===undefined)return false;
 		switch(typeof val){
@@ -269,7 +257,7 @@ let Util=YgEs.Util={
 		return !!val;
 	},
 
-	trinarize:(val,stringable=false)=>{
+	Trinarize:(val,stringable=false)=>{
 		if(val==null)return null;
 		if(val===undefined)return null;
 		switch(typeof val){
@@ -280,10 +268,10 @@ let Util=YgEs.Util={
 			}
 			break;
 		}
-		return Util.booleanize(val,stringable);
+		return Util.Booleanize(val,stringable);
 	},
 
-	zerofill:(val,col,sgn=false)=>{
+	FillZero:(val,col,sgn=false)=>{
 		let sf=val<0;
 		if(sf)val=-val;
 
@@ -296,7 +284,7 @@ let Util=YgEs.Util={
 		return ss+vs.substring(vs.length-col);
 	},
 
-	safeStepIter:(bgn,end,step,cbiter)=>{
+	SafeStepIter:(bgn,end,step,cb_iter)=>{
 
 		let cnt=bgn;
 		if(!step){
@@ -306,7 +294,7 @@ let Util=YgEs.Util={
 		if(bgn==end)return cnt;
 
 		if(step<0 != end-bgn<0){
-			HapMng.happenProp({msg:'backward',bgn:bgn,end:end,step:step});
+			HappeningManager.HappenProp({msg:'backward',bgn:bgn,end:end,step:step});
 			return cnt;
 		}
 
@@ -314,31 +302,31 @@ let Util=YgEs.Util={
 		for(;(step<0)?(cnt>end):(cnt<end);cnt+=step){
 			if(abort)return cnt;
 			((cnt_)=>{
-				if(cbiter(cnt_)===false)abort=true;
+				if(cb_iter(cnt_)===false)abort=true;
 			})(cnt);
 		}
 
 		return cnt;
 	},
 
-	safeArrayIter:(src,cbiter)=>{
+	SafeArrayIter:(src,cb_iter)=>{
 
 		let abort=false;
 		for(let t of src){
 			if(abort)return;
 			((t_)=>{
-				if(cbiter(t_)===false)abort=true;
+				if(cb_iter(t_)===false)abort=true;
 			})(t);
 		}
 	},
 
-	safeDictIter:(src,cbiter)=>{
+	SafeDictIter:(src,cb_iter)=>{
 
 		let abort=false;
 		for(let k in src){
 			if(abort)return;
 			((k_)=>{
-				if(cbiter(k_,src[k_])===false)abort=true;
+				if(cb_iter(k_,src[k_])===false)abort=true;
 			})(k);
 		}
 	},
@@ -353,7 +341,7 @@ let Timing=YgEs.Timing={
 	name:'YgEs_Timing',
 	User:{},
 
-	fromPromise:(promise,cb_ok=null,cb_ng=null)=>{
+	FromPromise:(promise,cb_ok=null,cb_ng=null)=>{
 		new Promise(async (ok,ng)=>{
 			try{
 				ok(await promise);
@@ -369,7 +357,7 @@ let Timing=YgEs.Timing={
 			else throw e;
 		});
 	},
-	toPromise:(cb_proc,cb_ok=null,cb_ng=null)=>{
+	ToPromise:(cb_proc,cb_ok=null,cb_ng=null)=>{
 		return new Promise((ok,ng)=>{
 			cb_proc(ok,ng);
 		}).then((r)=>{
@@ -381,7 +369,7 @@ let Timing=YgEs.Timing={
 		});
 	},
 
-	delay:(ms,cb_done,cb_abort=null)=>{
+	Delay:(ms,cb_done,cb_abort=null)=>{
 
 		let h=null;
 		if(!cb_done)return ()=>{
@@ -402,7 +390,7 @@ let Timing=YgEs.Timing={
 		}
 	},
 
-	poll:(ms,cb_poll,cb_abort=null)=>{
+	Poll:(ms,cb_poll,cb_abort=null)=>{
 
 		if(!cb_poll)return ()=>{
 			if(cb_abort)cb_abort();
@@ -410,7 +398,7 @@ let Timing=YgEs.Timing={
 
 		let cancel=null;
 		let next=()=>{
-			cancel=Timing.delay(ms,()=>{
+			cancel=Timing.Delay(ms,()=>{
 				cb_poll();
 				if(!cancel)return;
 				cancel=null;
@@ -426,7 +414,7 @@ let Timing=YgEs.Timing={
 		}
 	},
 
-	sync:(ms,cb_chk,cb_done,cb_abort=null)=>{
+	Sync:(ms,cb_chk,cb_done,cb_abort=null)=>{
 
 		if(!cb_chk)return ()=>{};
 		if(!cb_done)return ()=>{};
@@ -437,7 +425,7 @@ let Timing=YgEs.Timing={
 			return ()=>{};
 		}
 
-		cancel=Timing.poll(ms,()=>{
+		cancel=Timing.Poll(ms,()=>{
 			if(!cb_chk())return;
 			if(cancel){
 				cancel();
@@ -454,10 +442,10 @@ let Timing=YgEs.Timing={
 		}
 	},
 
-	delayKit:(ms,cb_done=null,cb_cancel=null)=>{
+	DelayKit:(ms,cb_done=null,cb_cancel=null)=>{
 		let kit={}
-		kit.promise=()=>Timing.toPromise((ok,ng)=>{
-			kit.cancel=Timing.delay(ms,
+		kit.ToPromise=()=>Timing.ToPromise((ok,ng)=>{
+			kit.Cancel=Timing.Delay(ms,
 			()=>{
 				if(cb_done)cb_done();
 				ok();
@@ -468,10 +456,10 @@ let Timing=YgEs.Timing={
 		});
 		return kit;
 	},
-	syncKit:(ms,cb_chk,cb_done=null,cb_abort=null)=>{
+	SyncKit:(ms,cb_chk,cb_done=null,cb_abort=null)=>{
 		let kit={}
-		kit.promise=()=>Timing.toPromise((ok,ng)=>{
-			kit.cancel=Timing.sync(ms,cb_chk,
+		kit.ToPromise=()=>Timing.ToPromise((ok,ng)=>{
+			kit.Cancel=Timing.Sync(ms,cb_chk,
 			()=>{
 				if(cb_done)ok(cb_done());
 				else ok();
@@ -494,45 +482,46 @@ let Timing=YgEs.Timing={
 const Log=YgEs.Log;
 
 function _default_happened(hap){
-	Log.fatal(hap.toString(),hap.getProp());	
+	Log.Fatal(hap.ToString(),hap.GetProp());	
 }
 function _default_abandoned(hap){
-	Log.warn('* Abandoned * '+hap.toString(),hap.getProp());	
+	Log.Warn('* Abandoned * '+hap.ToString(),hap.GetProp());	
 }
 function _default_resolved(hap){
-	Log.debug('* Resolved * '+hap.toString(),hap.getProp());	
+	Log.Debug('* Resolved * '+hap.ToString(),hap.GetProp());	
 }
 
 function _create_happening(cbprop,cbstr,cberr,init={}){
 
 	let resolved=false;
 	let abandoned=false;
-	let cb_resolved=init.cb_resolved??_default_resolved;
-	let cb_abandoned=init.cb_abandoned??_default_abandoned;
+	let onResolved=init.OnResolved??_default_resolved;
+	let onAbandoned=init.OnAbandoned??_default_abandoned;
 
 	let hap={
-		name:init.name??'YgEs_Happening',
-		User:init.user??{},
+		Name:init.Name??'YgEs.Happening',
+		User:init.User??{},
 
-		getProp:cbprop,
+		GetProp:cbprop,
+		ToString:cbstr,
 		toString:cbstr,
-		toJSON:()=>JSON.stringify(hap.getProp()),
-		toError:cberr,
+		ToJSON:()=>JSON.stringify(hap.GetProp()),
+		ToError:cberr,
 
-		isResolved:()=>resolved,
-		resolve:()=>{
+		IsResolved:()=>resolved,
+		Resolve:()=>{
 			if(resolved)return;
 			resolved=true;
 			abandoned=false;
-			if(cb_resolved)cb_resolved(hap);
+			if(onResolved)onResolved(hap);
 		},
 
-		isAbandoned:()=>abandoned && !resolved,
-		abandon:()=>{
+		IsAbandoned:()=>abandoned && !resolved,
+		Abandon:()=>{
 			if(resolved)return;
 			if(abandoned)return;
 			abandoned=true;
-			if(cb_abandoned)cb_abandoned(hap);
+			if(onAbandoned)onAbandoned(hap);
 		},
 	}
 	return hap;
@@ -543,94 +532,98 @@ function _create_manager(prm,parent=null){
 	let issues=[]
 	let children=[]
 
-	let mng={
-		name:prm.name??'YgEs_HappeningManager',
-		Happened:prm.happen??null,
-		User:prm.user??{},
+	const onHappen=(hap)=>{
+		for(let hm=mng;hm;hm=hm.GetParent()){
+			if(!hm.OnHappen)continue;
+			hm.OnHappen(hap);
+			return;
+		}
+		_default_happened(hap);
+	}
 
-		createLocal:(prm={})=>{
+	let mng={
+		name:prm.Name??'YgEs.HappeningManager',
+		OnHappen:prm.OnHappen??null,
+		User:prm.User??{},
+
+		CreateLocal:(prm={})=>{
 			let cm=_create_manager(prm,mng);
 			children.push(cm);
 			return cm;
 		},
 
-		getParent:()=>parent,
-		getChildren:()=>children,
-		getIssues:()=>issues,
+		GetParent:()=>parent,
+		GetChildren:()=>children,
+		GetIssues:()=>issues,
 
-		abandon:()=>{
+		Abandon:()=>{
 			for(let sub of children){
-				sub.abandon();
+				sub.Abandon();
 			}
 			for(let hap of issues){
-				hap.abandon();
+				hap.Abandon();
 			}
 			issues=[]
 		},
 
-		countIssues:()=>{
+		CountIssues:()=>{
 			let ct=issues.length;
 			for(let sub of children){
-				ct+=sub.countIssues();
+				ct+=sub.CountIssues();
 			}
 			return ct;
 		},
-		isCleaned:()=>{
+		IsCleaned:()=>{
 			if(issues.length>0)return false;
 			for(let sub of children){
-				if(!sub.isCleaned())return false;
+				if(!sub.IsCleaned())return false;
 			}
 			return true;
 		},
-		cleanup:()=>{
+		CleanUp:()=>{
 			let tmp=[]
 			for(let hap of issues){
-				if(!hap.isResolved())tmp.push(hap);
+				if(!hap.IsResolved())tmp.push(hap);
 			}
 			issues=tmp;
 
 			for(let sub of children){
-				sub.cleanup();
+				sub.CleanUp();
 			}
 		},
 
-		getInfo:()=>{
-			let info={name:mng.name,_issues:[],_children:[]}
+		GetInfo:()=>{
+			let info={Name:mng.name,Issues:[],Children:[]}
 			for(let hap of issues){
-				if(hap.isResolved())continue;
-				info._issues.push({name:hap.name,prop:hap.getProp()});
+				if(hap.IsResolved())continue;
+				info.Issues.push({Name:hap.name,Prop:hap.GetProp()});
 			}
 			for(let sub of children){
-				let si=sub.getInfo();
-				if(si._issues.length>0 || si._children.length>0)info._children.push(si);
+				let si=sub.GetInfo();
+				if(si.Issues.length>0 || si.Children.length>0)info.Children.push(si);
 			}
 			return info;
 		},
 
-		poll:(cb)=>{
+		Poll:(cb)=>{
 			if(!cb)return;
 			for(let hap of issues){
-				if(hap.isResolved())continue;
-				if(hap.isAbandoned())continue;
+				if(hap.IsResolved())continue;
+				if(hap.IsAbandoned())continue;
 				cb(hap);
 			}
 			for(let sub of children){
-				sub.poll(cb);
+				sub.Poll(cb);
 			}
 		},
 
-		_callHappened:(hap)=>{
-			if(mng.Happened)mng.Happened(hap);
-			else if(parent)parent._callHappened(hap);
-			else _default_happened(hap);
-		},
-		happen:(hap)=>{
+		Happen:(hap)=>{
 			issues.push(hap);
-			mng._callHappened(hap);
+			onHappen(hap);
 			return hap;
 		},
-		happenMsg:(msg,init={})=>{
-			return mng.happen(_create_happening(
+		HappenMsg:(msg,init={})=>{
+			return mng.Happen(_create_happening(
 				()=>{return {msg:''+msg}},
 				()=>''+msg,
 				()=>new Error(msg),
@@ -638,8 +631,8 @@ function _create_manager(prm,parent=null){
 			));
 		},
 
-		happenProp:(prop,init={})=>{
-			return mng.happen(_create_happening(
+		HappenProp:(prop,init={})=>{
+			return mng.Happen(_create_happening(
 				()=>prop,
 				()=>JSON.stringify(prop),
 				()=>new Error(JSON.stringify(prop)),
@@ -647,9 +640,9 @@ function _create_manager(prm,parent=null){
 			));
 		},
 
-		happenError:(err,init={})=>{
-			return mng.happen(_create_happening(
-				()=>{return YgEs.fromError(err)},
+		HappenError:(err,init={})=>{
+			return mng.Happen(_create_happening(
+				()=>{return YgEs.FromError(err)},
 				()=>''+err,
 				()=>err,
 				init
@@ -659,7 +652,7 @@ function _create_manager(prm,parent=null){
 	return mng;
 }
 
-YgEs.HappeningManager=_create_manager('YgEs_GlobalHappeningManager');
+YgEs.HappeningManager=_create_manager({Name:'YgEs.GlobalHappeningManager'});
 
 })();
 
@@ -673,104 +666,104 @@ const Timing=YgEs.Timing;
 const DEFAULT_ROOT_CYCLE=20;
 const DEFAULT_LAUNCHER_CYCLE=20;
 const DEFAULT_SYNC_CYCLE=10;
-const CLASS_PROC='YgEs_Procedure';
-const CLASS_LAUNCHER='YgEs_Launcher';
-const CLASS_LAUNCHERPROC='YgEs_LauncherProc';
-const CLASS_DELAYPROC='YgEs_DelayProc';
-const CLASS_ROOT='YgEs_RootLauncher';
+const CLASS_PROC='YgEs.Procedure';
+const CLASS_LAUNCHER='YgEs.Launcher';
+const CLASS_LAUNCHERPROC='YgEs.LauncherProc';
+const CLASS_DELAYPROC='YgEs.DelayProc';
+const CLASS_ROOT='YgEs.RootLauncher';
 
 function _create_proc(prm){
 
-	let cb_start=prm.cb_start??null;
-	let cb_poll=prm.cb_poll;
-	let cb_done=prm.cb_done??null;
-	let cb_abort=prm.cb_abort??null;
+	let onStart=prm.OnStart??null;
+	let onPoll=prm.OnPoll;
+	let onDone=prm.OnDone??null;
+	let onAbort=prm.OnAbort??null;
 
 	let started=false;
 	let finished=false;
 	let aborted=false;
 
 	let proc={
-		name:prm.name??CLASS_PROC,
-		HappenTo:(prm.happen??HappeningManager).createLocal(),
-		User:prm.user??{},
+		name:prm.Name??CLASS_PROC,
+		HappenTo:(prm.HappenTo??HappeningManager).CreateLocal(),
+		User:prm.User??{},
 
-		isStarted:()=>started,
-		isFinished:()=>finished,
-		isAborted:()=>aborted,
-		isEnd:()=>finished||aborted,
+		IsStarted:()=>started,
+		IsFinished:()=>finished,
+		IsAborted:()=>aborted,
+		IsEnd:()=>finished||aborted,
 
 		_start:()=>{
 			if(started)return;
-			if(proc.isEnd())return;
+			if(proc.IsEnd())return;
 			started=true;
-			if(cb_start){
+			if(onStart){
 				try{
-					cb_start(proc.User);
+					onStart(proc.User);
 				}
 				catch(e){
-					proc.HappenTo.happenProp({
+					proc.HappenTo.HappenProp({
 						class:CLASS_PROC,
 						cause:'throw from start',
 						src:proc,
-						err:YgEs.fromError(e),
+						err:YgEs.FromError(e),
 					});
-					proc.abort();
+					proc.Abort();
 				}
 			}
 		},
-		abort:()=>{
-			if(proc.isEnd())return;
+		Abort:()=>{
+			if(proc.IsEnd())return;
 			aborted=true;
-			if(cb_abort){
+			if(onAbort){
 				try{
-					cb_abort(proc.User);
+					onAbort(proc.User);
 				}
 				catch(e){
-					proc.HappenTo.happenProp({
+					proc.HappenTo.HappenProp({
 						class:CLASS_PROC,
 						cause:'throw from abort',
 						src:proc,
-						err:YgEs.fromError(e),
+						err:YgEs.FromError(e),
 					});
 				}
 			}
 			else{
-				proc.HappenTo.happenProp({
+				proc.HappenTo.HappenProp({
 					class:CLASS_PROC,
 					cause:'abort',
 					src:proc,
 				});
 			}
 		},
-		poll:()=>{
-			if(proc.isEnd())return false;
+		Poll:()=>{
+			if(proc.IsEnd())return false;
 			try{
-				if(cb_poll(proc.User))return true;
+				if(onPoll(proc.User))return true;
 			}
 			catch(e){
-				proc.HappenTo.happenProp({
+				proc.HappenTo.HappenProp({
 					class:CLASS_PROC,
 					cause:'throw from poll',
 					src:proc,
-					err:YgEs.fromError(e),
+					err:YgEs.FromError(e),
 				});
-				proc.abort();
+				proc.Abort();
 				return false;
 			}
-			if(cb_done){
+			if(onDone){
 				try{
-					cb_done(proc.User);
+					onDone(proc.User);
 					finished=true;
 				}
 				catch(e){
-					proc.HappenTo.happenProp({
+					proc.HappenTo.HappenProp({
 						class:CLASS_PROC,
 						cause:'throw from done',
 						src:proc,
-						err:YgEs.fromError(e),
+						err:YgEs.FromError(e),
 					});
-					proc.abort();
+					proc.Abort();
 					return false;
 				}
 			}
@@ -780,35 +773,35 @@ function _create_proc(prm){
 			return false;
 		},
 
-		sync:(cb_sync,interval=null)=>{
+		Sync:(cb_sync,interval=null)=>{
 			if(!cb_sync){
-				proc.HappenTo.happenProp({
+				proc.HappenTo.HappenProp({
 					class:CLASS_LAUNCHER,
 					cause:'empty callback from sync',
 				});
 				return;
 			}
 			if(interval===null)interval=DEFAULT_SYNC_CYCLE;
-			Timing.sync(interval,
-				()=>{return proc.isEnd();},
+			Timing.Sync(interval,
+				()=>{return proc.IsEnd();},
 				()=>{
 					try{
 						cb_sync(proc.User);
 					}
 					catch(e){
-						proc.HappenTo.happenProp({
+						proc.HappenTo.HappenProp({
 							class:CLASS_PROC,
 							cause:'throw from sync',
 							src:proc,
-							err:YgEs.fromError(e),
+							err:YgEs.FromError(e),
 						});
 					}
 				},
 			);
 		},
-		toPromise:(breakable,interval=null)=>{
-			return Timing.toPromise((ok,ng)=>{
-				proc.sync(()=>{
+		ToPromise:(breakable,interval=null)=>{
+			return Timing.ToPromise((ok,ng)=>{
+				proc.Sync(()=>{
 					if(breakable || finished)ok(proc.User);
 					else ng(new Error('abort',{cause:proc.User}));
 				},interval);
@@ -828,57 +821,57 @@ function _yges_enginge_create_launcher(prm){
 	let active=[]
 
 	let lnc={
-		name:prm.name??CLASS_LAUNCHER,
-		HappenTo:(prm.happen??HappeningManager).createLocal(),
-		Limit:prm.limit??-1,
-		Cycle:prm.cycle??DEFAULT_LAUNCHER_CYCLE,
-		User:prm.user??{},
+		name:prm.Name??CLASS_LAUNCHER,
+		HappenTo:(prm.HappenTo??HappeningManager).CreateLocal(),
+		Limit:prm.Limit??-1,
+		Cycle:prm.Cycle??DEFAULT_LAUNCHER_CYCLE,
+		User:prm.User??{},
 
-		isEnd:()=>{
+		IsEnd:()=>{
 			if(launched.length>0)return false;
 			if(active.length>0)return false;
 			for(let sub of sublauncher){
-				if(!sub.isEnd())return false;
+				if(!sub.IsEnd())return false;
 			}
 			return true;
 		},
-		isAbandoned:()=>abandoned,
-		countActive:()=>{
+		IsAbandoned:()=>abandoned,
+		CountActive:()=>{
 			let n=active.length
-			for(let sub of sublauncher)n+=sub.countActive();
+			for(let sub of sublauncher)n+=sub.CountActive();
 			return n;
 		},
-		countHeld:()=>{
+		CountHeld:()=>{
 			let n=launched.length
-			for(let sub of sublauncher)n+=sub.countHeld();
+			for(let sub of sublauncher)n+=sub.CountHeld();
 			return n;
 		},
 
-		abandon:()=>{
+		Abandon:()=>{
 			abandoned=true;
-			lnc.abort();
+			lnc.Abort();
 		},
 
-		createLauncher:(prm={})=>{
+		CreateLauncher:(prm={})=>{
 			let sub=_yges_enginge_create_launcher(prm);
 			sublauncher.push(sub);
 			return sub;
 		},
 
-		launch:(prm={})=>{
-			if(Engine.isAbandoned()){
-				lnc.HappenTo.happenMsg('the Engine was abandoned, no longer launch new procedures.');
+		Launch:(prm={})=>{
+			if(Engine.IsAbandoned()){
+				lnc.HappenTo.HappenMsg('the Engine was abandoned, no longer launch new procedures.');
 				return;
 			}
 			if(!_working){
-				Log.notice('the Engine not startted. call start() to run.');
+				Log.Notice('the Engine not started. call Start() to run.');
 			}
 			if(abandoned){
-				if(prm.cb_abort)prm.cb_abort();
+				if(prm.OnAbort)prm.OnAbort();
 				return;
 			}
-			if(!prm.cb_poll){
-				lnc.HappenTo.happenProp({
+			if(!prm.OnPoll){
+				lnc.HappenTo.HappenProp({
 					class:CLASS_LAUNCHER,
 					cause:'empty pollee',
 				});
@@ -895,24 +888,24 @@ function _yges_enginge_create_launcher(prm){
 			}
 			return proc;
 		},
-		abort:()=>{
-			if(lnc.isEnd())return;
+		Abort:()=>{
+			if(lnc.IsEnd())return;
 			aborted=true;
-			for(let sub of sublauncher)sub.abort();
+			for(let sub of sublauncher)sub.Abort();
 			sublauncher=[]
-			for(let proc of launched)proc.abort();
+			for(let proc of launched)proc.Abort();
 			launched=[]
-			for(let proc of active)proc.abort();
+			for(let proc of active)proc.Abort();
 			active=[]
 		},
-		poll:()=>{
+		Poll:()=>{
 			for(let sub of sublauncher){
-				sub.poll();
+				sub.Poll();
 			}
 
 			let cont=[]
 			for(let proc of active){
-				if(proc.poll())cont.push(proc);
+				if(proc.Poll())cont.push(proc);
 			}
 			active=cont;
 
@@ -929,54 +922,54 @@ function _yges_enginge_create_launcher(prm){
 			}
 		},
 
-		sync:(cb_sync,interval=null)=>{
+		Sync:(cb_sync,interval=null)=>{
 			if(!cb_sync){
-				lnc.HappenTo.happenProp({
+				lnc.HappenTo.HappenProp({
 					class:CLASS_LAUNCHER,
 					cause:'empty callback from sync',
 				});
 				return;
 			}
 			if(interval===null)interval=DEFAULT_SYNC_CYCLE;
-			Timing.sync(interval,
+			Timing.Sync(interval,
 				()=>{
-					lnc.poll();
-					return lnc.isEnd();
+					lnc.Poll();
+					return lnc.IsEnd();
 				},
 				()=>{
 					try{
 						cb_sync(lnc.User);
 					}
 					catch(e){
-						lnc.HappenTo.happenProp({
+						lnc.HappenTo.HappenProp({
 							class:CLASS_PROC,
 							cause:'throw from sync',
 							src:lnc,
-							err:YgEs.fromError(e),
+							err:YgEs.FromError(e),
 						});
 					}
 				}
 			);
 		},
 
-		toPromise:(breakable,interval=null)=>{
-			return Timing.toPromise((ok,ng)=>{
-				lnc.sync(()=>{
+		ToPromise:(breakable,interval=null)=>{
+			return Timing.ToPromise((ok,ng)=>{
+				lnc.Sync(()=>{
 					if(breakable || !aborted)ok(lnc.User);
 					else ng(new Error('abort',{cause:lnc.User}));
 				},interval);
 			});
 		},
 
-		delay:(time,cb_done,cb_abort=null)=>{
+		Delay:(time,cb_done,cb_abort=null)=>{
 			let until=new Date(Date.now()+time);
-			return lnc.launch({
-					name:CLASS_DELAYPROC,
-					cb_poll:(user)=>{
+			return lnc.Launch({
+					Name:CLASS_DELAYPROC,
+					OnPoll:(user)=>{
 						return Date.now()<until;
 					},
-					cb_done:cb_done,
-					cb_abort:cb_abort??cb_done,
+					OnDone:cb_done,
+					OnAbort:cb_abort??cb_done,
 				});
 		},
 	}
@@ -984,8 +977,8 @@ function _yges_enginge_create_launcher(prm){
 }
 
 let Engine=YgEs.Engine=_yges_enginge_create_launcher({
-	name:CLASS_ROOT,
-	cycle:DEFAULT_ROOT_CYCLE,
+	Name:CLASS_ROOT,
+	Cycle:DEFAULT_ROOT_CYCLE,
 });
 
 let _working=false;
@@ -994,11 +987,11 @@ let _cancel=null;
 function _poll_engine(){
 
 	if(!_working)return;
-	if(Engine.isAbandoned())return;
+	if(Engine.IsAbandoned())return;
 
-	Engine.poll();
+	Engine.Poll();
 
-	_cancel=Timing.delay(Engine.Cycle,()=>{
+	_cancel=Timing.Delay(Engine.Cycle,()=>{
 		_cancel=null;
 		_poll_engine();
 	});
@@ -1010,23 +1003,23 @@ function _stop(){
 	if(_cancel!=null)_cancel();
 }
 
-YgEs.Engine.start=()=>{
+YgEs.Engine.Start=()=>{
 
-	if(Engine.isAbandoned())return;
+	if(Engine.IsAbandoned())return;
 	if(_working)return;
 	_working=true;
 	_poll_engine();
 }
 
-YgEs.Engine.stop=()=>{
+YgEs.Engine.Stop=()=>{
 
 	_stop();
-	if(Engine.isAbandoned())return;
-	Engine.abort();
+	if(Engine.IsAbandoned())return;
+	Engine.Abort();
 }
 
-YgEs.Engine.shutdown=()=>{
-	Engine.abandon();
+YgEs.Engine.ShutDown=()=>{
+	Engine.Abandon();
 	_stop();
 }
 
@@ -1040,12 +1033,12 @@ const HappeningManager=YgEs.HappeningManager;
 
 function _run(start,states={},opt={}){
 
-	let launcher=opt.launcher??YgEs.Engine;
+	let launcher=opt.Launcher??YgEs.Engine;
 	let cur=null;
 
-	let name=opt.name??'YgEs_Statemachine';
-	let happen=opt.happen??HappeningManager;
-	let user=opt.user??{};
+	let name=opt.Name??'YgEs.StateMachine';
+	let happen=opt.HappenTo??HappeningManager;
+	let user=opt.User??{};
 
 	let state_prev=null;
 	let state_cur=null;
@@ -1053,22 +1046,21 @@ function _run(start,states={},opt={}){
 
 	let ctrl={
 		name:name+'_Control',
-		User:{},
-		getHappeningManager:()=>happen,
-		getPrevState:()=>state_prev,
-		getCurState:()=>state_cur,
-		getNextState:()=>state_next,
+		User:user,
+		GetHappeningManager:()=>happen,
+		GetPrevState:()=>state_prev,
+		GetCurState:()=>state_cur,
+		GetNextState:()=>state_next,
 	}
 
-	let getInfo=(phase)=>{
+	let GetInfo=(phase)=>{
 		return {
-			name:name,
-			prev:state_prev,
-			cur:state_cur,
-			next:state_next,
-			phase:phase,
-			ctrl:ctrl.User,
-			user:user,
+			Name:name,
+			Prev:state_prev,
+			Cur:state_cur,
+			Next:state_next,
+			Phase:phase,
+			User:user,
 		}
 	}
 
@@ -1084,10 +1076,10 @@ function _run(start,states={},opt={}){
 		}
 		cur=states[state_next]??null;
 		if(!cur){
-			stmac.happen.happenProp({
+			stmac.HappenTo.HappenProp({
 				class:'YgEs_Statemachine_Error',
 				cause:'state missing: '+state_next,
-				info:getInfo('selecing'),
+				info:GetInfo('selecing'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1096,15 +1088,15 @@ function _run(start,states={},opt={}){
 		state_cur=state_next;
 		state_next=null;
 		try{
-			if(cur.cb_start)cur.cb_start(ctrl,user);
+			if(cur.OnStart)cur.OnStart(ctrl,user);
 			poll_cur=poll_up;
 		}
 		catch(e){
-			stmac.happen.happenProp({
+			stmac.HappenTo.HappenProp({
 				class:'YgEs_Statemachine_Error',
 				cause:'throw from a callback',
-				info:getInfo('cb_start'),
-				err:YgEs.fromError(e),
+				info:GetInfo('cb_start'),
+				err:YgEs.FromError(e),
 			});
 			poll_cur=poll_nop;
 		}
@@ -1113,31 +1105,31 @@ function _run(start,states={},opt={}){
 	}
 	let poll_up=(user)=>{
 		try{
-			var r=cur.poll_up?cur.poll_up(ctrl,user):true;
+			var r=cur.OnPollInUp?cur.OnPollInUp(ctrl,user):true;
 		}
 		catch(e){
-			stmac.happen.happenProp({
+			stmac.HappenTo.HappenProp({
 				class:'YgEs_Statemachine_Error',
 				cause:'throw from a callback',
-				info:getInfo('poll_up'),
-				err:YgEs.fromError(e),
+				info:GetInfo('poll_up'),
+				err:YgEs.FromError(e),
 			});
 			r=false;
 		}
 		if(r==null)return; // continuing 
-		else if(r===false)proc.abort();
+		else if(r===false)proc.Abort();
 		else if(r===true){
 			try{
 				// normal transition 
-				if(cur.cb_ready)cur.cb_ready(ctrl,user);
+				if(cur.OnReady)cur.OnReady(ctrl,user);
 				poll_cur=poll_keep;
 			}
 			catch(e){
-				stmac.happen.happenProp({
+				stmac.HappenTo.HappenProp({
 					class:'YgEs_Statemachine_Error',
 					cause:'throw from a callback',
-					info:getInfo('cb_ready'),
-					err:YgEs.fromError(e),
+					info:GetInfo('cb_ready'),
+					err:YgEs.FromError(e),
 				});
 				poll_cur=poll_nop;
 			}
@@ -1152,19 +1144,19 @@ function _run(start,states={},opt={}){
 	}
 	let poll_keep=(user)=>{
 		try{
-			var r=cur.poll_keep?cur.poll_keep(ctrl,user):true;
+			var r=cur.OnPollInKeep?cur.OnPollInKeep(ctrl,user):true;
 		}
 		catch(e){
-			stmac.happen.happenProp({
+			stmac.HappenTo.HappenProp({
 				class:'YgEs_Statemachine_Error',
 				cause:'throw from a callback',
-				info:getInfo('poll_keep'),
-				err:YgEs.fromError(e),
+				info:GetInfo('poll_keep'),
+				err:YgEs.FromError(e),
 			});
 			r=false;
 		}
 		if(r==null)return; // continuing 
-		else if(r===false)proc.abort();
+		else if(r===false)proc.Abort();
 		else if(r===true){
 			// normal end 
 			state_next=null;
@@ -1178,15 +1170,15 @@ function _run(start,states={},opt={}){
 	}
 	let call_stop=(user)=>{
 		try{
-			if(cur.cb_stop)cur.cb_stop(ctrl,user);
+			if(cur.OnStop)cur.OnStop(ctrl,user);
 			poll_cur=poll_down;
 		}
 		catch(e){
-			stmac.happen.happenProp({
+			stmac.HappenTo.HappenProp({
 				class:'YgEs_Statemachine_Error',
 				cause:'throw from a callback',
-				info:getInfo('cb_stop'),
-				err:YgEs.fromError(e),
+				info:GetInfo('cb_stop'),
+				err:YgEs.FromError(e),
 			});
 			poll_cur=poll_nop;
 		}
@@ -1195,19 +1187,19 @@ function _run(start,states={},opt={}){
 	}
 	let poll_down=(user)=>{
 		try{
-			var r=cur.poll_down?cur.poll_down(ctrl,user):true;
+			var r=cur.OnPollInDown?cur.OnPollInDown(ctrl,user):true;
 		}
 		catch(e){
-			stmac.happen.happenProp({
+			stmac.HappenTo.HappenProp({
 				class:'YgEs_Statemachine_Error',
 				cause:'throw from a callback',
-				info:getInfo('poll_down'),
-				err:YgEs.fromError(e),
+				info:GetInfo('poll_down'),
+				err:YgEs.FromError(e),
 			});
 			r=false;
 		}
 		if(r==null)return; // continuing 
-		else if(r===false)proc.abort();
+		else if(r===false)proc.Abort();
 		else if(r===true){
 			// normal transition 
 			call_end(user);
@@ -1220,44 +1212,44 @@ function _run(start,states={},opt={}){
 	}
 	let call_end=(user)=>{
 		try{
-			if(cur.cb_end)cur.cb_end(ctrl,user);
+			if(cur.OnEnd)cur.OnEnd(ctrl,user);
 			call_start(user);
 		}
 		catch(e){
-			stmac.happen.happenProp({
+			stmac.HappenTo.HappenProp({
 				class:'YgEs_Statemachine_Error',
 				cause:'throw from a callback',
-				info:getInfo('cb_end'),
-				err:YgEs.fromError(e),
+				info:GetInfo('cb_end'),
+				err:YgEs.FromError(e),
 			});
 			poll_cur=poll_nop;
 		}
 	}
 
 	let stmac={
-		name:name,
-		happen:happen,
-		user:user,
+		Name:name,
+		HappenTo:happen,
+		User:user,
 
-		cb_start:(user)=>{
+		OnStart:(user)=>{
 			call_start(user);
 		},
-		cb_poll:(user)=>{
+		OnPoll:(user)=>{
 			poll_cur(user);
 			return !!cur;
 		},
-		cb_done:opt.cb_done??'',
-		cb_abort:opt.cb_abort??'',
+		OnDone:opt.OnDone??'',
+		OnAbort:opt.OnAbort??'',
 	}
 
-	let proc=launcher.launch(stmac);
-	ctrl.isStarted=proc.isStarted;
-	ctrl.isFinished=proc.isFinished;
-	ctrl.isAborted=proc.isAborted;
-	ctrl.isEnd=proc.isEnd;
-	ctrl.abort=proc.abort;
-	ctrl.sync=proc.sync;
-	ctrl.toPromise=proc.toPromise;
+	let proc=launcher.Launch(stmac);
+	ctrl.IsStarted=proc.IsStarted;
+	ctrl.IsFinished=proc.IsFinished;
+	ctrl.IsAborted=proc.IsAborted;
+	ctrl.IsEnd=proc.IsEnd;
+	ctrl.Abort=proc.Abort;
+	ctrl.Sync=proc.Sync;
+	ctrl.ToPromise=proc.ToPromise;
 	return ctrl;
 }
 
@@ -1265,7 +1257,7 @@ YgEs.StateMachine={
 	name:'YgEs_StateMachineContainer',
 	User:{},
 
-	run:_run,
+	Run:_run,
 }
 
 })();
@@ -1296,33 +1288,33 @@ function _standby(prm){
 	let aborted=false;
 	let wait=[]
 
-	let name=prm.name??'YgEs_Agent';
-	let happen=prm.happen??HappeningManager.createLocal();
-	let launcher=prm.launcher??Engine.createLauncher();
-	let user=prm.user??{};
+	let name=prm.Name??'YgEs.Agent';
+	let happen=prm.HappenTo??HappeningManager.CreateLocal();
+	let launcher=prm.Launcher??Engine.CreateLauncher();
+	let user=prm.User??{};
 
-	let getInfo=(phase)=>{
+	let GetInfo=(phase)=>{
 		return {
-			name:name,
-			phase:phase,
-			state:ctrl?ctrl.getCurState():'NONE',
-			wait:wait,
-			user:user,
+			Name:name,
+			Phase:phase,
+			State:ctrl?ctrl.GetCurState():'NONE',
+			Wait:wait,
+			User:user,
 		}
 	}
 
 	let states={
 		'IDLE':{
-			poll_keep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,user)=>{
 				if(opencount<1)return true;
 				restart=false;
 
-				happen.cleanup();
-				return happen.isCleaned()?'UP':'REPAIR';
+				happen.CleanUp();
+				return happen.IsCleaned()?'UP':'REPAIR';
 			},
 		},
 		'BROKEN':{
-			poll_keep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,user)=>{
 				if(opencount<1)return true;
 				restart=false;
 
@@ -1330,26 +1322,26 @@ function _standby(prm){
 			},
 		},
 		'REPAIR':{
-			cb_start:(ctrl,user)=>{
+			OnStart:(ctrl,user)=>{
 
 				try{
 					//start repairing 
 					wait=[]
-					if(prm.cb_repair)prm.cb_repair(agent);
+					if(prm.OnRepair)prm.OnRepair(agent);
 				}
 				catch(e){
-					happen.happenProp({
+					happen.HappenProp({
 						class:'YgEs_Agent_Error',
 						cause:'throw from a callback',
-						src:getInfo('cb_repair'),
-						err:YgEs.fromError(e),
+						src:GetInfo('OnRepair'),
+						err:YgEs.FromError(e),
 					});
 				}
 			},
-			poll_keep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,user)=>{
 				if(opencount<1){
-					happen.cleanup();
-					return happen.isCleaned()?'IDLE':'BROKEN';
+					happen.CleanUp();
+					return happen.IsCleaned()?'IDLE':'BROKEN';
 				}
 
 				// wait for delendencies 
@@ -1360,11 +1352,11 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.happenProp({
+						happen.HappenProp({
 							class:'YgEs_Agent_Error',
 							cause:'throw from a callback',
-							src:getInfo('wait for repair'),
-							err:YgEs.fromError(e),
+							src:GetInfo('wait for repair'),
+							err:YgEs.FromError(e),
 						});
 					}
 				}
@@ -1372,39 +1364,41 @@ function _standby(prm){
 				if(wait.length>0)return;
 
 				// wait for all happens resolved 
-				happen.cleanup();
-				if(happen.isCleaned())return 'UP';
+				happen.CleanUp();
+				if(happen.IsCleaned())return 'UP';
 			},
 		},
 		'DOWN':{
-			cb_start:(ctrl,user)=>{
+			OnStart:(ctrl,user)=>{
+				let back=false;
 				try{
 					wait=[]
 
 					// down dependencles too 
-					if(prm.dependencies){
-						Util.safeDictIter(prm.dependencies,(k,h)=>{
-							h.close();
+					if(prm.Dependencies){
+						Util.SafeDictIter(prm.Dependencies,(k,h)=>{
+							h.Close();
 						});
 					}
 
-					if(ctrl.getPrevState()=='UP'){
-						if(prm.cb_back)prm.cb_back(agent);
+					if(ctrl.GetPrevState()=='UP'){
+						back=true;
+						if(prm.OnBack)prm.OnBack(agent);
 					}
 					else{
-						if(prm.cb_close)prm.cb_close(agent);
+						if(prm.OnClose)prm.OnClose(agent);
 					}
 				}
 				catch(e){
-					happen.happenProp({
+					happen.HappenProp({
 						class:'YgEs_Agent_Error',
 						cause:'throw from a callback',
-						src:getInfo('cb_close'),
-						err:YgEs.fromError(e),
+						src:GetInfo(back?'OnBack':'OnClose'),
+						err:YgEs.FromError(e),
 					});
 				}
 			},
-			poll_keep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,user)=>{
 
 				// wait for delendencies 
 				let cont=[]
@@ -1414,44 +1408,44 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.happenProp({
+						happen.HappenProp({
 							class:'YgEs_Agent_Error',
 							cause:'throw from a callback',
-							src:getInfo('wait for down'),
-							err:YgEs.fromError(e),
+							src:GetInfo('wait for down'),
+							err:YgEs.FromError(e),
 						});
 					}
 				}
 				wait=cont;
 				if(wait.length>0)return null;
-				happen.cleanup();
-				return happen.isCleaned()?'IDLE':'BROKEN';
+				happen.CleanUp();
+				return happen.IsCleaned()?'IDLE':'BROKEN';
 			},
 		},
 		'UP':{
-			cb_start:(ctrl,user)=>{
+			OnStart:(ctrl,user)=>{
 				try{
 					wait=[]
-					if(prm.cb_open)prm.cb_open(agent);
+					if(prm.OnOpen)prm.OnOpen(agent);
 
 					// up dependencles too 
-					if(prm.dependencies){
-						Util.safeDictIter(prm.dependencies,(k,h)=>{
-							h.open();
-							wait.push(()=>h.isReady());
+					if(prm.Dependencies){
+						Util.SafeDictIter(prm.Dependencies,(k,h)=>{
+							h.Open();
+							wait.push(()=>h.IsReady());
 						});
 					}
 				}
 				catch(e){
-					happen.happenProp({
+					happen.HappenProp({
 						class:'YgEs_Agent_Error',
 						cause:'throw from a callback',
-						src:getInfo('cb_open'),
-						err:YgEs.fromError(e),
+						src:GetInfo('OnOpen'),
+						err:YgEs.FromError(e),
 					});
 				}
 			},
-			poll_keep:(user)=>{
+			OnPollInKeep:(user)=>{
 				if(opencount<1 || restart)return 'DOWN';
 
 				// wait for delendencies 
@@ -1462,94 +1456,94 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.happenProp({
+						happen.HappenProp({
 							class:'YgEs_Agent_Error',
 							cause:'throw from a callback',
-							src:getInfo('wait for up'),
-							err:YgEs.fromError(e),
+							src:GetInfo('wait for up'),
+							err:YgEs.FromError(e),
 						});
 					}
 				}
 				wait=cont;
-				if(!happen.isCleaned())return 'DOWN';
+				if(!happen.IsCleaned())return 'DOWN';
 				if(wait.length<1)return 'HEALTHY';
 			},
-			cb_end:(ctrl,user)=>{
-				if(ctrl.getNextState()=='HEALTHY'){
+			OnEnd:(ctrl,user)=>{
+				if(ctrl.GetNextState()=='HEALTHY'){
 					try{
 						// mark ready before callback 
 						ready=true;
-						if(prm.cb_ready)prm.cb_ready(agent);
+						if(prm.OnReady)prm.OnReady(agent);
 					}
 					catch(e){
-						happen.happenProp({
+						happen.HappenProp({
 							class:'YgEs_Agent_Error',
 							cause:'throw from a callback',
-							src:getInfo('cb_ready'),
-							err:YgEs.fromError(e),
+							src:GetInfo('OnReady'),
+							err:YgEs.FromError(e),
 						});
 					}
 				}
 			},
 		},
 		'HEALTHY':{
-			poll_keep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,user)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
 				}
-				if(!happen.isCleaned())return 'TROUBLE';
+				if(!happen.IsCleaned())return 'TROUBLE';
 
 				try{
-					if(prm.poll_healthy)prm.poll_healthy(agent);
+					if(prm.OnPollInHealthy)prm.OnPollInHealthy(agent);
 				}
 				catch(e){
-					happen.happenProp({
+					happen.HappenProp({
 						class:'YgEs_Agent_Error',
 						cause:'throw from a callback',
-						src:getInfo('poll_healthy'),
-						err:YgEs.fromError(e),
+						src:GetInfo('OnPollInHealthy'),
+						err:YgEs.FromError(e),
 					});
 					return 'TROUBLE';
 				}
 			},
 		},
 		'TROUBLE':{
-			poll_keep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,user)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
 				}
-				happen.cleanup();
-				if(happen.isCleaned())return 'HEALTHY';
+				happen.CleanUp();
+				if(happen.IsCleaned())return 'HEALTHY';
 
 				try{
-					if(prm.poll_trouble)prm.poll_trouble(agent);
+					if(prm.OnPollInTrouble)prm.OnPollInTrouble(agent);
 				}
 				catch(e){
-					happen.happenProp({
+					happen.HappenProp({
 						class:'YgEs_Agent_Error',
 						cause:'throw from a callback',
-						src:getInfo('poll_trouble'),
-						err:YgEs.fromError(e),
+						src:GetInfo('OnPollInTrouble'),
+						err:YgEs.FromError(e),
 					});
 				}
-				if(!happen.isCleaned())return 'HALT';
+				if(!happen.IsCleaned())return 'HALT';
 			},
 		},
 		'HALT':{
-			cb_start:(ctrl,user)=>{
+			OnStart:(ctrl,user)=>{
 				halt=true;
 			},
-			poll_keep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,user)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
 				}
-				happen.cleanup();
-				if(happen.isCleaned())return 'HEALTHY';
+				happen.CleanUp();
+				if(happen.IsCleaned())return 'HEALTHY';
 			},
-			cb_end:(ctrl,user)=>{
+			OnEnd:(ctrl,user)=>{
 				halt=false;
 			},
 		},
@@ -1559,43 +1553,43 @@ function _standby(prm){
 		name:name,
 		User:user,
 
-		isOpen:()=>opencount>0,
-		isBusy:()=>!!ctrl || opencount>0,
-		isReady:()=>ready && opencount>0,
-		isHalt:()=>halt,
-		getState:()=>ctrl?ctrl.getCurState():'NONE',
+		IsOpen:()=>opencount>0,
+		IsBusy:()=>!!ctrl || opencount>0,
+		IsReady:()=>ready && opencount>0,
+		IsHalt:()=>halt,
+		GetState:()=>ctrl?ctrl.GetCurState():'NONE',
 
-		getLauncher:()=>{return launcher;},
-		getHappeningManager:()=>{return happen;},
-		getDependencies:()=>{return prm.dependencies;},
+		GetLauncher:()=>{return launcher;},
+		GetHappeningManager:()=>{return happen;},
+		GetDependencies:()=>{return prm.Dependencies;},
 
-		waitFor:(cb)=>{wait.push(cb)},
-		restart:()=>{restart=true;},
+		WaitFor:(cb)=>{wait.push(cb)},
+		Restart:()=>{restart=true;},
 
-		fetch:()=>{
+		Fetch:()=>{
 			return handle(agent);
 		},
-		open:()=>{
-			let h=agent.fetch();
-			h.open();
+		Open:()=>{
+			let h=agent.Fetch();
+			h.Open();
 			return h;
 		},
 	}
 
 	let ctrlopt={
-		name:name+'_Control',
-		happen:happen,
-		launcher:launcher,
+		Name:name+'_Control',
+		HappenTo:happen,
+		Launcher:launcher,
 		User:user,
-		cb_done:(user)=>{
+		OnDone:(user)=>{
 			ctrl=null;
 			aborted=false;
-			if(prm.cb_finish)prm.cb_finish(agent,happen.isCleaned());
+			if(prm.OnFinish)prm.OnFinish(agent,happen.IsCleaned());
 		},
-		cb_abort:(user)=>{
+		OnAbort:(user)=>{
 			ctrl=null;
 			aborted=true;
-			if(prm.cb_abort)prm.cb_abort(agent);
+			if(prm.OnAbort)prm.OnAbort(agent);
 		},
 	}
 
@@ -1604,28 +1598,28 @@ function _standby(prm){
 		let h={
 			name:name+'_Handle',
 
-			getAgent:()=>{return agent;},
-			getLauncher:()=>agent.getLauncher(),
-			getHappeningManager:()=>agent.getHappeningManager(),
-			getDependencies:()=>agent.getDependencies(),
+			GetAgent:()=>{return agent;},
+			GetLauncher:()=>agent.GetLauncher(),
+			GetHappeningManager:()=>agent.GetHappeningManager(),
+			GetDependencies:()=>agent.GetDependencies(),
 
-			isOpenHandle:()=>in_open,
-			isOpenAgent:()=>agent.isOpen(),
-			isBusy:()=>agent.isBusy(),
-			isReady:()=>agent.isReady(),
-			isHalt:()=>agent.isHalt(),
-			getState:()=>agent.getState(),
+			IsOpenHandle:()=>in_open,
+			IsOpenAgent:()=>agent.IsOpen(),
+			IsBusy:()=>agent.IsBusy(),
+			IsReady:()=>agent.IsReady(),
+			IsHalt:()=>agent.IsHalt(),
+			GetState:()=>agent.GetState(),
 
-			restart:()=>agent.restart(),
+			Restart:()=>agent.Restart(),
 
-			open:()=>{
+			Open:()=>{
 				if(!in_open){
 					in_open=true;
 					++opencount;
 				}
-				if(!ctrl)ctrl=StateMachine.run('IDLE',states,ctrlopt);
+				if(!ctrl)ctrl=StateMachine.Run('IDLE',states,ctrlopt);
 			},
-			close:()=>{
+			Close:()=>{
 				if(!in_open)return;
 				in_open=false;
 				--opencount;
@@ -1638,674 +1632,12 @@ function _standby(prm){
 }
 
 YgEs.AgentManager={
-	name:'YgEs_AgentManager',
+	name:'YgEs.AgentManager',
 	User:{},
 
-	standby:_standby,
-	launch:(prm)=>{return _standby(prm).fetch();},
-	run:(prm)=>{return _standby(prm).open();},
-}
-
-})();
-
-// Quick HyperText for web -------------- //
-(()=>{ // local namespace 
-
-YgEs.toQHT=(el)=>{
-
-	let qht={
-		name:'YgEs_QuickHyperText',
-		User:{},
-		Element:el,
-
-		remove:()=>{
-			qht.Element.remove();
-			qht.Element=null;
-		},
-		clear:()=>{
-			if(!qht.Element)return;
-			qht.Element.innerHTML='';
-		},
-		append:(src)=>{
-			if(!qht.Element)return;
-			if(src==null)return;
-			if(typeof src==='object')qht.Element.append(src);
-			else qht.Element.innerHTML+=src;
-		},
-		replace:(src)=>{
-			if(!qht.Element)return;
-			qht.Element.innerHTML='';
-			qht.append(src);
-		},
-	}
-	return qht;
-}
-
-YgEs.newQHT=(prm)=>{
-
-	if(!prm.tag)return null;
-
-	let el=document.createElement(prm.tag);
-
-	if(prm.attr){
-		for(let k in prm.attr){
-			el.setAttribute(k,prm.attr[k]);
-		}
-	}
-	if(prm.style){
-		for(let k in prm.style){
-			el.style[k]=prm.style[k];
-		}
-	}
-	if(prm.sub){
-		for(let t of prm.sub){
-			if(t===null){}
-			else if(typeof t==='object')el.append(t);
-			else el.innerHTML+=t;
-		}
-	}
-	if(prm.target)prm.target.append(el);
-
-	return YgEs.toQHT(el);
-}
-
-})();
-
-// Low Level HTTP for web --------------- //
-(()=>{ // local namespace 
-
-YgEs.HTTPClient={
-	name:'YgEs_HTTP',
-	User:{},
-}
-
-function _retry(ctx,hap){
-	hap.resolve();
-	return ctx.retry();
-}
-
-YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
-
-	var req=new XMLHttpRequest();
-	var ctx={
-		name:'YgEs_HTTP_Request',
-		User:{},
-		url:url,
-		opt:opt,
-		accepted:false,
-		end:false,
-		ok:false,
-		send_progress:0.0,
-		recv_progress:0.0,
-		progress:0.0,
-		req:req,
-		abort:()=>{
-			req.abort();
-		},
-		retry:()=>{
-			return YgEs.HTTPClient.request(method,url,opt,cbres,cbok,cbng);
-		},
-	}
-	var res={
-		status:0,
-		msg:'',
-		timeout:false,
-		data:null,
-	}
-
-	var happen=opt.happen??YgEs.HappeningManager;
-
-	var sendratio=opt.sendratio??0.0;
-	if(sendratio<0.0)sendratio=0.0;
-	else if(sendratio>1.0)sendratio=1.0;
-
-	req.addEventListener('loadstart',(ev)=>{
-		ctx.accepted=true;
-		ctx.send_progress=1.0;
-		ctx.progress=sendratio;
-	});
-	req.addEventListener('progress',(ev)=>{
-		if(!ev.lengthComputable)return;
-		if(ev.total<1)return;
-		ctx.recv_progress=ev.loaded/ev.total;
-		ctx.progress=sendratio+((1.0-sendratio)*ctx.recv_progress);
-	});
-	req.addEventListener('load',(ev)=>{
-		if(ctx.end)return;
-		ctx.end=true;
-		ctx.recv_progress=1.0;
-		res.status=req.status;
-		res.msg=req.statusText;
-		res.body=req.response;
-		res.head={}
-		if(opt.refhead){
-			for(var k of opt.refhead){
-				res.head[k]=req.getResponseHeader(k);
-			}
-		}
-
-		if(opt.cbgate){
-			try{
-				var r=opt.cbgate(res);
-				if(r)cbres=r;
-			}
-			catch(e){
-				var hap=happen.happenError(e,{
-					name:'YgEs_HTTP_Error',
-					user:{retry:()=>_retry(ctx,hap)},
-				});
-				if(cbng)cbng(hap);
-				return;
-			}
-		}
-		else if(res.status>299){
-			var hap=happen.happenProp(res,{
-				name:'YgEs_HTTP_Bad',
-				user:{retry:()=>_retry(ctx,hap)},
-			});
-			if(cbng)cbng(hap);
-			return;
-		}
-
-		if(cbres){
-			var r=null;
-			var e=null;
-			try{
-				r=cbres(res);
-			}
-			catch(exc){
-				e=exc;
-				r=null;
-			}
-
-			if(e){
-				var hap=happen.happenError(e,{
-					name:'YgEs_HTTP_Error',
-					user:{retry:()=>_retry(ctx,hap)},
-				});
-				if(cbng)cbng(hap);
-			}
-			else if(r===null){
-				var hap=happen.happenProp({
-					name:'YgEs_HTTP_Invalid',
-					msg:'invalid response:',
-					res:req.response,
-					user:{retry:()=>_retry(ctx,hap)},
-				});
-				if(cbng)cbng(hap);
-			}
-			else{
-				ctx.ok=true;
-				if(cbok)cbok(r);
-			}
-		}
-		else{
-			ctx.ok=true;
-			if(cbok)cbok(res.body);
-		}
-	});
-	req.addEventListener('error',(ev)=>{
-		if(ctx.end)return;
-		ctx.end=true;
-		res.msg='HTTP request error';
-
-		if(cbng)cbng(happen.happenMsg(res.msg,{
-			name:'YgEs_HTTP_Error',
-			user:{retry:()=>_retry(ctx,hap)},
-		}));
-		else log_fatal(res.msg);
-	});
-	req.addEventListener('timeout',(ev)=>{
-		if(ctx.end)return;
-		ctx.end=true;
-		res.timeout=true;
-		res.msg='HTTP timeout';
-
-		if(cbng)cbng(happen.happenMsg(res.msg,{
-			name:'YgEs_HTTP_Error',
-			user:{retry:()=>_retry(ctx,hap)},
-		}));
-		else log_fatal(res.msg);
-	});
-	req.addEventListener('abort',(ev)=>{
-		if(ctx.end)return;
-		ctx.end=true;
-		res.msg='aborted';
-
-		if(cbng)cbng(happen.happenMsg(res.msg,{
-			name:'YgEs_HTTP_Error',
-			user:{retry:()=>_retry(ctx,hap)},
-		}));
-		else log_notice(res.msg);
-	});
-
-	if(opt.restype)req.responseType=opt.restype;
-	if(opt.timeout)req.timeout=opt.timeout;
-	if(opt.header){
-		for(var k in opt.header){
-			req.setRequestHeader(k,opt.header[k]);
-		}
-	}
-
-	if(opt.body){
-		req.upload.addEventListener('progress',(ev)=>{
-			if(ctx.end)return;
-			if(ev.total<1)return;
-			ctx.send_progress=ev.loaded/ev.total;
-			ctx.progress=sendratio*ctx.send_progress;
-		});
-	}
-
-	req.open(method,url);
-	if(opt.body){
-		if(opt.type)req.setRequestHeader('Content-Type',opt.type);
-		req.send(opt.body);
-	}
-	else req.send();
-
-	return ctx;
-}
-
-YgEs.HTTPClient.getText=(url,cbok=null,cbng=null,opt={})=>{
-
-	return YgEs.HTTPClient.request('GET',url,opt,
-	(res)=>{
-		if(res.status!=200)return null;
-		return res.body;
-	},cbok,cbng);
-}
-
-YgEs.HTTPClient.getBlob=(url,cbok=null,cbng=null,opt={})=>{
-
-	return YgEs.HTTPClient.request('GET',url,Object.assign({
-		restype:'blob',
-	},opt),
-	(res)=>{
-		if(res.status!=200)return null;
-		return res.body;
-	},cbok,cbng);
-}
-
-YgEs.HTTPClient.getBuf=(url,cbok=null,cbng=null,opt={})=>{
-
-	return YgEs.HTTPClient.request('GET',url,Object.assign({
-		restype:'arraybuffer',
-	},opt),
-	(res)=>{
-		if(res.status!=200)return null;
-		return res.body;
-	},cbok,cbng);
-}
-
-YgEs.HTTPClient.getJSON=(url,cbok=null,cbng=null,opt={})=>{
-
-	return YgEs.HTTPClient.request('GET',url,opt,
-	(res)=>{
-		if(res.status!=200)return null;
-		return JSON.parse(res.body);
-	},cbok,cbng);
-}
-
-YgEs.HTTPClient.getXML=(url,cbok=null,cbng=null,opt={})=>{
-
-	return YgEs.HTTPClient.request('GET',url,opt,
-	(res)=>{
-		if(res.status!=200)return null;
-		var psr=new DOMParser();
-		return psr.parseFromString(res.body,"text/xml");
-	},cbok,cbng);
-}
-
-YgEs.HTTPClient.postText=(url,text,cbok=null,cbng=null,opt={})=>{
-
-	return YgEs.HTTPClient.request('POST',url,Object.assign({
-		headers:{'Content-Type':'text/plain'},
-		body:text,
-		sendratio:0.99,
-	},opt),
-	(res)=>{
-		return res.body;
-	},cbok,cbng);
-}
-
-YgEs.HTTPClient.postJSON=(url,data,cbok=null,cbng=null,opt={})=>{
-
-	return YgEs.HTTPClient.request('POST',url,Object.assign({
-		headers:{'Content-Type':'application/json'},
-		body:JSON.stringify(data),
-		sendratio:0.99,
-	},opt),
-	(res)=>{
-		return res.body;
-	},cbok,cbng);
-}
-
-YgEs.HTTPClient.postFile=(url,bin,file,cbok=null,cbng=null,opt={})=>{
-
-	readfile(bin,file,(name,data)=>{
-		return YgEs.HTTPClient.request('POST',url,Object.assign({
-			type:file.type?file.type:'application/octet-stream',
-			body:data,
-			sendratio:0.99,
-		},opt),
-		(res)=>{
-			return res.body;
-		},cbok,cbng);
-	},cbng);
-}
-
-YgEs.HTTPClient.delete=(url,cbok=null,cbng=null,opt={})=>{
-
-	return YgEs.HTTPClient.request('DELETE',url,opt,
-	(res)=>{
-		return res.body;
-	},cbok,cbng);
-}
-
-})();
-
-// Download Manager --------------------- //
-(()=>{ // local namespace 
-
-function _create(launcher,monitor=null){
-
-	let plugs={}
-	let ctxs={}
-
-	let ctrl={
-		Ready:{},
-
-		plug:(type,p)=>{
-			p.Launcher=launcher;
-			plugs[type]=p;
-		},
-		unload:(label)=>{
-			if(!ctxs[label])return;
-			var ctx=ctxs[label];
-			if(ctx.state.sig_unload)return;
-			ctx.state.sig_unload=true;
-			ctx.state.ready=false;
-			if(ctx.view)ctx.view.unload();
-		},
-		load:(label,type,url,depends=[],cb_ok=null,cb_ng=null)=>{
-			if(ctxs[label])ctxs[label].abort();
-
-			let ctx={
-				name:'YgEs_Downloader_Context',
-				User:{},
-				label:label,
-				type:type,
-				state:{
-					happening:null,
-					loaded:false,
-					ready:false,
-					unloaded:false,
-					sig_unload:false,
-				},
-				loader:null,
-				source:null,
-				view:null,
-				abort:()=>{
-					if(!ctx,proc)return;
-					ctx,proc.abort();
-					ctx,proc=null;
-				},
-			}
-			ctxs[label]=ctx;
-
-			let states={
-				'Setup':{
-					poll_keep:(smc,user)=>{
-						ctx.loader=plugs[type].cb_start(url,(src)=>{
-							ctx.source=src;
-							if(ctx.view)ctx.view.apply();
-							user.loaded=true;
-						},(hap)=>{
-							happening=hap;
-							let p=hap.getProp();
-							let msg=p.status?
-								('['+p.status+'] '+p.msg):
-								hap.toString();
-							if(ctx.view)ctx.view.happen(msg,()=>{
-								ctx.loader=hap.User.retry();
-							});
-						});
-						return 'Download';
-					},
-				},
-				'Download':{
-					poll_keep:(smc,user)=>{
-						if(user.happening)return 'Failure';
-						if(ctx.view)ctx.view.progress(ctx.loader.progress);
-						if(!user.loaded)return;
-						return 'WaitDeps';
-					},
-				},
-				'WaitDeps':{
-					poll_keep:(smc,user)=>{
-						for(let dep of depends){
-							if(ctrl.Ready[dep]===undefined)return;
-						}
-						return 'Apply';
-					},
-				},
-				'Apply':{
-					cb_ready:(smc,user)=>{
-						plugs[type].cb_init(ctx.source,(res)=>{
-							ctrl.Ready[label]=res;
-							user.ready=true;
-							if(ctx.view)ctx.view.done();
-						},(hap)=>{
-							let msg=hap.toString();
-							if(ctx.view)ctx.view.happen(msg,()=>{
-								ctx.loader=hap.User.retry();
-							});
-						});
-					},
-					poll_keep:(smc,user)=>{
-						if(user.happening)return 'Failure';
-						if(user.ready)return 'Ready';
-					},
-				},
-				'Failure':{
-					poll_keep:(smc,user)=>{
-						if(user.happening.isResolved()){
-							user.happening=null;
-							return 'Download';
-						}
-					},
-				},
-				'Ready':{
-					poll_keep:(smc,user)=>{
-						if(!user.ready)return 'Unload';
-					},
-				},
-				'Unload':{
-					cb_ready:(smc,user)=>{
-						plugs[ctx.type].cb_unload(ctrl.Ready[label],()=>{
-							user.unloaded=true;
-						},(hap)=>{
-							user.unloaded=true;
-						});
-					},
-					poll_keep:(smc,user)=>{
-						if(!user.unloaded)return;
-
-						if(ctx.view){
-							monitor.detach(ctx.view);
-							ctx.view=null;
-						}
-						delete ctxs[label];
-						delete ctrl.Ready[label];
-						return true;
-					},
-				},
-			}
-
-			ctx.proc=YgEs.StateMachine.run('Setup',states,{
-				name:'YgEs_Downloader_Proc',
-				launcher:launcher,
-				user:ctx.state,
-			});
-
-			if(monitor)ctx.view=monitor.attach(ctx);
-
-			return ctx;
-		},
-		isReady:()=>{
-			for(var label in ctxs){
-				if(!ctxs[label].state.ready)return false;
-			}
-			return true;
-		},
-	}
-	return ctrl;
-}
-
-function _plugCSS(store){
-
-	let plug={
-		cb_start:(url,cb_ok,cb_ng)=>{
-			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
-		},
-		cb_init:(src,cb_ok,cb_ng)=>{
-			cb_ok(YgEs.newQHT({target:store,tag:'style',sub:[src]}));
-		},
-		cb_unload:(img,cb_ok,cb_ng)=>{
-			img.remove();
-			cb_ok();
-		},
-	}
-	return plug;
-}
-
-function _plugJS(store){
-
-	let plug={
-		cb_start:(url,cb_ok,cb_ng)=>{
-			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
-		},
-		cb_init:(src,cb_ok,cb_ng)=>{
-			cb_ok(YgEs.newQHT({target:store,tag:'script',sub:[src]}));
-		},
-		cb_unload:(img,cb_ok,cb_ng)=>{
-			img.remove();
-			cb_ok();
-		},
-	}
-	return plug;
-}
-
-function _plugJSON(){
-
-	let plug={
-		cb_start:(url,cb_ok,cb_ng)=>{
-			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
-		},
-		cb_init:(src,cb_ok,cb_ng)=>{
-			try{
-				cb_ok(JSON.parse(src));
-			}
-			catch(e){
-				cb_ng(plug.Launcher.HappenTo.happenError(e));
-			}
-		},
-		cb_unload:(img,cb_ok,cb_ng)=>{
-			cb_ok();
-		},
-	}
-	return plug;
-}
-
-
-YgEs.DownloadManager={
-
-	create:_create,
-
-	plugCSS:_plugCSS,
-	plugJS:_plugJS,
-	plugJSON:_plugJSON,
-}
-
-})();
-
-// Download Monitor --------------------- //
-(()=>{ // local namespace 
-
-function _setup(target,show){
-
-	let visible=false;
-	let view=YgEs.newQHT({target:target,tag:'div',attr:{class:'yges_loadmon_view'}});
-	let tbl=YgEs.newQHT({tag:'table',attr:{class:'yges_loadmon_table',border:'border'}});
-	let head=YgEs.newQHT({target:tbl,tag:'tr',attr:{class:'yges_loadmon_thr'},sub:[
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_type'},sub:['Type']}).Element,
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_name'},sub:['Name']}).Element,
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_cond'},sub:['Cond']}).Element,
-	]});
-
-	let ctrl={
-		isVisible:()=>visible,
-		dispose:()=>{
-			view.remove();
-			view=null;
-			tbl=null;
-			head=null;
-			ctrl=null;
-		},
-		hide:()=>{
-			if(!visible)return;
-			visible=false;
-			view.clear();
-		},
-		show:()=>{
-			if(visible)return;
-			visible=true;
-			view.clear();
-			view.append(tbl.Element);
-		},
-		detach:(view)=>{
-			view.row.remove();
-		},
-		attach:(ctx)=>{
-			let v_row={
-			}
-
-			v_row.row=YgEs.newQHT({target:tbl,tag:'tr'});
-			YgEs.newQHT({target:v_row.row,tag:'td',sub:[ctx.type]});
-			YgEs.newQHT({target:v_row.row,tag:'td',sub:[ctx.label]});
-			v_row.cond=YgEs.newQHT({target:v_row.row,tag:'td'});
-			v_row.meter=YgEs.newQHT({target:v_row.cond,tag:'meter',attr:{min:0,max:100,value:0}});
-			v_row.msg=YgEs.newQHT({target:v_row.cond,tag:'span'});
-
-			v_row.progress=(val)=>{
-				v_row.meter.Element.setAttribute('value',val*100);
-			},
-			v_row.apply=()=>{
-				v_row.msg.replace('(applying)');
-			};
-			v_row.done=()=>{
-				v_row.msg.replace('[OK]');
-			};
-			v_row.happen=(msg,cb_retry)=>{
-				v_row.msg.replace(msg);
-				let btn=YgEs.newQHT({target:v_row.msg,tag:'button',sub:['Retry']});
-				btn.Element.onclick=()=>{
-					cb_retry();
-				}
-			};
-			v_row.unload=()=>{
-				v_row.msg.replace('(unloading)');
-			};
-
-			return v_row;
-		},
-	}
-	if(show)ctrl.show();
-	return ctrl;
-}
-
-YgEs.DownloadMonitor={
-	setup:_setup,
+	StandBy:_standby,
+	Launch:(prm)=>{return _standby(prm).Fetch();},
+	Run:(prm)=>{return _standby(prm).Open();},
 }
 
 })();

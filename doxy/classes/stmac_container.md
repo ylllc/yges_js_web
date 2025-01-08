@@ -13,7 +13,7 @@
 | YgEs.StateMachine | statemachine container |
 
 -----
-# Structures
+# Unions
 
 -----
 ## StateSwitching {#StMac_StateSwitching}
@@ -26,17 +26,20 @@
 | string | switch to next state |
 
 -----
+# Structures
+
+-----
 ## StateSettings {#StMac_StateSettings}
 
 | Name | Type | Means |
 |------|------|-------|
-| cb_start | func<@ref pg_class_stmac_control,@ref UserShared> | call at begin of current state up |
-| poll_up | func<@ref pg_class_stmac_control,@ref UserShared>:@ref StateSwitching | call by each polling in up phase |
-| cb_ready | func<@ref pg_class_stmac_control,@ref UserShared> | call at end of current state up |
-| poll_keep | func<@ref pg_class_stmac_control,@ref UserShared>:@ref StateSwitching | call by each polling in keep phase |
-| cb_stop | func<@ref pg_class_stmac_control,@ref UserShared> | call at begin of current state down |
-| poll_down | func<@ref pg_class_stmac_control,@ref UserShared>:@ref StateSwitching | call by each polling in down phase |
-| cb_end | func<@ref pg_class_stmac_control,@ref UserShared> | call at end of current state down |
+| OnStart | func<@ref pg_class_stmac_context,@ref StMac_UserShared> | call at begin of current state up |
+| OnPollInUp | func<@ref pg_class_stmac_context,@ref StMac_UserShared>:@ref StMac_StateSwitching | call by each polling in up phase |
+| OnReady | func<@ref pg_class_stmac_context,@ref StMac_UserShared> | call at end of current state up |
+| OnPollInKeep | func<@ref pg_class_stmac_context,@ref StMac_UserShared>:@ref StMac_StateSwitching | call by each polling in keep phase |
+| OnStop | func<@ref pg_class_stmac_context,@ref StMac_UserShared> | call at begin of current state down |
+| OnPollinDown | func<@ref pg_class_stmac_context,@ref StMac_UserShared>:@ref StMac_StateSwitching | call by each polling in down phase |
+| OnEnd | func<@ref pg_class_stmac_context,@ref StMac_UserShared> | call at end of current state down |
 
 ## UserShared {#StMac_UserShared}
 
@@ -46,12 +49,12 @@ user defined object kept in a control
 
 | Name | Type | Means |
 |------|------|-------|
-| name | string? | user class name |
-| happen | @ref pg_class_happening_manager? | user happening handler |
-| launcher | @ref pg_class_launcher? | procedure runs on it |
-| user | @ref UserShared | user definitions |
-| cb_done | func<@ref UserShared> | call at normal end of the states procedure |
-| cb_abort | func<@ref UserShared> | call at abend of the states procedure |
+| Name | string? | user class name |
+| HappenTo | @ref pg_class_happening_manager? | user happening handler |
+| Launcher | @ref pg_class_launcher? | procedure runs on it |
+| User | @ref StMac_UserShared | user definitions and kept in created context |
+| OnDone | func<@ref StMac_UserShared> | call at normal end of the states procedure |
+| OnAbort | func<@ref StMac_UserShared> | call at abend of the states procedure |
 
 -----
 # Methods
@@ -61,16 +64,16 @@ user defined object kept in a control
 
 ### Spec
 
-Run(start,states,opt):StateMachineContext
+Run(start,states,opt):@ref pg_class_stmac_context
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | start | string | select startpoint of states |
-| states | dict<string,@ref StateSettings> | states settings by each state name |
-| opt | @ref StatesOption | optional settings |
+| states | dict<string,@ref StMac_StateSettings> | states settings by each state name |
+| opt | @ref StMac_StatesOption | optional settings |
 
 ### Returns
 
-statemachine control
+statemachine context

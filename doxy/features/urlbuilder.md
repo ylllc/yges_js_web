@@ -36,74 +36,74 @@ and can use YgEs.URLBuilder too.
 -----
 ## Parsing
 
-call url.parse() and store normally.  
+call url.Parse() and store normally.  
 ```
 var url='https://us%65r:pw%64@www.example.com:8080/%7Ea/b%2Fc.html?q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf#abc#xyz';
 
-var a=URLBuilder.parse(url);
-log.Info(a.scheme); // https 
-log.Info(a.slashes); // // 
-log.Info(a.user); // user 
-log.Info(a.pass); // pwd 
-log.Info(a.host); // www.example.com
-log.Info(a.port); // 8080 
-log.Info(a.path); // /%7Ea/b%2Fc.html 
-log.Info(a.query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf 
-log.Info(a.hash); // abc#xyz 
+var a=URLBuilder.Parse(url);
+log.Info(a.Scheme); // https 
+log.Info(a.Slashes); // // 
+log.Info(a.User); // user 
+log.Info(a.Pass); // pwd 
+log.Info(a.Host); // www.example.com
+log.Info(a.Port); // 8080 
+log.Info(a.Path); // /%7Ea/b%2Fc.html 
+log.Info(a.Query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf 
+log.Info(a.Fragmant); // abc#xyz 
 ```
 
 -----
 ## Extract & Bake Host
 
 ```
-log.Info(a.host); // www.example.com
-var b=a.extractHost();
+log.Info(a.Host); // www.example.com
+var b=a.ExtractHost();
 log.Info(JSON.stringify(b)); // ["www","example","com"]
 
 b[0]+=0;
 b.unshift('test');
-a.bakeHost(b);
-log.Info(a.host); // test.www0.example.com 
+a.BakeHost(b);
+log.Info(a.Host); // test.www0.example.com 
 ```
 
 -----
 ## Extract & Bake Path
 
 ```
-log.Info(a.path); // /%7Ea/b%2Fc.html 
-b=a.extractPath();
+log.Info(a.Path); // /%7Ea/b%2Fc.html 
+b=a.ExtractPath();
 log.Info(JSON.stringify(b)); // ["","~a","b/c.html"]
 
 b[b.length-1]='';
-a.bakePath(b);
-log.Info(a.path); // /~a/
+a.BakePath(b);
+log.Info(a.Path); // /~a/
 ```
 
 -----
 ## Extract & Bake Query as Args
 
 ```
-log.Info(a.query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf 
-b=a.extractArgs();
+log.Info(a.Query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf 
+b=a.ExtractArgs();
 log.Info(JSON.stringify(b)); // ["q=ijk","lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de+f"]
 
 b.push('xyz');
-a.bakeArgs(b);
-log.Info(a.query); // q%3Dijk+lmn%26a%3D1%26b%5Ba%5D%5Bb%5D%5B%5D%3D123%26b%5Ba%5D%5Bc%5D%3D789%26b%5Ba%5D%5Bb%5D%5B%5D%3Dde%2Bf+xyz 
+a.BakeArgs(b);
+log.Info(a.Query); // q%3Dijk+lmn%26a%3D1%26b%5Ba%5D%5Bb%5D%5B%5D%3D123%26b%5Ba%5D%5Bc%5D%3D789%26b%5Ba%5D%5Bb%5D%5B%5D%3Dde%2Bf+xyz 
 ```
 
 -----
 ## Extract & Bake Query as Prop
 
 ```
-log.Info(a.query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf 
-b=a.extractProp();
+log.Info(a.Query); // q=ijk+lmn&a=1&b[a][b][]=123&b[a][c]=789&b[a][b][]=de%2Bf 
+b=a.ExtractProp();
 log.Info(JSON.stringify(b)); // {"q":"ijk+lmn","a":"1","b":{"a":{"b":["123","de+f"],"c":"789"}}}
 
 b.b.a.d='xyz';
 b.b.a.b.push(-3.14);
-a.bakeProp(b);
-log.Info(a.query); // q=ijk%2Blmn&a=1&b[a][b][]=123&b[a][b][]=de%2Bf&b[a][b][]=-3.14&b[a][c]=789&b[a][d]=xyz
+a.BakeProp(b);
+log.Info(a.Query); // q=ijk%2Blmn&a=1&b[a][b][]=123&b[a][b][]=de%2Bf&b[a][b][]=-3.14&b[a][c]=789&b[a][d]=xyz
 ```
 
 -----

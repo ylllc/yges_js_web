@@ -16,7 +16,7 @@
 # Structures
 
 -----
-## PrepareOption {#DirControl_PrepareOption}
+## MkDirOption {#DirControl_MkDirOption}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -102,7 +102,7 @@ detect file stat.
 | Name | Type | Means |
 |------|------|-------|
 | path | string | checking path |
-| opt | StatOption | optional params |
+| opt | @ref DirControl_StatOption | optional params |
 
 ### Returns
 
@@ -124,7 +124,7 @@ MkDir(path,opt={}):Promise
 | Name | Type | Means |
 |------|------|-------|
 | path | string | target path |
-| opt | PrepareOption | optional params |
+| opt | @ref DirControl_MkDirOption | optional params |
 
 ### Returns
 
@@ -135,14 +135,13 @@ a Promise of procedure
 
 ### Spec
 
-Target(dir,prepare):DirTarget
+Target(dir):DirTarget
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | path | string | target path |
-| prepare | bool | auto creation when not exists in opening this |
 
 ### Returns
 

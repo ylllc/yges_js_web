@@ -35,23 +35,23 @@ and can use YgEs.Test too.
 var scenaria=[
 	// test 1 
 	{
-		title:'Teet Title 1',
-		proc:(tool)=>{
+		Title:'Teet Title 1',
+		Proc:(tool)=>{
 			// Test Scenario 1 
 		},
 	},
 	// test 2 
 	{
-		title:'Teet Title 2',
-		proc:(tool)=>{
+		Title:'Teet Title 2',
+		Proc:(tool)=>{
 			// Test Scenario 2 
 		},
 	},
 	// test 3 
 	{
-		title:'Teet Title 3',
-		filter:false,
-		proc:(tool)=>{
+		Title:'Teet Title 3',
+		Filter:false,
+		Proc:(tool)=>{
 			// Skipped by filter 
 		},
 	},
@@ -65,16 +65,16 @@ Test.Run(scenaria);
 -----
 ## Filtering
 
-a scenario that .filter is definded,  
-available when .filter is trued.  
-(undefinded .filter means true)  
+a scenario that .Filter is definded,  
+available when .Filter is trued.  
+(undefinded .Filter means true)  
 
 -----
 ## Pickup Mode
 
-scenaria[] has some scenario that .pickup is trued,  
-run only .pickup is trued.  
-(undefinded .pickup means false)  
+scenaria[] has some scenario that .PickUp is trued,  
+run only .PickUp is trued.  
+(undefinded .PickUp means false)  
 
 -----
 ## Assertion
@@ -83,15 +83,15 @@ YgEs.Test have compatible functions for assertion.
 
 | Name | Purpose |
 |------|---------|
-| chk(cond) | can use any conditions |
-| chk_loose(v1,v2) | v1 == v2 |
-| chk_strict(v1,v2) | v1 === v2 |
-| chk_less(v1,v2) | v1 < v2 |
-| chk_less_eq(v1,v2) | v1 <= v2 |
-| chk_great(v1,v2) | v1 > v2 |
-| chk_great_eq(v1,v2) | v1 >= v2 |
-| chk_approx(v1,v2,range) | abs(v1-v2) <= range |
-| never() | always failed |
+| Chk(cond) | can use any conditions |
+| ChkLoose(v1,v2) | v1 == v2 |
+| ChkStrict(v1,v2) | v1 === v2 |
+| ChkLess(v1,v2) | v1 < v2 |
+| ChkLessEq(v1,v2) | v1 <= v2 |
+| ChkGreat(v1,v2) | v1 > v2 |
+| ChkGreatEq(v1,v2) | v1 >= v2 |
+| ChkApprox(v1,v2,range) | |v1-v2| <= range |
+| Never() | always failed |
 
 -----
 ## Tools

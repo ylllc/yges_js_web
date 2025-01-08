@@ -8,7 +8,7 @@
 
 function _cpmsg(msg,v1,op,v2){
 	if(!msg)msg='Test Mismatch:';
-	return ''+msg+' ('+YgEs.inspect(v1)+' '+op+' '+YgEs.inspect(v2)+')';
+	return ''+msg+' ('+YgEs.Inspect(v1)+' '+op+' '+YgEs.Inspect(v2)+')';
 }
 
 function _assert(cond,msg){
@@ -26,12 +26,12 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 
 	const setMsg=(s)=>{
 		msg='';
-		if(view)view.setMsg(s);
+		if(view)view.SetMsg(s);
 	}
 	const updateResult=(r)=>{
 		if(r===result)return;
 		result=r;
-		if(view)view.updateResult(result);
+		if(view)view.UpdateResult(result);
 		reportParent(r);
 	}
 	const report=(f)=>{
@@ -44,78 +44,78 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 
 	let states={
 		'Download':{
-			cb_start:(ctrl,user)=>{
+			OnStart:(ctrl,user)=>{
 				setMsg('(download)');
-				YgEs.HTTPClient.getText(url,(src)=>{
+				YgEs.HTTPClient.GetText(url,(src)=>{
 					setMsg('(install)');
-					src='YgEs.Test.scenaria["'+url+'"]=(()=>{'+src+'return scenaria;})();';
-					YgEs.newQHT({target:target,tag:'script',sub:[src]});
-					if(!YgEs.Test.scenaria[url]){
-						user.hap=launcher.HappenTo.happenMsg('Syntex Error');
+					src='YgEs.Test.Scenaria["'+url+'"]=(()=>{'+src+'return scenaria;})();';
+					YgEs.NewQHT({Target:target,Tag:'script',Sub:[src]});
+					if(!YgEs.Test.Scenaria[url]){
+						user.Hap=launcher.HappenTo.HappenMsg('Syntex Error');
 					}
 					else{
-						for(let scn of YgEs.Test.scenaria[url]){
+						for(let scn of YgEs.Test.Scenaria[url]){
 							++runs;
 							let sct={
 								scn:scn,
 								view:null,
-								setView:(v)=>{
+								SetView:(v)=>{
 									sct.view=v;
-									if(v)v.updateResult(result);
+									if(v)v.UpdateResult(result);
 								},
 							}
-							user.scenaria.push(sct);
+							user.Scenaria.push(sct);
 						}
-						user.done=true;
-						if(view)view.setScenaria(user.scenaria);
+						user.Done=true;
+						if(view)view.SetScenaria(user.Scenaria);
 					}
 				},(hap)=>{
-					user.hap=hap;
+					user.Hap=hap;
 				});
 			},
-			poll_keep:(ctrl,user)=>{
-				if(user.hap){
-					setMsg('(error) '+hap.toString());
+			OnPollInKeep:(ctrl,user)=>{
+				if(user.Hap){
+					setMsg('(error) '+user.Hap.ToString());
 					return false;
 				}
-				if(user.done)return 'Run';
+				if(user.Done)return 'Run';
 			},
 		},
 		'Run':{
-			cb_start:(ctrl,user)=>{
+			OnStart:(ctrl,user)=>{
 				setMsg('(standby)');
-				YgEs.Timing.toPromise(async ()=>{
+				YgEs.Timing.ToPromise(async ()=>{
 
 					let puf=false;
-					for(let i=0;i<user.scenaria.length;++i){
-						let sct=user.scenaria[i];
-						if(!sct.scn.pickup)continue;
+					for(let i=0;i<user.Scenaria.length;++i){
+						let sct=user.Scenaria[i];
+						if(!sct.scn.Pickup)continue;
 						puf=true;
 						break;
 					}
 
 					setMsg('(running)');
-					for(let i=0;i<user.scenaria.length;++i){
-						let sct=user.scenaria[i];
+					for(let i=0;i<user.Scenaria.length;++i){
+						let sct=user.Scenaria[i];
 						try{
-							if(sct.scn.filter===false || (puf && !sct.scn.pickup)){
+							if(sct.scn.Filter===false || (puf && !sct.scn.Pickup)){
 								--runs;
 								if(sct.view){
-									sct.view.skip();
+									sct.view.Skip();
 									if(result==null && runs<1)report(true);
 								}
 								continue;
 							}
 
-							await sct.scn.proc({
-								Launcher:launcher.createLauncher(),
-								Log:YgEs.Log.createLocal(sct.scn.title,YgEs.Log.LEVEL.DEBUG),
+							await sct.scn.Proc({
+								Launcher:launcher.CreateLauncher(),
+								Log:YgEs.Log.CreateLocal(sct.scn.Title,YgEs.Log.LEVEL.DEBUG),
 							});
-							if(sct.view)sct.view.updateResult(true);
+							if(sct.view)sct.view.UpdateResult(true);
 							report(true);
 						}
 						catch(e){
-							if(sct.view)sct.view.setError(e);
+							if(sct.view)sct.view.SetError(e);
 							report(false);
 						}
 					}
@@ -126,22 +126,22 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 	}
 
 	let user={
-		scenaria:[],
-		hap:null,
-		done:false,
+		Scenaria:[],
+		Hap:null,
+		Done:false,
 	}
-	let proc=YgEs.StateMachine.run('Download',states,{
-		name:'YgEs_UnitTest_Proc',
-		launcher:launcher,
-		user:user,
+	let proc=YgEs.StateMachine.Run('Download',states,{
+		Name:'YgEs.UnitTest_Proc',
+		Launcher:launcher,
+		User:user,
 	});
 
-	user.setView=(v)=>{
+	user.SetView=(v)=>{
 		view=v;
 		if(view){
-			view.updateResult(result);
-			view.setMsg(msg);
-			if(user.done)view.setScenaria(user.scenaria);
+			view.UpdateResult(result);
+			view.SetMsg(msg);
+			if(user.Done)view.SetScenaria(user.Scenaria);
 		}
 	}
 
@@ -152,13 +152,13 @@ function _setupTestDir(launcher,target,url,src,reportParent){
 
 	let result=null;
 	let runs=0;
-	let ctrl={dirs:{},files:{}}
+	let ctrl={Dirs:{},Files:{}}
 	let view=null;
 
 	const updateResult=(r)=>{
 		if(r===result)return;
 		result=r;
-		if(view)view.updateResult(result);
+		if(view)view.UpdateResult(result);
 		reportParent(r);
 	}
 
@@ -170,18 +170,18 @@ function _setupTestDir(launcher,target,url,src,reportParent){
 		else return;
 	}
 
-	for(let fn in src.files){
+	for(let fn in src.Files){
 		++runs;
-		ctrl.files[fn]=_setupTestFile(launcher,target,url+fn,src.files[fn],report);
+		ctrl.Files[fn]=_setupTestFile(launcher,target,url+fn,src.Files[fn],report);
 	}
-	for(let dn in src.dirs){
+	for(let dn in src.Dirs){
 		++runs;
-		ctrl.dirs[dn]=_setupTestDir(launcher,target,url+dn+'/',src.dirs[dn],report);
+		ctrl.Dirs[dn]=_setupTestDir(launcher,target,url+dn+'/',src.Dirs[dn],report);
 	}
 
-	ctrl.setView=(v)=>{
+	ctrl.SetView=(v)=>{
 		view=v;
-		if(view)view.updateResult(result);
+		if(view)view.UpdateResult(result);
 	}
 
 	return ctrl;
@@ -190,22 +190,22 @@ function _setupTestDir(launcher,target,url,src,reportParent){
 YgEs.Test={
 	name:'YgEs_UnitTest',
 	User:{},
-	scenaria:{},
+	Scenaria:{},
 
-	never:(msg=null)=>{_assert(false,msg)},
-	chk:(cond,msg=null)=>{_assert(cond,msg)},
-	chk_loose:(v1,v2,msg=null)=>{_assert(v1==v2,_cpmsg(msg,v1,'==',v2))},
-	chk_strict:(v1,v2,msg=null)=>{_assert(v1===v2,_cpmsg(msg,v1,'===',v2))},
-	chk_less:(v1,v2,msg=null)=>{_assert(v1<v2,_cpmsg(msg,v1,'<',v2))},
-	chk_less_eq:(v1,v2,msg=null)=>{_assert(v1<=v2,_cpmsg(msg,v1,'<=',v2))},
-	chk_great:(v1,v2,msg=null)=>{_assert(v1>v2,_cpmsg(msg,v1,'>',v2))},
-	chk_great_eq:(v1,v2,msg=null)=>{_assert(v1>=v2,_cpmsg(msg,v1,'>=',v2))},
+	Never:(msg=null)=>{_assert(false,msg)},
+	Chk:(cond,msg=null)=>{_assert(cond,msg)},
+	ChkLoose:(v1,v2,msg=null)=>{_assert(v1==v2,_cpmsg(msg,v1,'==',v2))},
+	ChkStrict:(v1,v2,msg=null)=>{_assert(v1===v2,_cpmsg(msg,v1,'===',v2))},
+	ChkLess:(v1,v2,msg=null)=>{_assert(v1<v2,_cpmsg(msg,v1,'<',v2))},
+	ChkLessEq:(v1,v2,msg=null)=>{_assert(v1<=v2,_cpmsg(msg,v1,'<=',v2))},
+	ChkGreat:(v1,v2,msg=null)=>{_assert(v1>v2,_cpmsg(msg,v1,'>',v2))},
+	ChkGreatEq:(v1,v2,msg=null)=>{_assert(v1>=v2,_cpmsg(msg,v1,'>=',v2))},
 
-	run:(scn)=>{
+	Run:(scn)=>{
 		// dummy 
 	},
 
-	setup:(launcher,target,url,src)=>{
+	SetUp:(launcher,target,url,src)=>{
 		return _setupTestDir(launcher,target,url,src,()=>{});
 	},
 

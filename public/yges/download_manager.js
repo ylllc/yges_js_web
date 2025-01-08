@@ -14,74 +14,74 @@ function _create(launcher,monitor=null){
 	let ctrl={
 		Ready:{},
 
-		plug:(type,p)=>{
+		Plug:(type,p)=>{
 			p.Launcher=launcher;
 			plugs[type]=p;
 		},
-		unload:(label)=>{
+		Unload:(label)=>{
 			if(!ctxs[label])return;
 			var ctx=ctxs[label];
-			if(ctx.state.sig_unload)return;
-			ctx.state.sig_unload=true;
-			ctx.state.ready=false;
-			if(ctx.view)ctx.view.unload();
+			if(ctx.State.SigUnload)return;
+			ctx.State.SigUnload=true;
+			ctx.State.Ready=false;
+			if(ctx.View)ctx.View.Unload();
 		},
-		load:(label,type,url,depends=[],cb_ok=null,cb_ng=null)=>{
-			if(ctxs[label])ctxs[label].abort();
+		Load:(label,type,url,depends=[],cb_ok=null,cb_ng=null)=>{
+			if(ctxs[label])ctxs[label].Abort();
 
 			let ctx={
-				name:'YgEs_Downloader_Context',
+				Name:'YgEs.Downloader_Context',
 				User:{},
-				label:label,
-				type:type,
-				state:{
-					happening:null,
-					loaded:false,
-					ready:false,
-					unloaded:false,
-					sig_unload:false,
+				Label:label,
+				Type:type,
+				State:{
+					Happening:null,
+					Loaded:false,
+					Ready:false,
+					Unloaded:false,
+					SigUnload:false,
 				},
-				loader:null,
-				source:null,
-				view:null,
-				abort:()=>{
-					if(!ctx,proc)return;
-					ctx,proc.abort();
-					ctx,proc=null;
+				Loader:null,
+				Source:null,
+				View:null,
+				Abort:()=>{
+					if(!ctx,Proc)return;
+					ctx,Proc.Abort();
+					ctx,Proc=null;
 				},
 			}
 			ctxs[label]=ctx;
 
 			let states={
 				'Setup':{
-					poll_keep:(smc,user)=>{
-						ctx.loader=plugs[type].cb_start(url,(src)=>{
-							ctx.source=src;
-							if(ctx.view)ctx.view.apply();
-							user.loaded=true;
+					OnPollInKeep:(smc,user)=>{
+						ctx.Loader=plugs[type].OnStart(url,(src)=>{
+							ctx.Source=src;
+							if(ctx.View)ctx.View.Apply();
+							user.Loaded=true;
 						},(hap)=>{
-							happening=hap;
-							let p=hap.getProp();
+							user.Happening=hap;
+							let p=hap.GetProp();
 							let msg=p.status?
 								('['+p.status+'] '+p.msg):
-								hap.toString();
-							if(ctx.view)ctx.view.happen(msg,()=>{
-								ctx.loader=hap.User.retry();
+								hap.ToString();
+							if(ctx.View)ctx.View.Happen(msg,()=>{
+								ctx.Loader=hap.User.Retry();
 							});
 						});
 						return 'Download';
 					},
 				},
 				'Download':{
-					poll_keep:(smc,user)=>{
-						if(user.happening)return 'Failure';
-						if(ctx.view)ctx.view.progress(ctx.loader.progress);
-						if(!user.loaded)return;
+					OnPollInKeep:(smc,user)=>{
+						if(user.Happening)return 'Failure';
+						if(ctx.View)ctx.View.Progress(ctx.Loader.Progress);
+						if(!user.Loaded)return;
 						return 'WaitDeps';
 					},
 				},
 				'WaitDeps':{
-					poll_keep:(smc,user)=>{
+					OnPollInKeep:(smc,user)=>{
 						for(let dep of depends){
 							if(ctrl.Ready[dep]===undefined)return;
 						}
@@ -89,50 +89,50 @@ function _create(launcher,monitor=null){
 					},
 				},
 				'Apply':{
-					cb_ready:(smc,user)=>{
-						plugs[type].cb_init(ctx.source,(res)=>{
+					OnReady:(smc,user)=>{
+						plugs[type].OnInit(ctx.Source,(res)=>{
 							ctrl.Ready[label]=res;
-							user.ready=true;
-							if(ctx.view)ctx.view.done();
+							user.Ready=true;
+							if(ctx.View)ctx.View.Done();
 						},(hap)=>{
-							let msg=hap.toString();
-							if(ctx.view)ctx.view.happen(msg,()=>{
-								ctx.loader=hap.User.retry();
+							let msg=hap.ToString();
+							if(ctx.View)ctx.View.Happen(msg,()=>{
+								ctx.Loader=hap.User.Retry();
 							});
 						});
 					},
-					poll_keep:(smc,user)=>{
-						if(user.happening)return 'Failure';
-						if(user.ready)return 'Ready';
+					OnPollInKeep:(smc,user)=>{
+						if(user.Happening)return 'Failure';
+						if(user.Ready)return 'Ready';
 					},
 				},
 				'Failure':{
-					poll_keep:(smc,user)=>{
-						if(user.happening.isResolved()){
-							user.happening=null;
+					OnPollInKeep:(smc,user)=>{
+						if(user.Happening.IsResolved()){
+							user.Happening=null;
 							return 'Download';
 						}
 					},
 				},
 				'Ready':{
-					poll_keep:(smc,user)=>{
-						if(!user.ready)return 'Unload';
+					OnPollInKeep:(smc,user)=>{
+						if(!user.Ready)return 'Unload';
 					},
 				},
 				'Unload':{
-					cb_ready:(smc,user)=>{
-						plugs[ctx.type].cb_unload(ctrl.Ready[label],()=>{
-							user.unloaded=true;
+					OnReady:(smc,user)=>{
+						plugs[ctx.Type].OnUnload(ctrl.Ready[label],()=>{
+							user.Unloaded=true;
 						},(hap)=>{
-							user.unloaded=true;
+							user.Unloaded=true;
 						});
 					},
-					poll_keep:(smc,user)=>{
-						if(!user.unloaded)return;
+					OnPollInKeep:(smc,user)=>{
+						if(!user.Unloaded)return;
 
-						if(ctx.view){
-							monitor.detach(ctx.view);
-							ctx.view=null;
+						if(ctx.View){
+							monitor.Detach(ctx.View);
+							ctx.View=null;
 						}
 						delete ctxs[label];
 						delete ctrl.Ready[label];
@@ -141,19 +141,19 @@ function _create(launcher,monitor=null){
 				},
 			}
 
-			ctx.proc=YgEs.StateMachine.run('Setup',states,{
-				name:'YgEs_Downloader_Proc',
-				launcher:launcher,
-				user:ctx.state,
+			ctx.Proc=YgEs.StateMachine.Run('Setup',states,{
+				Name:'YgEs_Downloader_Proc',
+				Launcher:launcher,
+				User:ctx.State,
 			});
 
-			if(monitor)ctx.view=monitor.attach(ctx);
+			if(monitor)ctx.View=monitor.Attach(ctx);
 
 			return ctx;
 		},
-		isReady:()=>{
+		IsReady:()=>{
 			for(var label in ctxs){
-				if(!ctxs[label].state.ready)return false;
+				if(!ctxs[label].State.Ready)return false;
 			}
 			return true;
 		},
@@ -164,14 +164,14 @@ function _create(launcher,monitor=null){
 function _plugCSS(store){
 
 	let plug={
-		cb_start:(url,cb_ok,cb_ng)=>{
-			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
+		OnStart:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.GetText(url,cb_ok,cb_ng);
 		},
-		cb_init:(src,cb_ok,cb_ng)=>{
-			cb_ok(YgEs.newQHT({target:store,tag:'style',sub:[src]}));
+		OnInit:(src,cb_ok,cb_ng)=>{
+			cb_ok(YgEs.NewQHT({Target:store,Tag:'style',Sub:[src]}));
 		},
-		cb_unload:(img,cb_ok,cb_ng)=>{
-			img.remove();
+		OnUnload:(img,cb_ok,cb_ng)=>{
+			img.Remove();
 			cb_ok();
 		},
 	}
@@ -181,14 +181,14 @@ function _plugCSS(store){
 function _plugJS(store){
 
 	let plug={
-		cb_start:(url,cb_ok,cb_ng)=>{
-			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
+		OnStart:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.GetText(url,cb_ok,cb_ng);
 		},
-		cb_init:(src,cb_ok,cb_ng)=>{
-			cb_ok(YgEs.newQHT({target:store,tag:'script',sub:[src]}));
+		OnInit:(src,cb_ok,cb_ng)=>{
+			cb_ok(YgEs.NewQHT({Target:store,Tag:'script',Sub:[src]}));
 		},
-		cb_unload:(img,cb_ok,cb_ng)=>{
-			img.remove();
+		OnUnload:(img,cb_ok,cb_ng)=>{
+			img.Remove();
 			cb_ok();
 		},
 	}
@@ -198,10 +198,10 @@ function _plugJS(store){
 function _plugJSON(){
 
 	let plug={
-		cb_start:(url,cb_ok,cb_ng)=>{
-			return YgEs.HTTPClient.getText(url,cb_ok,cb_ng);
+		OnStart:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.GetText(url,cb_ok,cb_ng);
 		},
-		cb_init:(src,cb_ok,cb_ng)=>{
+		OnInit:(src,cb_ok,cb_ng)=>{
 			try{
 				cb_ok(JSON.parse(src));
 			}
@@ -209,7 +209,7 @@ function _plugJSON(){
 				cb_ng(plug.Launcher.HappenTo.happenError(e));
 			}
 		},
-		cb_unload:(img,cb_ok,cb_ng)=>{
+		OnUnload:(img,cb_ok,cb_ng)=>{
 			cb_ok();
 		},
 	}
@@ -219,11 +219,11 @@ function _plugJSON(){
 
 YgEs.DownloadManager={
 
-	create:_create,
+	Create:_create,
 
-	plugCSS:_plugCSS,
-	plugJS:_plugJS,
-	plugJSON:_plugJSON,
+	PlugCSS:_plugCSS,
+	PlugJS:_plugJS,
+	PlugJSON:_plugJSON,
 }
 
 })();

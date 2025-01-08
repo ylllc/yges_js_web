@@ -16,12 +16,12 @@
 # Structures
 
 -----
-## AsyncControl {#Timing_AsyncControl}
+## AsyncControlKit {#Timing_AsyncControlKit}
 
 | Name | Type | Means |
 |------|------|-------|
-| cancel | func | cancel source procedure |
-| promise | func:Promise | convert to a Promise |
+| Cancel | func | cancel source procedure |
+| ToPromise | func:Promise | convert to a Promise |
 
 -----
 # Callbacks
@@ -163,7 +163,7 @@ call cb_done after about msec.
 
 ### Spec
 
-DelayKit(msec,cb_done=null,cb_abort=null):AsyncControl
+DelayKit(msec,cb_done=null,cb_abort=null):@ref Timing_AsyncControlKit
 
 ### Args
 
@@ -184,7 +184,7 @@ wait for cb_chk returns true.
 
 ### Spec
 
-SyncKit(msec,cb_chk,cb_done,cb_abort):AsyncControl
+SyncKit(msec,cb_chk,cb_done,cb_abort):@ref Timing_AsyncControlKit
 
 ### Args
 

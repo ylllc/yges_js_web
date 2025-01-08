@@ -38,7 +38,7 @@ GetState():string
 current state  
 
 -----
-## IsBusy {#Agent_GetState}
+## IsBusy {#Agent_IsBusy}
 
 ### Spec
 
@@ -98,7 +98,7 @@ IsHalt():bool
 
 ### Spec
 
-GetLauncher():Launcher
+GetLauncher():@ref pg_class_launcher
 
 ### Returns
 
@@ -109,7 +109,7 @@ procedures running on it
 
 ### Spec
 
-GetHappeningManager():HappeningManager
+GetHappeningManager():@ref pg_class_happening_manager
 
 ### Returns
 
@@ -120,7 +120,7 @@ happenings reported in it
 
 ### Spec
 
-GetDependencies():dict<string,AgentHandle>
+GetDependencies():dict<string,@ref pg_class_agent_handle>
 
 ### Returns
 
@@ -140,14 +140,14 @@ add required condition to complete its phase.
 
 | Name | Type | Means |
 |------|------|-------|
-| cb_wait | CBWait | condition checking |
+| cb_wait | @ref Agent_CB_Wait | condition checking |
 
 -----
 ## Restart {#Agent_Restart}
 
 ### Spec
 
-Restart()
+Restart():void
 
 do DOWN and UP in this Agent  
 
@@ -156,7 +156,7 @@ do DOWN and UP in this Agent
 
 ### Spec
 
-Fetch():AgentHandle
+Fetch():@ref pg_class_agent_handle
 
 ### Returns
 
@@ -167,7 +167,7 @@ create a new AgentHandle.
 
 ### Spec
 
-Open():AgentHandle
+Open():@ref pg_class_agent_handle
 
 ### Returns
 

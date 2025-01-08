@@ -23,19 +23,19 @@ use YgEs
 ## Refer an element
 
 ```
-let main=YgEs.toQHT(document.getElementById('main'));
+let main=YgEs.ToQHT(document.getElementById('main'));
 ```
 
 -----
 ## Create new element
 
 ```
-let hw=YgEs.newQHT({
-	target:main,
-	tag:'div',
-	attr:{class:'sub'},
-	style:{border:'ridge'},
-	sub:['Hello World!']
+let hw=YgEs.NewQHT({
+	Target:main,
+	Tag:'div',
+	Attr:{class:'sub'},
+	Style:{border:'ridge'},
+	Sub:['Hello World!']
 });
 
 ```

@@ -45,8 +45,25 @@
 -----
 | Name | Type | Means |
 |------|------|-------|
-| LEVEL | dict<string,int> | enum log levels |
-| LEVEL_NAMES | string[] | name table of each log levels |
+| @ref Log_LEVEL | dict<string,int> | enum log levels |
+| LEVEL_NAMES | string[] | name table of each log levels (NEVER not in) |
+
+-----
+## LEVEL {#Log_LEVEL}
+
+| Name | Type | Means |
+|------|------|-------| 
+| TICK | int | ultra verbosely, for check transition in pollings |
+| TRACE | int | more verbosely, for check steps in procedures |
+| DEBUG | int | verbosely, for check important value |
+| INFO | int | for notify normal info |
+| NOTICE | int | for notify attentional info |
+| WARN | int | for notify warning |
+| FATAL | int | for notify continuable error |
+| CRIT | int | for notify critical error |
+| ALERT | int | for notify alert |
+| EMERG | int | for notify emergency |
+| NEVER | int | for use Showable, always suppressed |
 
 -----
 # Properties
@@ -74,7 +91,7 @@ CB_LogFormat(src):void
 
 | Name | Type | Means |
 |------|------|-------|
-| src | @ref LogEntry | target log entry |
+| src | @ref Log_LogEntry | target log entry |
 
 ### Implements
 
@@ -91,7 +108,7 @@ CB_LogWay(src):void
 
 | Name | Type | Means |
 |------|------|-------|
-| src | @ref LogEntry | target log entry |
+| src | @ref Log_LogEntry | target log entry |
 
 ### Implements
 

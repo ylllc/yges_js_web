@@ -16,33 +16,38 @@
 # Types
 
 -----
-## QHTContent {#QHTContent}
+## QHTContent {#QHT_QHTContent}
 
 | Type | Means |
 |------|-------|
 | Element | HTML element |
+| @ref pg_class_qht | Element in QHT instance |
 | string | plain string |
 
 -----
-## QHTPrm {#QHTPrm}
+## QHTPrm {#QHT_QHTPrm}
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
-| target | @ref pg_class_qht | apeend to |
-| tag | string | HTML tag name |
-| attr | dict<string,string> | attributes |
-| style | dict<string,string> | styles |
-| sub | @ref QHTContent[] | inner contents |
+| Target | @ref pg_class_qht | apeend to |
+| Tag | string | HTML tag name |
+| Attr | dict<string,string> | attributes |
+| Style | dict<string,string> | styles |
+| Sub | @ref QHT_QHTContent[] | inner contents |
 
 -----
 # Methods
 
 -----
-## toQHT(elem):QHT
+## ToQHT {#QHT_ToQHT}
 
 create @ref pg_class_qht from an Element.  
+
+### Spec
+
+ToQHT(elem):@ref pg_class_qht
 
 ### Args
 
@@ -55,15 +60,19 @@ create @ref pg_class_qht from an Element.
 created @ref pg_class_qht instance.
 
 -----
-## newQHT(prm):QHT
+## NewQHT {#QHT_NewQHT}
 
 create new @ref pg_class_qht instance.
+
+### Spec
+
+NewQHT(prm):@ref pg_class_qht
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
-| prm | @ref QHTPrm | params |
+| prm | @ref QHT_QHTPrm | params |
 
 ### Returns
 

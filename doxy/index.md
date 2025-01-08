@@ -7,5 +7,6 @@ You can select source files under your wish from this solution and copy freely.
 
 # Contains
 
+- @subpage pg_type
 - @subpage pg_feat
 - @subpage pg_class

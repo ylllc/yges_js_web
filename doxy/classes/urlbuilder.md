@@ -2,7 +2,7 @@
 
 # What's It?
 
-@sa @ref pg_feat_urlbuild @n
+@sa @ref pg_feat_urlbuilder @n
 
 -----
 # Namespaces
@@ -15,7 +15,11 @@
 -----
 # Methods
 
-## parse(url):ParsedURL
+## Parse {#URLBuilder_Parse}
+
+### Spec
+
+Parse(url):@ref pg_class_parsedurl
 
 ### Args
 
@@ -28,7 +32,11 @@
 parse a URL and store it.  
 
 -----
-## extractHost(src):string[]
+## ExtractHost {#URLBuilder_ExtractHost}
+
+### Spec
+
+ExtractHost(src):string[]
 
 split by .
 
@@ -43,7 +51,11 @@ split by .
 extracted host name
 
 -----
-## bakeHost(src):string
+## BakeHost {#URLBuilder_BakeHost}
+
+### Spec
+
+BakeHost(src):string
 
 join with .
 
@@ -58,7 +70,11 @@ join with .
 baked host name
 
 -----
-## extractPath(src):string[]
+## ExtractPath {#URLBuilder_ExtractPath}
+
+### Spec
+
+ExtractPath(src):string[]
 
 split by / and URL decode
 
@@ -73,7 +89,11 @@ split by / and URL decode
 extracted path name
 
 -----
-## bakePath(src):string
+## BakePath {#URLBuilder_BakePath}
+
+### Spec
+
+BakePath(src):string
 
 URL encode and join with /
 
@@ -88,7 +108,11 @@ URL encode and join with /
 baked path name
 
 -----
-## extractArgs(src):string[]
+## ExtractArgs {#URLBuilder_ExtractArgs}
+
+### Spec
+
+ExtractArgs(src):string[]
 
 split by + and URL decode
 
@@ -103,7 +127,11 @@ split by + and URL decode
 extracted query
 
 -----
-## bakeArgs(src):string
+## BakeArgs {#URLBuilder_BakeArgs}
+
+### Spec
+
+BakeArgs(src):string
 
 URL encode and join with +
 
@@ -118,7 +146,11 @@ URL encode and join with +
 baked query
 
 -----
-## extractProp(src):dict<string,string>
+## ExtractProp {#URLBuilder_ExtractProp}
+
+### Spec
+
+ExtractProp(src):dict<string,string>
 
 extract to a KVS structure.  
 that supported PHP's substructure partially.  
@@ -136,7 +168,11 @@ but JavaScript not.
 extracted query
 
 -----
-## bakeProp(src):string
+## BakeProp {#URLBuilder_BakeProp}
+
+### Spec
+
+BakeProp(src):string
 
 bake from a KVS structure.  
 

@@ -55,6 +55,10 @@ CB_Iter(key,sub):bool?
 | false | break iter |
 | other | continue |
 
+### Imprements
+
+loop procedure from @ref PropTree_Each  
+
 -----
 # Methods
 

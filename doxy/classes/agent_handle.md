@@ -12,7 +12,7 @@ created by @ref pg_class_agent
 
 ### Spec
 
-GetAgent():Agent
+GetAgent():@ref pg_class_agent
 
 ### Returns
 
@@ -23,7 +23,7 @@ target Agent
 
 ### Spec
 
-GetLauncher():Launcher
+GetLauncher():@ref pg_class_launcher
 
 ### Returns
 
@@ -34,7 +34,7 @@ procedures running on target Agent
 
 ### Spec
 
-GetHappeningManager():HappeningManager
+GetHappeningManager():@ref pg_class_happening_manager
 
 ### Returns
 
@@ -45,7 +45,7 @@ happenings reported in target Agent
 
 ### Spec
 
-GetDependencies():dict<string,AgentHandle>
+GetDependencies():dict<string,@ref pg_class_agent_handle>
 
 ### Returns
 
@@ -121,7 +121,7 @@ IsHalt():bool
 
 ### Spec
 
-Restart()
+Restart():void
 
 do DOWN and UP in this Agent  
 
@@ -130,7 +130,7 @@ do DOWN and UP in this Agent
 
 ### Spec
 
-Fetch():AgentHandle
+Fetch():@ref pg_class_agent_handle
 
 ### Returns
 
@@ -141,7 +141,7 @@ create a new AgentHandle.
 
 ### Spec
 
-Open()
+Open():void
 
 open this handle.  
 
@@ -150,6 +150,6 @@ open this handle.
 
 ### Spec
 
-Close()
+Close():void
 
 close this handle.  

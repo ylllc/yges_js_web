@@ -3,7 +3,7 @@
 # What's It?
 
 HTTP route interface.  
-implement for @ref pg_class_http_server.setup()  
+implement for @ref pg_class_http_server  
 
 -----
 # Properties
@@ -17,7 +17,11 @@ implement for @ref pg_class_http_server.setup()
 # Methods
 
 -----
-## walk(walker)
+## Walk {#HTTPRoute_Walk}
+
+### Spec
+
+Walk(walker)
 
 implement routing of a HTTP request
 

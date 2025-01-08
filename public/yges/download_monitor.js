@@ -9,77 +9,77 @@
 function _setup(target,show){
 
 	let visible=false;
-	let view=YgEs.newQHT({target:target,tag:'div',attr:{class:'yges_loadmon_view'}});
-	let tbl=YgEs.newQHT({tag:'table',attr:{class:'yges_loadmon_table',border:'border'}});
-	let head=YgEs.newQHT({target:tbl,tag:'tr',attr:{class:'yges_loadmon_thr'},sub:[
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_type'},sub:['Type']}).Element,
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_name'},sub:['Name']}).Element,
-		YgEs.newQHT({tag:'th',attr:{class:'yges_loadmon_th_cond'},sub:['Cond']}).Element,
+	let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:{class:'yges_loadmon_view'}});
+	let tbl=YgEs.NewQHT({Tag:'table',Attr:{class:'yges_loadmon_table',border:'border'}});
+	let head=YgEs.NewQHT({Target:tbl,Tag:'tr',Attr:{class:'yges_loadmon_thr'},Sub:[
+		YgEs.NewQHT({Tag:'th',Attr:{class:'yges_loadmon_th_type'},Sub:['Type']}),
+		YgEs.NewQHT({Tag:'th',Attr:{class:'yges_loadmon_th_name'},Sub:['Name']}),
+		YgEs.NewQHT({Tag:'th',Attr:{class:'yges_loadmon_th_cond'},Sub:['Cond']}),
 	]});
 
 	let ctrl={
-		isVisible:()=>visible,
-		dispose:()=>{
-			view.remove();
+		IsVisible:()=>visible,
+		Dispose:()=>{
+			view.Remove();
 			view=null;
 			tbl=null;
 			head=null;
 			ctrl=null;
 		},
-		hide:()=>{
+		Hide:()=>{
 			if(!visible)return;
 			visible=false;
-			view.clear();
+			view.Clear();
 		},
-		show:()=>{
+		Show:()=>{
 			if(visible)return;
 			visible=true;
-			view.clear();
-			view.append(tbl.Element);
+			view.Clear();
+			view.Append(tbl);
 		},
-		detach:(view)=>{
-			view.row.remove();
+		Detach:(view)=>{
+			view.Row.Remove();
 		},
-		attach:(ctx)=>{
+		Attach:(ctx)=>{
 			let v_row={
 			}
 
-			v_row.row=YgEs.newQHT({target:tbl,tag:'tr'});
-			YgEs.newQHT({target:v_row.row,tag:'td',sub:[ctx.type]});
-			YgEs.newQHT({target:v_row.row,tag:'td',sub:[ctx.label]});
-			v_row.cond=YgEs.newQHT({target:v_row.row,tag:'td'});
-			v_row.meter=YgEs.newQHT({target:v_row.cond,tag:'meter',attr:{min:0,max:100,value:0}});
-			v_row.msg=YgEs.newQHT({target:v_row.cond,tag:'span'});
+			v_row.Row=YgEs.NewQHT({Target:tbl,Tag:'tr'});
+			YgEs.NewQHT({Target:v_row.Row,Tag:'td',Sub:[ctx.Type]});
+			YgEs.NewQHT({Target:v_row.Row,Tag:'td',Sub:[ctx.Label]});
+			v_row.Cond=YgEs.NewQHT({Target:v_row.Row,Tag:'td'});
+			v_row.Meter=YgEs.NewQHT({Target:v_row.Cond,Tag:'meter',Attr:{min:0,max:100,value:0}});
+			v_row.Msg=YgEs.NewQHT({Target:v_row.Cond,Tag:'span'});
 
-			v_row.progress=(val)=>{
-				v_row.meter.Element.setAttribute('value',val*100);
+			v_row.Progress=(val)=>{
+				v_row.Meter.Element.setAttribute('value',val*100);
 			},
-			v_row.apply=()=>{
-				v_row.msg.replace('(applying)');
+			v_row.Apply=()=>{
+				v_row.Msg.Replace('(applying)');
 			};
-			v_row.done=()=>{
-				v_row.msg.replace('[OK]');
+			v_row.Done=()=>{
+				v_row.Msg.Replace('[OK]');
 			};
-			v_row.happen=(msg,cb_retry)=>{
-				v_row.msg.replace(msg);
-				let btn=YgEs.newQHT({target:v_row.msg,tag:'button',sub:['Retry']});
+			v_row.Happen=(msg,cb_retry)=>{
+				v_row.Msg.Replace(msg);
+				let btn=YgEs.NewQHT({Target:v_row.Msg,Tag:'button',Sub:['Retry']});
 				btn.Element.onclick=()=>{
 					cb_retry();
 				}
 			};
-			v_row.unload=()=>{
-				v_row.msg.replace('(unloading)');
+			v_row.Unload=()=>{
+				v_row.Msg.Replace('(unloading)');
 			};
 
 			return v_row;
 		},
 	}
-	if(show)ctrl.show();
+	if(show)ctrl.Show();
 	return ctrl;
 }
 
 YgEs.DownloadMonitor={
-	setup:_setup,
+	SetUp:_setup,
 }
 
 })();

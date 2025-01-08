@@ -1,4 +1,4 @@
-﻿@page pg_class_stmac_control StateMachineContext
+﻿@page pg_class_stmac_context StateMachineContext
 
 # What's It?
 
@@ -9,7 +9,7 @@ created by @ref pg_class_stmac_container
 
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions (on this context, not shared to states User) |
+| User | @ref StMac_UserShared | user definitions and kept in this context |
 
 -----
 # Methods
@@ -52,7 +52,7 @@ next state
 
 ### Spec
 
-GetHappeningManager():HappeningManager
+GetHappeningManager():@ref pg_class_happening_manager
 
 ### Returns
 

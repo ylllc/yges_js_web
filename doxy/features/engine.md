@@ -58,23 +58,23 @@ Engine.Start();
 
 ```
 var proc=Engine.Launch({
-	user:{
+	User:{
 		// initial variables 
 		name:'async sample',
 	},
-	cb_init:(user)=>{
+	OnInit:(user)=>{
 		// called first at works
 		user.lock=true;
 	},
-	cb_poll:(user)=>{
+	OnPoll:(user)=>{
 		// polling while returns true
 		return user.lock;
 	},
-	cb_done:(user)=>{
+	OnDone:(user)=>{
 		// called on done 
 		log.Info(user.name+' is done');
 	},
-	cb_abort:(user)=>{
+	OnAbort:(user)=>{
 		// called on abort 
 		log.Warn(user.name+' is aborted');
 	}
