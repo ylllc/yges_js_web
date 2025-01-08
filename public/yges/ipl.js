@@ -1641,3 +1641,672 @@ YgEs.AgentManager={
 }
 
 })();
+
+// Quick HyperText for web -------------- //
+(()=>{ // local namespace 
+
+YgEs.ToQHT=(el)=>{
+
+	let qht={
+		name:'YgEs.QuickHyperText',
+		_yges_qht_:true,
+		User:{},
+		Element:el,
+
+		Remove:()=>{
+			qht.Element.remove();
+			qht.Element=null;
+		},
+		Clear:()=>{
+			if(!qht.Element)return;
+			qht.Element.innerHTML='';
+		},
+		Append:(src)=>{
+			if(!qht.Element)return;
+			if(src==null)return;
+			if(typeof src==='object'){
+				if(src._yges_qht_)qht.Element.append(src.Element);
+				else qht.Element.append(src);
+			}
+			else qht.Element.innerHTML+=src;
+		},
+		Replace:(src)=>{
+			if(!qht.Element)return;
+			qht.Element.innerHTML='';
+			qht.Append(src);
+		},
+	}
+	return qht;
+}
+
+YgEs.NewQHT=(prm)=>{
+
+	if(!prm.Tag)return null;
+
+	let el=document.createElement(prm.Tag);
+
+	if(prm.Attr){
+		for(let k in prm.Attr){
+			el.setAttribute(k,prm.Attr[k]);
+		}
+	}
+	if(prm.Style){
+		for(let k in prm.Style){
+			el.style[k]=prm.Style[k];
+		}
+	}
+	if(prm.Sub){
+		for(let t of prm.Sub){
+			if(t===null){}
+			else if(typeof t==='object'){
+				if(t._yges_qht_)el.append(t.Element);
+				else el.append(t);
+			}
+			else el.innerHTML+=t;
+		}
+	}
+	if(prm.Target)prm.Target.Append(el);
+
+	return YgEs.ToQHT(el);
+}
+
+})();
+
+// Low Level HTTP for web --------------- //
+(()=>{ // local namespace 
+
+YgEs.HTTPClient={
+	name:'YgEs.HTTP',
+	User:{},
+}
+
+function _retry(ctx,hap){
+	hap.Resolve();
+	return ctx.Retry();
+}
+
+YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
+
+	var req=new XMLHttpRequest();
+	var ctx={
+		name:'YgEs.HTTP_Request',
+		User:{},
+		URL:url,
+		Opt:opt,
+		Accepted:false,
+		End:false,
+		OK:false,
+		SendProgress:0.0,
+		RecvProgress:0.0,
+		Progress:0.0,
+		Req:req,
+		Abort:()=>{
+			req.abort();
+		},
+		Retry:()=>{
+			return YgEs.HTTPClient.Request(method,url,opt,cb_res,cb_ok,cb_ng);
+		},
+	}
+	var res={
+		Status:0,
+		Msg:'',
+		TimeOut:false,
+		Data:null,
+	}
+
+	var happen=opt.HappenTo??YgEs.HappeningManager;
+
+	var sendratio=opt.SendRatio??0.0;
+	if(sendratio<0.0)sendratio=0.0;
+	else if(sendratio>1.0)sendratio=1.0;
+
+	req.addEventListener('loadstart',(ev)=>{
+		ctx.Accepted=true;
+		ctx.SendProgress=1.0;
+		ctx.Progress=sendratio;
+	});
+	req.addEventListener('Progress',(ev)=>{
+		if(!ev.lengthComputable)return;
+		if(ev.total<1)return;
+		ctx.RecvProgress=ev.loaded/ev.total;
+		ctx.Progress=sendratio+((1.0-sendratio)*ctx.RecvProgress);
+	});
+	req.addEventListener('load',(ev)=>{
+		if(ctx.End)return;
+		ctx.End=true;
+		ctx.RecvProgress=1.0;
+		res.Status=req.status;
+		res.Msg=req.statusText;
+		res.Body=req.response;
+		res.head={}
+		if(opt.RefHead){
+			for(var k of opt.RefHead){
+				res.head[k]=req.getResponseHeader(k);
+			}
+		}
+
+		if(opt.OnGate){
+			try{
+				var r=opt.OnGate(res);
+				if(r)cb_res=r;
+			}
+			catch(e){
+				var hap=happen.HappenError(e,{
+					Name:'YgEs.HTTP_Error',
+					User:{Retry:()=>_retry(ctx,hap)},
+				});
+				if(cb_ng)cb_ng(hap);
+				return;
+			}
+		}
+		else if(res.Status>299){
+			var hap=happen.HappenProp(res,{
+				Name:'YgEs_HTTP_Bad',
+				User:{Retry:()=>_retry(ctx,hap)},
+			});
+			if(cb_ng)cb_ng(hap);
+			return;
+		}
+
+		if(cb_res){
+			var r=null;
+			var e=null;
+			try{
+				r=cb_res(res);
+			}
+			catch(exc){
+				e=exc;
+				r=null;
+			}
+
+			if(e){
+				var hap=happen.HappenError(e,{
+					Name:'YgEs.HTTP_Error',
+					User:{Retry:()=>_retry(ctx,hap)},
+				});
+				if(cb_ng)cb_ng(hap);
+			}
+			else if(r===null){
+				var hap=happen.HappenProp({
+					Name:'YgEs_HTTP_Invalid',
+					Msg:'invalid response:',
+					Res:req.response,
+					User:{Retry:()=>_retry(ctx,hap)},
+				});
+				if(cb_ng)cb_ng(hap);
+			}
+			else{
+				ctx.OK=true;
+				if(cb_ok)cb_ok(r);
+			}
+		}
+		else{
+			ctx.OK=true;
+			if(cb_ok)cb_ok(res.Body);
+		}
+	});
+	req.addEventListener('error',(ev)=>{
+		if(ctx.End)return;
+		ctx.End=true;
+		res.Msg='HTTP request error';
+
+		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
+			Name:'YgEs.HTTP_Error',
+			User:{Retry:()=>_retry(ctx,hap)},
+		}));
+		else log_fatal(res.Msg);
+	});
+	req.addEventListener('timeout',(ev)=>{
+		if(ctx.End)return;
+		ctx.End=true;
+		res.TimeOut=true;
+		res.Msg='HTTP timeout';
+
+		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
+			Name:'YgEs.HTTP_Error',
+			User:{Retry:()=>_retry(ctx,hap)},
+		}));
+		else log_fatal(res.Msg);
+	});
+	req.addEventListener('abort',(ev)=>{
+		if(ctx.End)return;
+		ctx.End=true;
+		res.Msg='aborted';
+
+		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
+			Name:'YgEs.HTTP_Error',
+			User:{Retry:()=>_retry(ctx,hap)},
+		}));
+		else log_notice(res.Msg);
+	});
+
+	if(opt.ResType)req.responseType=opt.ResType;
+	if(opt.TimeOut)req.timeout=opt.TimeOut;
+	if(opt.Header){
+		for(var k in opt.Header){
+			req.setRequestHeader(k,opt.Header[k]);
+		}
+	}
+
+	if(opt.Body){
+		req.upload.addEventListener('Progress',(ev)=>{
+			if(ctx.End)return;
+			if(ev.total<1)return;
+			ctx.SendProgress=ev.loaded/ev.total;
+			ctx.Progress=sendratio*ctx.SendProgress;
+		});
+	}
+
+	req.open(method,url);
+	if(opt.Body){
+		if(opt.Type)req.setRequestHeader('Content-Type',opt.Type);
+		req.send(opt.Body);
+	}
+	else req.send();
+
+	return ctx;
+}
+
+YgEs.HTTPClient.GetText=(url,cb_ok=null,cb_ng=null,opt={})=>{
+
+	return YgEs.HTTPClient.Request('GET',url,opt,
+	(res)=>{
+		if(res.Status!=200)return null;
+		return res.Body;
+	},cb_ok,cb_ng);
+}
+
+YgEs.HTTPClient.GetBlob=(url,cb_ok=null,cb_ng=null,opt={})=>{
+
+	return YgEs.HTTPClient.Request('GET',url,Object.assign({
+		ResType:'blob',
+	},opt),
+	(res)=>{
+		if(res.Status!=200)return null;
+		return res.Body;
+	},cb_ok,cb_ng);
+}
+
+YgEs.HTTPClient.GetBuf=(url,cb_ok=null,cb_ng=null,opt={})=>{
+
+	return YgEs.HTTPClient.Request('GET',url,Object.assign({
+		ResType:'arraybuffer',
+	},opt),
+	(res)=>{
+		if(res.Status!=200)return null;
+		return res.Body;
+	},cb_ok,cb_ng);
+}
+
+YgEs.HTTPClient.GetJSON=(url,cb_ok=null,cb_ng=null,opt={})=>{
+
+	return YgEs.HTTPClient.Request('GET',url,opt,
+	(res)=>{
+		if(res.Status!=200)return null;
+		return JSON.parse(res.Body);
+	},cb_ok,cb_ng);
+}
+
+YgEs.HTTPClient.GetXML=(url,cb_ok=null,cb_ng=null,opt={})=>{
+
+	return YgEs.HTTPClient.Request('GET',url,opt,
+	(res)=>{
+		if(res.Status!=200)return null;
+		var psr=new DOMParser();
+		return psr.parseFromString(res.Body,"text/xml");
+	},cb_ok,cb_ng);
+}
+
+YgEs.HTTPClient.PostText=(url,text,cb_ok=null,cb_ng=null,opt={})=>{
+
+	return YgEs.HTTPClient.Request('POST',url,Object.assign({
+		headers:{'Content-Type':'text/plain'},
+		Body:text,
+		SendRatio:0.99,
+	},opt),
+	(res)=>{
+		return res.Body;
+	},cb_ok,cb_ng);
+}
+
+YgEs.HTTPClient.PostJSON=(url,data,cb_ok=null,cb_ng=null,opt={})=>{
+
+	return YgEs.HTTPClient.Request('POST',url,Object.assign({
+		headers:{'Content-Type':'application/json'},
+		Body:JSON.stringify(data),
+		SendRatio:0.99,
+	},opt),
+	(res)=>{
+		return res.Body;
+	},cb_ok,cb_ng);
+}
+
+YgEs.HTTPClient.PostFile=(url,bin,file,cb_ok=null,cb_ng=null,opt={})=>{
+
+	readfile(bin,file,(name,data)=>{
+		return YgEs.HTTPClient.Request('POST',url,Object.assign({
+			Type:file.type?file.type:'application/octet-stream',
+			Body:data,
+			SendRatio:0.99,
+		},opt),
+		(res)=>{
+			return res.Body;
+		},cb_ok,cb_ng);
+	},cb_ng);
+}
+
+YgEs.HTTPClient.Delete=(url,cb_ok=null,cb_ng=null,opt={})=>{
+
+	return YgEs.HTTPClient.Request('DELETE',url,opt,
+	(res)=>{
+		return res.Body;
+	},cb_ok,cb_ng);
+}
+
+})();
+
+// Download Manager --------------------- //
+(()=>{ // local namespace 
+
+function _create(launcher,monitor=null){
+
+	let plugs={}
+	let ctxs={}
+
+	let ctrl={
+		Ready:{},
+
+		Plug:(type,p)=>{
+			p.Launcher=launcher;
+			plugs[type]=p;
+		},
+		Unload:(label)=>{
+			if(!ctxs[label])return;
+			var ctx=ctxs[label];
+			if(ctx.State.SigUnload)return;
+			ctx.State.SigUnload=true;
+			ctx.State.Ready=false;
+			if(ctx.View)ctx.View.Unload();
+		},
+		Load:(label,type,url,depends=[],cb_ok=null,cb_ng=null)=>{
+			if(ctxs[label])ctxs[label].Abort();
+
+			let ctx={
+				Name:'YgEs.Downloader_Context',
+				User:{},
+				Label:label,
+				Type:type,
+				State:{
+					Happening:null,
+					Loaded:false,
+					Ready:false,
+					Unloaded:false,
+					SigUnload:false,
+				},
+				Loader:null,
+				Source:null,
+				View:null,
+				Abort:()=>{
+					if(!ctx,Proc)return;
+					ctx,Proc.Abort();
+					ctx,Proc=null;
+				},
+			}
+			ctxs[label]=ctx;
+
+			let states={
+				'Setup':{
+					OnPollInKeep:(smc,user)=>{
+						ctx.Loader=plugs[type].OnStart(url,(src)=>{
+							ctx.Source=src;
+							if(ctx.View)ctx.View.Apply();
+							user.Loaded=true;
+						},(hap)=>{
+							user.Happening=hap;
+							let p=hap.GetProp();
+							let msg=p.status?
+								('['+p.status+'] '+p.msg):
+								hap.ToString();
+							if(ctx.View)ctx.View.Happen(msg,()=>{
+								ctx.Loader=hap.User.Retry();
+							});
+						});
+						return 'Download';
+					},
+				},
+				'Download':{
+					OnPollInKeep:(smc,user)=>{
+						if(user.Happening)return 'Failure';
+						if(ctx.View)ctx.View.Progress(ctx.Loader.Progress);
+						if(!user.Loaded)return;
+						return 'WaitDeps';
+					},
+				},
+				'WaitDeps':{
+					OnPollInKeep:(smc,user)=>{
+						for(let dep of depends){
+							if(ctrl.Ready[dep]===undefined)return;
+						}
+						return 'Apply';
+					},
+				},
+				'Apply':{
+					OnReady:(smc,user)=>{
+						plugs[type].OnInit(ctx.Source,(res)=>{
+							ctrl.Ready[label]=res;
+							user.Ready=true;
+							if(ctx.View)ctx.View.Done();
+						},(hap)=>{
+							let msg=hap.ToString();
+							if(ctx.View)ctx.View.Happen(msg,()=>{
+								ctx.Loader=hap.User.Retry();
+							});
+						});
+					},
+					OnPollInKeep:(smc,user)=>{
+						if(user.Happening)return 'Failure';
+						if(user.Ready)return 'Ready';
+					},
+				},
+				'Failure':{
+					OnPollInKeep:(smc,user)=>{
+						if(user.Happening.IsResolved()){
+							user.Happening=null;
+							return 'Download';
+						}
+					},
+				},
+				'Ready':{
+					OnPollInKeep:(smc,user)=>{
+						if(!user.Ready)return 'Unload';
+					},
+				},
+				'Unload':{
+					OnReady:(smc,user)=>{
+						plugs[ctx.Type].OnUnload(ctrl.Ready[label],()=>{
+							user.Unloaded=true;
+						},(hap)=>{
+							user.Unloaded=true;
+						});
+					},
+					OnPollInKeep:(smc,user)=>{
+						if(!user.Unloaded)return;
+
+						if(ctx.View){
+							monitor.Detach(ctx.View);
+							ctx.View=null;
+						}
+						delete ctxs[label];
+						delete ctrl.Ready[label];
+						return true;
+					},
+				},
+			}
+
+			ctx.Proc=YgEs.StateMachine.Run('Setup',states,{
+				Name:'YgEs_Downloader_Proc',
+				Launcher:launcher,
+				User:ctx.State,
+			});
+
+			if(monitor)ctx.View=monitor.Attach(ctx);
+
+			return ctx;
+		},
+		IsReady:()=>{
+			for(var label in ctxs){
+				if(!ctxs[label].State.Ready)return false;
+			}
+			return true;
+		},
+	}
+	return ctrl;
+}
+
+function _plugCSS(store){
+
+	let plug={
+		OnStart:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.GetText(url,cb_ok,cb_ng);
+		},
+		OnInit:(src,cb_ok,cb_ng)=>{
+			cb_ok(YgEs.NewQHT({Target:store,Tag:'style',Sub:[src]}));
+		},
+		OnUnload:(img,cb_ok,cb_ng)=>{
+			img.Remove();
+			cb_ok();
+		},
+	}
+	return plug;
+}
+
+function _plugJS(store){
+
+	let plug={
+		OnStart:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.GetText(url,cb_ok,cb_ng);
+		},
+		OnInit:(src,cb_ok,cb_ng)=>{
+			cb_ok(YgEs.NewQHT({Target:store,Tag:'script',Sub:[src]}));
+		},
+		OnUnload:(img,cb_ok,cb_ng)=>{
+			img.Remove();
+			cb_ok();
+		},
+	}
+	return plug;
+}
+
+function _plugJSON(){
+
+	let plug={
+		OnStart:(url,cb_ok,cb_ng)=>{
+			return YgEs.HTTPClient.GetText(url,cb_ok,cb_ng);
+		},
+		OnInit:(src,cb_ok,cb_ng)=>{
+			try{
+				cb_ok(JSON.parse(src));
+			}
+			catch(e){
+				cb_ng(plug.Launcher.HappenTo.happenError(e));
+			}
+		},
+		OnUnload:(img,cb_ok,cb_ng)=>{
+			cb_ok();
+		},
+	}
+	return plug;
+}
+
+
+YgEs.DownloadManager={
+
+	Create:_create,
+
+	PlugCSS:_plugCSS,
+	PlugJS:_plugJS,
+	PlugJSON:_plugJSON,
+}
+
+})();
+
+// Download Monitor --------------------- //
+(()=>{ // local namespace 
+
+function _setup(target,show){
+
+	let visible=false;
+	let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:{class:'yges_loadmon_view'}});
+	let tbl=YgEs.NewQHT({Tag:'table',Attr:{class:'yges_loadmon_table',border:'border'}});
+	let head=YgEs.NewQHT({Target:tbl,Tag:'tr',Attr:{class:'yges_loadmon_thr'},Sub:[
+		YgEs.NewQHT({Tag:'th',Attr:{class:'yges_loadmon_th_type'},Sub:['Type']}),
+		YgEs.NewQHT({Tag:'th',Attr:{class:'yges_loadmon_th_name'},Sub:['Name']}),
+		YgEs.NewQHT({Tag:'th',Attr:{class:'yges_loadmon_th_cond'},Sub:['Cond']}),
+	]});
+
+	let ctrl={
+		IsVisible:()=>visible,
+		Dispose:()=>{
+			view.Remove();
+			view=null;
+			tbl=null;
+			head=null;
+			ctrl=null;
+		},
+		Hide:()=>{
+			if(!visible)return;
+			visible=false;
+			view.Clear();
+		},
+		Show:()=>{
+			if(visible)return;
+			visible=true;
+			view.Clear();
+			view.Append(tbl);
+		},
+		Detach:(view)=>{
+			view.Row.Remove();
+		},
+		Attach:(ctx)=>{
+			let v_row={
+			}
+
+			v_row.Row=YgEs.NewQHT({Target:tbl,Tag:'tr'});
+			YgEs.NewQHT({Target:v_row.Row,Tag:'td',Sub:[ctx.Type]});
+			YgEs.NewQHT({Target:v_row.Row,Tag:'td',Sub:[ctx.Label]});
+			v_row.Cond=YgEs.NewQHT({Target:v_row.Row,Tag:'td'});
+			v_row.Meter=YgEs.NewQHT({Target:v_row.Cond,Tag:'meter',Attr:{min:0,max:100,value:0}});
+			v_row.Msg=YgEs.NewQHT({Target:v_row.Cond,Tag:'span'});
+
+			v_row.Progress=(val)=>{
+				v_row.Meter.Element.setAttribute('value',val*100);
+			},
+			v_row.Apply=()=>{
+				v_row.Msg.Replace('(applying)');
+			};
+			v_row.Done=()=>{
+				v_row.Msg.Replace('[OK]');
+			};
+			v_row.Happen=(msg,cb_retry)=>{
+				v_row.Msg.Replace(msg);
+				let btn=YgEs.NewQHT({Target:v_row.Msg,Tag:'button',Sub:['Retry']});
+				btn.Element.onclick=()=>{
+					cb_retry();
+				}
+			};
+			v_row.Unload=()=>{
+				v_row.Msg.Replace('(unloading)');
+			};
+
+			return v_row;
+		},
+	}
+	if(show)ctrl.Show();
+	return ctrl;
+}
+
+YgEs.DownloadMonitor={
+	SetUp:_setup,
+}
+
+})();
