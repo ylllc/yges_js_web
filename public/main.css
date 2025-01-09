@@ -7,6 +7,10 @@ html, body {
 	height: 100vh;
 	width: 100vw;
 }
+h4{
+	margin-top: 0.7em;
+	margin-bottom: 0.3em;
+}
 
 @keyframes warning_blink{
 	0% {color:#202020}

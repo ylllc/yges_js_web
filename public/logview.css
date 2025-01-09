@@ -1,0 +1,17 @@
+
+.yges_logview_window{
+	border:groove;
+	height:10em;
+	overflow:auto;
+}
+
+.yges_logview_line_tick{color:#888;}
+.yges_logview_line_trace{color:#ccc;}
+.yges_logview_line_debug{color:#fff;}
+.yges_logview_line_info{color:#4df;}
+.yges_logview_line_notice{color:#cf4;}
+.yges_logview_line_warn{color:#fc4;}
+.yges_logview_line_fatal{color:#f64;}
+.yges_logview_line_crit{color:#f24;}
+.yges_logview_line_alert{color:#f2a;}
+.yges_logview_line_emerg{color:#c4f;}
