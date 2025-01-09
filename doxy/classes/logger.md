@@ -1,226 +1,353 @@
-﻿@page pg_class_logger Logger
+﻿@page pg_class_logger Log
 
 # What's It?
 
 @sa @ref pg_feat_logger
 
+-----
+# Namespaces
 
+-----
+| Symbol | Purpose |
+|--------|---------|
+| YgEs.Log | global logger |
+
+-----
+# Structures
+
+-----
+## LogEntry {#Log_LogEntry}
+
+| Name | Type | Means |
+|------|------|-------|
+| Date | string | date by ISO8601 |
+| Capt | string | caption |
+| Lev | int | log level |
+| Msg | @ref Log_LogSource | message |
+| Prop | dict<string,any>? | properties |
+| Text | string? | formatted value |
+
+-----
+# Unions
+
+-----
+## LogSource {#Log_LogSource}
+
+| Type | Means |
+|------|-------|
+| func | put return value from called it |
+| object | put with inspected |
+| other | put with stringified |
+
+-----
 # Constants
 
-Name | Type | Means
------|------|------
-LEVEL | dict<string,int> | enum log levels 
-LEVEL_NAMES | string[] | name table of each log levels
+-----
+| Name | Type | Means |
+|------|------|-------|
+| @ref Log_LEVEL | dict<string,int> | enum log levels |
+| LEVEL_NAMES | string[] | name table of each log levels (NEVER not in) |
 
+-----
+## LEVEL {#Log_LEVEL}
+
+| Name | Type | Means |
+|------|------|-------| 
+| TICK | int | ultra verbosely, for check transition in pollings |
+| TRACE | int | more verbosely, for check steps in procedures |
+| DEBUG | int | verbosely, for check important value |
+| INFO | int | for notify normal info |
+| NOTICE | int | for notify attentional info |
+| WARN | int | for notify warning |
+| FATAL | int | for notify continuable error |
+| CRIT | int | for notify critical error |
+| ALERT | int | for notify alert |
+| EMERG | int | for notify emergency |
+| NEVER | int | for use Showable, always suppressed |
+
+-----
 # Properties
 
-Name | Type | Means
------|------|------
-Showable | int? | minimun showable log level
-Caption | string | a caption
-Format | function<Format> | formatter
-Way | function<Way> | output way
-User | object | user definitions
+-----
+| Name | Type | Means |
+|------|------|-------|
+| Showable | int? | minimum showable log level |
+| Caption | string | caption |
+| Format | @ref Log_CB_LogFormat | formatter |
+| Way | @ref Log_CB_LogWay | output way |
+| User | dict<string,any> | user definitions |
 
-## Type: function<Format>(capt,lev,msg):FormattedLog
+-----
+# Callbacks
+
+-----
+## CB_LogFormat {#Log_CB_LogFormat}
+
+### Spec
+
+CB_LogFormat(src):void
 
 ### Args
 
-Name | Type | Means
------|------|------
-capt | string | caption by logger
-lev | int | log level
-msg | LogSource | source log message
+| Name | Type | Means |
+|------|------|-------|
+| src | @ref Log_LogEntry | target log entry |
 
-you can redefine of log formatting
+### Implements
 
-### Returns
+format from src and put to src.Text  
 
-formatted log message  
+-----
+## CB_LogWay {#Log_CB_LogWay}
 
+### Spec
 
-## Type: LogSource
+CB_LogWay(src):void
 
-Type | Means
------|------
-function<string> | create log string
-object | inspected string
-others | simple convert to string
+### Args
 
+| Name | Type | Means |
+|------|------|-------|
+| src | @ref Log_LogEntry | target log entry |
 
-## Type: FormattedLog
+### Implements
 
-usually as string.  
-but can use otherwise in your wish.  
+output from src  
+usually, put src.Text  
 
-
-## Type: function<Way>(msg)
-
-Name | Type | Means
------|------|------
-msg | FormattedLog | formatted log message
-
-you can redfine of log output procedure.  
-
-
+-----
 # Methods
 
-## createLocal(capt=null,showable=null):Logger
+-----
+## CreateLocal {#Log_CreateLocal}
 
-create new local log instance
+create a new local log instance  
 
-### Args
+### Spec
 
-Name | Type | Means
------|------|------
-capt | string? | caption (null means same to parent instance)
-showable | int? | showablility (null means same to parent instance)
-
-### Returns
-
-local logger instance
-
-
-## getCaption():string
-
-### Returns
-
-caption for this instance
-
-
-## getShowable():int
-
-### Returns
-
-showable log level for this instance
-
-
-## format(capt,lev,msg):any
-
-format a log element
+CreateLocal(capt=null,showable=null):@ref pg_class_logger
 
 ### Args
 
-Name | Type | Means
------|------|------
-capt | string | caption
-lev | int | log level
-msg | string | message
+| Name | Type | Means |
+| -----|------|------ |
+| capt | string? | caption (null means same to parent instance) |
+| showable | int? | showablility (null means same to parent instance) |
 
 ### Returns
 
-formatted value
+local logger instance.  
+its settings inherited from this.  
 
+-----
+## GetParent {#Log_GetParent}
 
-## write(src)
+### Spec
 
-write a formatted log value
+GetParent():@ref pg_class_logger?
 
-### Args
+### Returns
 
-Name | Type | Means
------|------|------
-src | any | formatted source
+parent instance or null.  
 
+-----
+## GetCaption {#Log_GetCaption}
 
-## put(lev,msg)
+### Spec
+
+GetCaption():string
+
+### Returns
+
+caption for this instance.  
+it's this Caption when already set or parent setting.   
+
+-----
+## GetShowable {#Log_GetShowable}
+
+### Spec
+
+GetShowable():int
+
+### Returns
+
+showable log level for this instance.  
+it's this Showable when already set or parent setting.   
+
+-----
+## Put {#Log_Put}
 
 log width variable level.  
 suppressed when lower than showable.  
 
-Name | Type | Means
------|------|------
-lev | int | log level
-msg | string | message
+### Spec
 
+Put(lev,msg,prop=null):void
 
-## tick(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| lev | int | log level |
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Tick {#Log_Tick}
 
 put TICK log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Tick(msg,prop=null):void
 
-## trace(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Trace {#Log_Trace}
 
 put TRACE log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Trace(msg,prop=null):void
 
-## debug(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Debug {#Log_Debug}
 
 put DEBUG log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Debug(msg,prop=null):void
 
-## info(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Info {#Log_Info}
 
 put INFO log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Info(msg,prop=null):void
 
-## notice(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Notice {#Log_Notice}
 
 put NOTICE log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Notice(msg,prop=null):void
 
-## warn(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Warn {#Log_Warn}
 
 put WARN log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Warn(msg,prop=null):void
 
-## fatal(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Fatal {#Log_Fatal}
 
 put FATAL log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Fatal(msg,prop=null):void
 
-## crit(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Crit {#Log_Crit}
 
 put CRIT log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Crit(msg,prop=null):void
 
-## alert(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Alert {#Log_Alert}
 
 put ALERT log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Alert(msg,prop=null):void
 
-## emerg(msg)
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |
+
+-----
+## Emerg {#Log_Emerg}
 
 put EMERG log
 
-Name | Type | Means
------|------|------
-msg | string | message
+### Spec
 
+Emerg(msg,prop=null):void
 
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | message |
+| prop | dict<string,any>? | properties |

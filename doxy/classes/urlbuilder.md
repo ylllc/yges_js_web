@@ -2,115 +2,155 @@
 
 # What's It?
 
-@sa @ref pg_feat_urlbuild @n
+@sa @ref pg_feat_urlbuilder @n
 
+-----
+# Namespaces
 
+-----
+| Symbol | Purpose |
+|--------|---------|
+| YgEs.URLBuilder | URL builder |
+
+-----
 # Methods
 
-## parse(url):ParsedURL
+## Parse {#URLBuilder_Parse}
+
+### Spec
+
+Parse(url):@ref pg_class_parsedurl
 
 ### Args
 
-Name | Type | Means
------|------|------
-url | string | parsing source URL
+| Name | Type | Means |
+|------|------|-------|
+| url | string | parsing source URL |
 
 ### Returns
 
 parse a URL and store it.  
 
+-----
+## ExtractHost {#URLBuilder_ExtractHost}
 
-## extractHost(src):array
+### Spec
+
+ExtractHost(src):string[]
 
 split by .
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | string | extracting source host name
+| Name | Type | Means |
+|------|------|-------|
+| src | string | extracting source host name |
 
-### Return
+### Returns
 
 extracted host name
 
+-----
+## BakeHost {#URLBuilder_BakeHost}
 
-## bakeHost(src):string
+### Spec
+
+BakeHost(src):string
 
 join with .
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | array | baking source host name
+| Name | Type | Means |
+|------|------|-------|
+| src | string[] | baking source host name |
 
-### Return
+### Returns
 
 baked host name
 
+-----
+## ExtractPath {#URLBuilder_ExtractPath}
 
-## extractPath(src):array
+### Spec
+
+ExtractPath(src):string[]
 
 split by / and URL decode
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | string | extracting source path name
+| Name | Type | Means |
+|------|------|-------|
+| src | string | extracting source path name |
 
-### Return
+### Returns
 
 extracted path name
 
+-----
+## BakePath {#URLBuilder_BakePath}
 
-## bakePath(src):string
+### Spec
+
+BakePath(src):string
 
 URL encode and join with /
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | array | baking source path name
+| Name | Type | Means |
+|------|------|-------|
+| src | string[] | baking source path name |
 
-### Return
+### Returns
 
 baked path name
 
+-----
+## ExtractArgs {#URLBuilder_ExtractArgs}
 
-## extractArgs(src):array
+### Spec
+
+ExtractArgs(src):string[]
 
 split by + and URL decode
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | string | extracting source query
+| Name | Type | Means |
+|------|------|-------|
+| src | string | extracting source query |
 
-### Return
+### Returns
 
 extracted query
 
+-----
+## BakeArgs {#URLBuilder_BakeArgs}
 
-## bakeArgs(src):string
+### Spec
+
+BakeArgs(src):string
 
 URL encode and join with +
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | array | baking source query
+| Name | Type | Means |
+|------|------|-------|
+| src | string[] | baking source query |
 
 ### Return
 
 baked query
 
+-----
+## ExtractProp {#URLBuilder_ExtractProp}
 
-## extractProp(src):dict
+### Spec
+
+ExtractProp(src):dict<string,string>
 
 extract to a KVS structure.  
 that supported PHP's substructure partially.  
@@ -119,26 +159,29 @@ but JavaScript not.
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | string | extracting source query
+| Name | Type | Means |
+|------|------|-------|
+| src | string | extracting source query |
 
 ### Return
 
 extracted query
 
+-----
+## BakeProp {#URLBuilder_BakeProp}
 
-## bakeProp(src):string
+### Spec
+
+BakeProp(src):string
 
 bake from a KVS structure.  
 
 ### Args
 
-Name | Type | Means
------|------|------
-src | dict | baking source query
+| Name | Type | Means |
+|------|------|-------|
+| src | dict<string,string> | baking source query |
 
 ### Return
 
 baked query
-

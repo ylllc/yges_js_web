@@ -2,269 +2,374 @@
 
 # What's It?
 
-@sa @ref pg_feat_proptree @n
+created by @ref pg_class_proptree_container
 
+-----
+# Unions
 
-# Constants
+-----
+## PropTreeKey {#PropTree_PropTreeKey}
 
-Name | Type | Means
------|------|------
-PROPTYPE | int[] | PropTreeType
+| Type | Means |
+|------|-------|
+| int | array index |
+| string | prop key |
 
-## Type: PropTreeType
+-----
+## PropTreeKeys {#PropTree_PropTreeKeys}
 
-Name | Type | Means
------|------|------
-EMPTY | int | not set
-MONO | int | direct value
-ARRAY | int | values stored in an array
-PROP | int | values stored in an object
+| Type | Means |
+|------|-------|
+| @ref PropTree_PropTreeKey[] | keys in an array (for locate indirectly) |
+| ...@ref PropTree_PropTreeKey | keys in args (for locate directly) |
 
+-----
+# Properties
 
+-----
+| Name | Type | Means |
+|------|------|-------|
+| User | dict<string,any> | user definitions |
+
+-----
+# Callbacks
+
+-----
+## CB_Iter {#PropTree_CB_Iter}
+
+### Spec
+
+CB_Iter(key,sub):bool?
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| key | @ref PropTree_PropTreeKey | key of target substructure |
+| sub | any | sub-substructure with each content |
+
+### Returns
+
+| Value | Means |
+|-------|-------|
+| false | break iter |
+| other | continue |
+
+### Imprements
+
+loop procedure from @ref PropTree_Each  
+
+-----
 # Methods
 
-## getType():PropTreeType
+-----
+## GetType {#PropTree_GetType}
+
+### Spec
+
+GetType():@ref PropTree_PROPTYPE
 
 ### Returns
 
 instance type
 
+-----
+## Export {#PropTree_Export}
 
-## export():any
+### Spec
+
+Export():any
 
 ### Returns
 
 all values in this  
 
-
-## toArray(...keys)
+-----
+## ToArray {#PropTree_ToArray}
 
 target object substructure is converted to an array.
 
+### Spec
+
+ToArray(...keys)
+
 ### Args
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
 
-
-## Union: PropTreeKeys
-
-Type | Means
------|------
-PropTreeKey[] | keys in an array (for locate indirectly)
-...PropTreeKey | keys in args (for locate directly)
-
-## Union: PropTreeKey
-
-Type | Means
------|------
-int | array index
-string | prop key
-
-## toProp(...keys)
+-----
+## ToDict {#PropTree_ToDict}
 
 target array substructure is converted to an object.
 
-### Args
+### Spec
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
-
-
-## exists(...keys):bool
+ToDict(...keys)
 
 ### Args
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
+
+-----
+## Exists {#PropTree_Exists}
+
+### Spec
+
+Exists(...keys):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
 
 ### Returns
 
 something stored at target location
 
+-----
+## Ref {#PropTree_Ref}
 
-## ref(...keys):PropTree?
+### Spec
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+Ref(...keys):PropTree?
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
 
 ### Returns
 
 subinstance at target locateion (or undefined) 
 
+-----
+## Dig {#PropTree_Dig}
 
-## dig(...args):PropTree
+### Spec
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+Dig(...args):PropTree
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
 
 ### Returns
 
 subinstance at target  
 (create a new instance when not found)  
 
+-----
+## Count {#PropTree_Count}
 
-## count(...keys):int
+### Spec
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+Count(...keys):int
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
 
 ### Returns
 
 EMPTY type always 0.  
 MONO type always 1.  
-ARRAY,PROP type returns subinstances count.  
+ARRAY,DICT type returns subinstances count.  
 
+-----
+## Get {#PropTree_Get}
 
-## get(...keys):any
+### Spec
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+Get(...keys):any
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
 
 ### Returns
 
 export from target subinstances (or undefined)
 
-
-## set(...keys,val):PropTree
+-----
+## Set {#PropTree_Set}
 
 set a content to target subinstances.  
-and it is converted to ARRAY/PROP by key type.  
+and it is converted to ARRAY/DICT by key type.  
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
-val | any | source content
+### Spec
+
+Set(...keys,val):PropTree
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
+| val | any | source content |
 
 ### Returns
 
 reference of target subinstances
 
-
-## cut(...keys):any
+---
+## Cut {#PropTree_Cut}
 
 in MONO type, erase target value with undefiend.  
-in ARRAY,PROP type, target subinstances is cut out from its node.  
+in ARRAY,DICT type, target subinstances is cut out from its node.  
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+### Spec
+
+Cut(...keys):any
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
+| val | any | source content |
 
 ### Returns
 
 EMPTY type returns undefined.  
 MONO type returns erased value.  
-ARRAY,PROP type returns reference of removed subinstances.  
+ARRAY,DICT type returns reference of removed subinstances.  
 
-
-## merge(...keys,val):PropTree
+-----
+## Merge {#PropTree_Merge}
 
 overwrite a structure to target subinstances.  
-and it is converted to ARRAY/PROP by key type.  
+and it is converted to ARRAY/DICT by key type.  
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
-val | any | source content
+### Spec
+
+Merge(...keys,val):PropTree
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
+| val | any | source content |
 
 ### Returns
 
 reference of target subinstances
 
-
-## push(...keys,val):PropTree
+-----
+## Push {#PropTree_Push}
 
 add a content to endside of target subinstances.  
 and it is converted to ARRAY.  
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
-val | any | source content
+### Spec
+
+Push(...keys,val):PropTree
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
+| val | any | source content |
 
 ### Returns
 
 reference of target subinstances
 
-
-## unshift(...keys,val):PropTree
+-----
+## Unshift {#PropTree_Unshift}
 
 add a content to beginside of target subinstances.  
 and it is converted to ARRAY.  
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
-val | any | source content
+### Spec
+
+Unshift(...keys,val):PropTree
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
+| val | any | source content |
 
 ### Returns
 
 reference of target subinstances
 
-
-## pop(...keys):any
+-----
+## Pop {#PropTree_Pop}
 
 cut out a content from endside of target subinstances.  
 and it is converted to ARRAY.  
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+### Spec
+
+Pop(...keys):any
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
 
 ### Returns
 
 cut content
 
-
-## shift(...keys):any
+-----
+## Shift {#PropTree_Shift}
 
 cut out a content from beginside of target subinstances.  
 and it is converted to ARRAY.  
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | substructure location
+### Spec
+
+Shift(...keys):any
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
 
 ### Returns
 
 cut content
 
-
-## each(...keys,cb):quadinary
+-----
+## Each {#PropTree_Each}
 
 iterate on target subinstances.  
 
-Name | Type | Means
------|------|------
-keys | PropTreeKeys | target substructure location
-cb | function<PropIter> | callback with each content
+### Spec
+
+Each(...keys,cb):quadinary
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| keys | @ref PropTree_PropTreeKeys | substructure location |
+| cb | @ref PropTree_CB_Iter | callback with each content |
 
 ### Returns
 
-Value | Means
------ | -----
-true | all done
-false | breaked
-null | not ARRAY or PROP, or empty callback
-undefined | target substructure not found
-
-## Type: function<PropIter>:trinary
-
-Name | Type | Means
------|------|------
-key | any | key of target substructure
-sub | any | sub-substructure with each content
-
-### Returns
-
-Value | Means
------ | -----
-false | break iter
-other | continue
+| Value | Means |
+|-------|-------|
+| true | all done |
+| false | breaked |
+| null | not ARRAY or DICT, or empty callback |
+| undefined | target substructure not found |

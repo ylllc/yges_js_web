@@ -1,78 +1,103 @@
 ﻿@page pg_class_happening Happening
 
+-----
 # What's It?
 
-@sa @ref pg_feat_happening
+created and managed by @ref pg_class_happening_manager  
 
-
+-----
 # Properties
 
-Name | Type | Means
------|------|------
-GetProp | function<GetProp> | get props by object
-ToString |  function<ToString> | get message
-ToJSON | function<ToJSON> | get props by JSON
-Resolved | function<Resolved> | call on resolved
-Abandoned | function<Abandoned> | call on abandoned
-User | object | user definitions
+| Name | Type | Means |
+|------|------|-------|
+| User | dict<string,any> | user definitions |
 
-## Type: function<GetProp>():object
+-----
+# Methods
+
+-----
+## GetProp {#Happening_GetProp}
+
+### Spec
+
+GetProp():dict<string,any>
 
 ### Returns
 
 properties of the happening.  
 
-## Type: function<ToString>():string
+-----
+## ToString {#Happening_ToString}
+
+### Spec
+
+ToString():string  
+toString():string  
 
 ### Returns
 
 message of the happening.  
 
-## Type: function<ToJSON>():string
+-----
+## ToJSON {#Happening_ToJSON}
+
+### Spec
+
+ToJSON():string
 
 ### Returns
 
 properties by JSON.  
 
-## Type: function<Resolved>(hap)
+-----
+## ToError {#Happening_ToError}
 
-call by resolved happening.  
+### Spec
 
-### Args
+ToError():Error
 
-Name | Type | Means
------|------|------
-hap | Happening | source happening
+### Returns
 
-## Type: function<Abandoned>(hap)
+convert to an Error.  
 
-call by abandoned happening.  
+-----
+## IsResolved {#Happening_IsResolved}
 
-### Args
+### Spec
 
-Name | Type | Means
------|------|------
-hap | Happening | source happening
-
-
-# Methods
-
-## isResolved():bool
+IsResolved():bool
 
 ### Returns
 
 means the Happening is resolved.  
 
-## isAbandoned():bool
+-----
+## IsAbandoned {#Happening_IsAbandoned}
+
+### Spec
+
+IsAbandoned():bool
+
+### Returns
 
 means the Happening is abandoned and not resolved.  
 (resolved Happening returns false)  
 
-## resolve()
+-----
+## Resolve {#Happening_Resolve}
+
+### Spec
+
+Resolve()
 
 the Happening marks resolved.  
 and retract abandoned.  
 
-## abandon()
+-----
+## Abandon {#Happening_Abandon}
+
+### Spec
+
+Abandon()
 
 the Happening marks abandoned.  

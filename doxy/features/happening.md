@@ -4,6 +4,7 @@
 
 it provides runtime error management, so rational.  
 
+-----
 ## Exception? don't.
 
 @startuml "Throwing Exception means abandon all"
@@ -45,6 +46,7 @@ buggy procedure
 endnote
 @enduml
 
+-----
 ## Manage all them
 
 @startuml "All Happening Managed by HappeningManager"
@@ -74,12 +76,16 @@ correct procedure
 endnote
 @enduml
 
-
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.HappeningManager
 
 ## for Node/Deno
 
@@ -87,36 +93,40 @@ endnote
 import HappeningManager from 'api/happening.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.HappeningManager too.  
 
+-----
 # How to Use
 
+-----
 ## Listen them
 
 ```
 // can override common happening management procedure 
-HappeningManager.Happened=(h)=>{
+HappeningManager.OnHappen=(h)=>{
 	//		: 
 	// instant recovery when possible
-	// and call h.resolve()
+	// and call h.Resolve()
 	//		: 
 }
 ```
 
+-----
 ## Feature side happening and suggestion
 
 ```
-var h=HappeningManager.happenProp({type:'Test',msg:'Happened'},{
+var h=HappeningManager.HappenProp({type:'Test',msg:'Happened'},{
 	// user resolving protocol 
 	User:{
 		retry:()=>{
 			// retry procedure 
 			//		:
-			h.resolve();
+			h.Resolve();
 		},
 		ignore:()=>{
 			// ignore procedure 
 			//		:
-			h.abandon();
+			h.Abandon();
 		},
 	},
 	Resolved:()=>{
@@ -128,31 +138,35 @@ var h=HappeningManager.happenProp({type:'Test',msg:'Happened'},{
 });
 ```
 
+-----
 ## Polling unresolved
 
 ```
-HappeningManager.poll((h)=>{
+HappeningManager.Poll((h)=>{
 	//		: 
 	// user procedure by decision
 	//		: 
 });
 ```
 
+-----
 ## Local Happenning Manager
 
 can create local instance and categorize in your wish.
 
 ```
-var lhap=HappeningManager.createLocal();
+var lhap=HappeningManager.CreateLocal();
 ```
 
+-----
 ## Cleaning up
 
 Resolved instance still kept in HappeningManager and makes it dirty.  
-HappeningManager.cleanup() removes resolved and abandoned instances
+HappeningManager.CleanUp() removes resolved and abandoned instances
 and makes it clean.  
 
 
+-----
 ## Resolved vs Abandoned 
 
 Resolved give priority over Abandoned.  
@@ -160,6 +174,7 @@ Resolved instance cannot abandon.
 and Abandoned instance still can resolve and retract abandoned.  
 
 
+-----
 # Class Reference
 
 @sa @ref pg_class_happening @n

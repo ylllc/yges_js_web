@@ -1,9 +1,10 @@
-﻿@page pg_feat_stmac Statemachine
+﻿@page pg_feat_stmac State Machine
 
 # What's It?
 
 it provides transitionning by between states.   
 
+-----
 ## Simple Transition
 
 each states have 3 internal states for initializing and finalizing.  
@@ -37,6 +38,7 @@ State2Keep -[dotted]-> [*]: completion order
 
 @enduml
 
+-----
 ## Branching
 
 abnormally, can make transition from Up or Down.  
@@ -68,98 +70,105 @@ State1Keep -[dotted]-> State2B: normal transition order
 
 @enduml
 
+-----
 ## Callbacks
 
 each states have some callbacks.  
-cb_start, cb_ready, cb_stop, cb_end are called on switching polling phase.  
-poll_up, poll_keep, poll_down are called from every the Engine polling.  
+OnStart, OnReady, OnStop, OnEnd are called on switching polling phase.  
+OnPollInUp, OnPollInKeep, OnPollInDown are called from every the Engine polling.  
 these are impremented in each states.  
 
-cb_done, cb_abort are called on a procedure of statemachine is over.  
+OnDone, OnAbort are called on a procedure of statemachine is over.  
 these are impremented in statemachine option.  
 
 @startuml "Callbacks"
 
-[*] --> cb_start
-cb_start --> poll_up
-poll_up --> poll_up: return undefined
-poll_up --> cb_end: return next state\n (for interruption)
-poll_up --> cb_ready: return true
-poll_up --> cb_abort: retirn false\n (for abortion)
-cb_ready --> poll_keep
-poll_keep --> poll_keep: return undefined
-poll_keep --> cb_stop: return next state
-poll_keep --> cb_stop: return true\n (for normal end)
-poll_keep --> cb_abort: retirn false\n (for abortion)
-cb_stop --> poll_down
-poll_down --> poll_down: return undefined
-poll_down --> cb_end: return next state\n (for interruption)
-poll_down --> cb_end: return true\n (for normal transition)
-poll_down --> cb_abort: return false\n (for abortion)
-cb_start <-- cb_end: switch to next state
-cb_end --> cb_done: normal end
-cb_end --> cb_abort: abortion
-cb_done --> [*]
-cb_abort --> [*]
+[*] --> OnStart
+OnStart --> OnPollInUp
+OnPollInUp --> OnPollInUp: return undefined
+OnPollInUp --> OnEnd: return next state\n (for interruption)
+OnPollInUp --> OnReady: return true
+OnPollInUp --> OnAbort: retirn false\n (for abortion)
+OnReady --> OnPollInKeep
+OnPollInKeep --> OnPollInKeep: return undefined
+OnPollInKeep --> OnStop: return next state
+OnPollInKeep --> OnStop: return true\n (for normal end)
+OnPollInKeep --> OnAbort: retirn false\n (for abortion)
+OnStop --> OnPollInDown
+OnPollInDown --> OnPollInDown: return undefined
+OnPollInDown --> OnEnd: return next state\n (for interruption)
+OnPollInDown --> OnEnd: return true\n (for normal transition)
+OnPollInDown --> OnAbort: return false\n (for abortion)
+OnStart <-- OnEnd: switch to next state
+OnEnd --> OnDone: normal end
+OnEnd --> OnAbort: abortion
+OnDone --> [*]
+OnAbort --> [*]
 
 @enduml
 
 each polling callback returns to control it.  
 
 | Value | Means |
-|---|---|
+|-------|-------|
 | null or undefined | keep polling |
 | true | step to next phase |
 | false | abortion |
 | string | switch to next state |
 
-
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.StateMachine
 
 ## for Node/Deno
 
 ```
-import StMac from 'api/stmac.js';
-import Engine from 'api/engine.js';
+import StateMachine from 'api/stmac.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.StateMachine too.  
 
+-----
 # How to Use
 
+-----
 ## Imprements
 
 ```
 var states={
 	'StateName':{
-		cb_start:(ctx,user)=>{
+		OnStart:(ctx,user)=>{
 			// call on begin of this state
 		},
-		poll_up:(ctx,user)=>{
+		OnPollInUp:(ctx,user)=>{
 			// polling and return by result 
 			// normally returns true 
 			return true;
 		},
-		cb_ready:(ctx,user)=>{
+		OnReady:(ctx,user)=>{
 			// call on end of up phase
 		},
-		poll_keep:(ctx,user)=>{
+		OnPollInKeep:(ctx,user)=>{
 			// polling and return by result 
 			// normally returns next state 
 			return 'NextStateName';
 		},
-		cb_stop:(ctx,user)=>{
+		OnStop:(ctx,user)=>{
 			// call on begin of down phase
 		},
-		poll_down:(ctx,user)=>{
+		OnPollInDown:(ctx,user)=>{
 			// polling and return by result 
 			// normally returns true 
 			return true;
 		},
-		cb_end:(ctx,user)=>{
+		OnEnd:(ctx,user)=>{
 			// call on end of this state
 		},
 	},
@@ -168,23 +177,25 @@ var states={
 
 ```
 
+-----
 ## Run States
 
 ```
 // states running on the Engine 
-Engine.start();
+Engine.Start();
 
 // run states from a state 
-StMac.run('StateName',states);
+StateMachine.Run('StateName',states);
 
 // wait for end of procedures and stop the Engine 
-Engine.sync((dmy)=>{
-	Engine.stop();
+Engine.Sync((dmy)=>{
+	Engine.Stop();
 });
 
 ```
 
+-----
 # Class Reference
 
-@sa @ref pg_class_stmac_context @n
-	@ref pg_class_stmac_manager
+@sa @ref pg_class_stmac_control @n
+	@ref pg_class_stmac_container

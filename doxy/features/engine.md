@@ -4,29 +4,36 @@
 
 it provides async procedure management.  
 
+-----
 ## Every async procedures launch them on the Engine.
 
 each procedures controlled by the Engine.  
 can see their life, can abort them.  
 
+-----
 ## Limit parallel running.
 
 in JavaScript, running in a big loop that has async,  
 means run parallel all them, e.g. 10000 HTTP requests.  
 the Engine can limit and run little by little.  
 
+-----
 ## Can exit at your wish
 
 Node.js often become a zombie.  
 you wish to exit, but something lives...  
 the Engine can shutdown with all internal procedures, and can exit.  
 
-
+-----
 # Import
 
+-----
 ## for web
 
-(todo)  
+```
+<script src="yges/ipl.js"></script>
+```
+use YgEs.Engine
 
 ## for Node/Deno
 
@@ -34,39 +41,42 @@ the Engine can shutdown with all internal procedures, and can exit.
 import Engine from 'api/engine.js';
 ```
 importing name can redefine in your wish.  
+and can use YgEs.Engine too.  
 
-
+-----
 # How to Use
 
+-----
 ## Start the Engine  
 
 ```
-Engine.start();
+Engine.Start();
 ```
 
+-----
 ## Launch
 
 ```
-var proc=Engine.launch({
-	user:{
+var proc=Engine.Launch({
+	User:{
 		// initial variables 
 		name:'async sample',
 	},
-	cb_init:(user)=>{
+	OnInit:(user)=>{
 		// called first at works
 		user.lock=true;
 	},
-	cb_poll:(user)=>{
+	OnPoll:(user)=>{
 		// polling while returns true
 		return user.lock;
 	},
-	cb_done:(user)=>{
+	OnDone:(user)=>{
 		// called on done 
-		log.info(user.name+' is done');
+		log.Info(user.name+' is done');
 	},
-	cb_abort:(user)=>{
+	OnAbort:(user)=>{
 		// called on abort 
-		log.warn(user.name+' is aborted');
+		log.Warn(user.name+' is aborted');
 	}
 });
 		:
@@ -75,33 +85,35 @@ var proc=Engine.launch({
 proc.User.lock=false;
 ```
 
+-----
 ## Sub-launcher
 
 ```
-var sub=Engine.createLauncher({
+var sub=Engine.CreateLauncher({
 	// limit parallel running 
 	// more procedures are held until end of running procedures 
 	limit:5,
 });
 
 // can launch too 
-sub.launch(...);
+sub.Launch(...);
 
 		:
 
 // wait for end of procedures in sub 
-sub.sync((user)=>{
+sub.Sync((user)=>{
 	// sub is abandoned 
-	sub.abandon();
+	sub.Abandon();
 });
 ```
 
+-----
 ## Instant delay
 
 it's useful everywhere.
 
 ```
-var proc=Engine.delay(1000,(user)=>{
+var proc=Engine.Delay(1000,(user)=>{
 	// run after 1 sec 
 },(user)=>{
 	// on abort delayig 
@@ -110,19 +122,20 @@ var proc=Engine.delay(1000,(user)=>{
 		:
 
 // can abort delaying 
-proc.abort();
+proc.Abort();
 ```
 
+-----
 ## Shutdown
 
 ```
-Engine.shutdown();
+Engine.ShutDown();
 ```
 
 all procedures in the Engine are aborted.  
 and can exit.  
 
-
+-----
 # Class Reference
 
 @sa @ref pg_class_engine @n

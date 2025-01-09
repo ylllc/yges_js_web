@@ -28,38 +28,43 @@ Repositories:
 <script src="yges/ipl.js"></script>
 </div>
 <script><!--
-let modules=YgEs.toQHT(document.getElementById('modules'));
-let mainboard=YgEs.toQHT(document.getElementById('mainboard'));
-mainboard.clear();
-let ipl_loading=YgEs.newQHT({target:mainboard,tag:'div',attr:{class:'warning'},sub:['(IPL Loading...)']});
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
+mainboard.Clear();
+let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
 
 const TestBase='/test/';
 
 async function ipl_ready(){
 
-	ipl_loading.remove();
+	ipl_loading.Remove();
 
-	let log=YgEs.Log.createLocal('YgEsTest',YgEs.Log.LEVEL.TRACE);
-	let hapmng=YgEs.HappeningManager.createLocal({
+	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
+	let hapmng=YgEs.HappeningManager.CreateLocal({
 		name:'YgEsTestHaps',
-		happen:(hap)=>{log.fatal(hap.toJSON())},
+		happen:(hap)=>{log.Fatal(hap.ToString(),hap.GetProp())},
 	});
 
-	YgEs.Engine.start();
-	let launcher=YgEs.Engine.createLauncher({happen:hapmng});
-	let loader=YgEs.Downloader.setupGUI(launcher,mainboard,true,modules);
+	YgEs.Engine.Start();
+	let launcher=YgEs.Engine.CreateLauncher({happen:hapmng});
+	let monitor=YgEs.DownloadMonitor.SetUp(mainboard,true);
+	let loader=YgEs.DownloadManager.Create(launcher,monitor);
 
-	loader.load('test.css','CSS','test.css');
-	loader.load('quickqueue.js','JS','yges/quickqueue.js');
-	loader.load('proptree.js','JS','yges/proptree.js');
-	loader.load('urlbuild.js','JS','yges/urlbuild.js');
-	loader.load('stmac.js','JS','yges/stmac.js');
-	loader.load('agent.js','JS','yges/agent.js');
-	loader.load('unittest.js','JS','yges/unittest.js');
-	loader.load('TestInfo','JSON',TestBase);
-	await launcher.toPromise();
+	loader.Plug('CSS',YgEs.DownloadManager.PlugCSS(modules));
+	loader.Plug('JS',YgEs.DownloadManager.PlugJS(modules));
+	loader.Plug('JSON',YgEs.DownloadManager.PlugJSON());
 
-	mainboard.clear();
-	YgEs.Test.setupGUI(launcher,mainboard,TestBase,loader.Ready.TestInfo);
+	loader.Load('test.css','CSS','test.css');
+	loader.Load('quickqueue.js','JS','yges/quickqueue.js');
+	loader.Load('proptree.js','JS','yges/proptree.js',['quickqueue.js']);
+	loader.Load('urlbuilder.js','JS','yges/urlbuilder.js',['proptree.js']);
+	loader.Load('unittest.js','JS','yges/unittest.js');
+	loader.Load('unittest_view.js','JS','yges/unittest_view.js');
+	loader.Load('TestInfo','JSON',TestBase);
+	await YgEs.Timing.SyncKit(10,()=>{return loader.IsReady();}).ToPromise();
+	monitor.Dispose();
+
+	let test=YgEs.Test.SetUp(launcher,modules,TestBase,loader.Ready.TestInfo);
+	let view=YgEs.TestView.SetUp(test,mainboard);
 }
 //--></script></div></body></html>

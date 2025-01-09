@@ -2,79 +2,112 @@
 
 # What's It?
 
-@sa @ref pg_feat_engine
+created by @pg_class_launcher
 
-
+-----
 # Properties
 
-Name | Type | Means
------|------|------
-HappenTo | HappeningManager? | user happening handler
-User | object | user definitions
+| Name | Type | Means |
+|------|------|-------|
+| HappenTo | HappeningManager? | user happening handler |
+| User | dict<string,any> | user definitions |
 
-
+-----
 # Methods
 
-## isStarted():bool
+## IsStarted {#Procedure_IsStarted}
+
+### Spec
+
+IsStarted():bool
 
 ### Returns
 
 this procedure is started
 
-## isFinished():bool
+-----
+## IsFinished {#Procedure_IsFinished}
+
+### Spec
+
+IsFinished():bool
 
 ### Returns
 
 this procedure is finished
 
-## isAborted():bool
+-----
+## IsAborted {#Procedure_IsAborted}
+
+### Spec
+
+IsAborted():bool
 
 ### Returns
 
 this procedure is aborted
 
-## isEnd():bool
+-----
+## IsEnd {#Procedure_IsEnd}
+
+### Spec
+
+IsEnd():bool
 
 ### Returns
 
 this procedure is ended (fiinshed or aborted)
 
-## abort()
+-----
+## Abort {#Procedure_IsEnd}
+
+### Spec
+
+Abort()
 
 abort this procedure
 
-## poll()
+-----
+## Poll {#Procedure_Poll}
+
+### Spec
+
+Poll()
 
 poll a individual procedure.  
 usually called from the Engine.  
 and not necessary to call manually.  
 
-## sync(cb_sync,interval=null)
+-----
+## Sync {#Procedure_Sync}
+
+### Spec
+
+Sync(cb_sync,interval=null)
 
 wait for end of procedure and call cb_sync
 
 ### Args
 
-Name | Type | Means
------|------|------
-cb_sync | function<SyncEnd> | called on end of sync
-interval | int? | poll interval msec (null=DEFAULT_SYNC_CYCLE)
+| Name | Type | Means |
+|------|------|-------|
+| cb_sync | func<UserShared> | called on end of sync |
+| interval | int? | poll interval msec (null=DEFAULT_SYNC_CYCLE) |
 
-## Type: function<SyncEnd>(user)
+-----
+## ToPromise {#Procedure_ToPromise}
 
-Name | Type | Means
------|------|------
-user | object | ref Procedure.User
+### Spec
 
-## toPromise(breakable,interval=null):Promise
+ToPromise(breakable,interval=null):Promise
 
 ### Args
 
-Name | Type | Means
------|------|------
-breakable | bool | Promise fullfiled from abort
-interval | int? | poll interval msec (null=DEFAULT_SYNC_CYCLE)
+| Name | Type | Means |
+|------|------|-------|
+| breakable | bool | Promise fullfiled from abort |
+| interval | int? | poll interval msec (null=DEFAULT_SYNC_CYCLE) |
 
 ### Returns
 
-a Promise include caling sync()
+a Promise include caling Sync()

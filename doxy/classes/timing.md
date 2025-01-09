@@ -4,51 +4,197 @@
 
 @sa @ref pg_feat_timing @n
 
+-----
+# Namespaces
+
+-----
+| Symbol | Purpose |
+|--------|---------|
+| YgEs.Timing | global Timing |
+
+-----
+# Structures
+
+-----
+## AsyncControlKit {#Timing_AsyncControlKit}
+
+| Name | Type | Means |
+|------|------|-------|
+| Cancel | func | cancel source procedure |
+| ToPromise | func:Promise | convert to a Promise |
+
+-----
+# Callbacks
+
+-----
+## AsyncProc {#Timing_AsyncProc}
+
+typical async procedure
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| ok | func<any> | call on done |
+| ng | func<Error> | call on failed |
+
+### Implements
+
+your procedure in async  
+
+-----
+# Properties
+
+| Name | Type | Means |
+|------|------|-------|
+| User | dict<string,any> | user definitions |
+
+-----
 # Methods
 
-## delay(msec,cb):function
+-----
+## FromPromise {#Timing_FromPromise}
 
-call cb after about msec.  
+wait for a Promise.  
 
-### Args
+### Spec
 
-Name | Type | Means
------|------|------
-msec | int | waiting in msec
-cb | function | calling target
-
-### Returns
-
-cancelling function
-
-## poll(msec,cb):function
-
-call cb repeatedly every about msec.  
+FromPromise(promise,cb_ok=null,cb_ng=null):Promise
 
 ### Args
 
-Name | Type | Means
------|------|------
-msec | int | waiting in msec
-cb | function | calling target
+| Name | Type | Means |
+|------|------|-------|
+| promise | Promise | waiting source |
+| cb_ok | func<any> | call on done |
+| cb_ng | func<Error> | call on error |
 
 ### Returns
 
-cancelling function
+socketting Promise
 
-## sync(msec,cb_chk,cb_done,cb_abort):function
+-----
+## ToPromise {#Timing_ToPromise}
+
+convert to a Promise
+
+### Spec
+
+ToPromise(cb_proc,cb_ok=null,cb_ng=null):Promise
+
+| Name | Type | Means |
+|------|------|-------|
+| cb_proc | @ref AsyncProc | waiting source |
+| cb_ok | func<any> | call on done |
+| cb_ng | func<Error> | call on error |
+
+### Returns
+
+wrapped Promise
+
+-----
+## Delay {#Timing_Delay}
+
+call cb_done after about msec.  
+
+### Spec
+
+Delay(msec,cb_done,cb_abort=null):func
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msec | int | waiting in msec |
+| cb_done | func | calling target |
+| cb_abort | func | call on abort |
+
+### Returns
+
+aborting function
+
+-----
+## Poll {#Timing_Poll}
+
+call cb_poll repeatedly every about msec.  
+
+### Spec
+
+Poll(msec,cb_poll,cb_abort=null):func
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msec | int | waiting in msec |
+| cb_poll | func | calling target |
+| cb_abort | func | call on abort |
+
+### Returns
+
+aborting function
+
+-----
+## Sync {#Timing_Sync}
 
 wait for cb_chk returns true.  
 
+### Spec
+
+Sync(msec,cb_chk,cb_done=null,cb_abort=null):func
+
 ### Args
 
-Name | Type | Means
------|------|------
-msec | int | waiting in msec
-cb_chk | function:bool | calling repeatedly until returns true
-cb_done | function | called on cb_chk returns true
-cb_abort | function | called on aborted
+| Name | Type | Means |
+|------|------|-------|
+| msec | int | waiting in msec |
+| cb_chk | func:bool | calling repeatedly until returns true |
+| cb_done | func | called on cb_chk returns true |
+| cb_abort | func | called on aborted |
 
 ### Returns
 
-cancelling function
+aborting function
+
+-----
+## DelayKit {#Timing_DelayKit}
+
+call cb_done after about msec.  
+
+### Spec
+
+DelayKit(msec,cb_done=null,cb_abort=null):@ref Timing_AsyncControlKit
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msec | int | waiting in msec |
+| cb_done | func | calling target |
+| cb_abort | func | call on abort |
+
+### Returns
+
+control kit instance
+
+-----
+## SyncKit {#Timing_SyncKit}
+
+wait for cb_chk returns true.  
+
+### Spec
+
+SyncKit(msec,cb_chk,cb_done,cb_abort):@ref Timing_AsyncControlKit
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| msec | int | waiting in msec |
+| cb_chk | func:bool | calling repeatedly until returns true |
+| cb_done | func | called on cb_chk returns true |
+| cb_abort | func | called on aborted |
+
+### Returns
+
+control kit instance

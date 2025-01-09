@@ -4,144 +4,228 @@
 
 @sa @ref pg_feat_happening
 
+-----
+# Namespaces
 
+-----
+| Symbol | Purpose |
+|--------|---------|
+| YgEs.HappeningManager | global HappeningManager |
+
+-----
+# Structures
+
+-----
+## HappeningManagerPrm {#HappeningManager_HappeningManagerPrm}
+
+| Name | Type | Means |
+|------|------|-------|
+| Name | string? | user class name |
+| OnHappen | func<@ref pg_class_happening> | call on happened |
+| User | dict<string,any> | user difinition |
+
+-----
+## HappeningInfo {#HappeningManager_HappeningInfo}
+
+| Name | Type | Means |
+|------|------|-------|
+| Name | string | user class name of HappeningManager |
+| Issues | dict<string,any>[] | GetProp() of each unresolved happenings |
+| Children | @ref HappeningManager_HappeningInfo[] | GetInfo() of each children |
+
+-----
+## HappeningOption {#HappeningManager_HappeningOption}
+
+| Name | Type | Means |
+|------|------|-------|
+| Name | string? | instance name |
+| OnResolved | func<@ref pg_class_happening>? | call on resolved |
+| OnAbandoned | func<@ref pg_class_happening>? | call on abandoned |
+| User | dict<string,any>? | other user definitions kept on created @ref pg_class_happening |
+
+-----
 # Properties
 
-Name | Type | Means
------|------|------
-Happened | function<Happened> | call on happened
-User | object | user definitions
+| Name | Type | Means |
+|------|------|-------|
+| OnHappen | func<@ref pg_class_happening> | call on happened |
+| User | dict<string,any> | user definitions |
 
-## Type: function<Happened>
-
-### Args
-
-Name | Type | Means
------|------|------
-hap | Happening | source happening
-
-
+-----
 # Methods
 
-## createLocal(name='YgEs_HappeningManager'):HappeningManager
+-----
+## CreateLocal(prm={}):@ref pg_class_happening_manager {#HappeningManager_CreateLocal}
 
 create a child HappeningManager  
 
 ### Args
 
-Name | Type | Means
------|------|------
-name | string? | instance name
+| Name | Type | Means |
+|------|------|-------|
+| prm | @ref HappeningManager_HappeningManagerPrm | settings |
 
 ### Returns
 
 created instance  
 
+-----
+## GetParent {#HappeningManager_GetParent}
 
-## abandon()
+### Spec
+
+GetParent():@ref pg_class_happening_manager?
+
+### Returns
+
+parent instance (null from global instance)  
+
+-----
+## GetChildren {#HappeningManager_GetChildren}
+
+### Spec
+
+GetChildren():@ref pg_class_happening_manager[]
+
+### Returns
+
+child instances  
+
+-----
+## GetIssues {#HappeningManager_GetIssues}
+
+### Spec
+
+GetIssues():@ref pg_class_happening[]
+
+### Returns
+
+Happening instances in this instance.  
+include dirty resolved happens.  
+
+-----
+## Abandon {#HappeningManager_Abandon}
+
+### Spec
+
+Abandon():void
 
 abandon all happens in this instance
 and all child HappeningManager.  
 
-## countIssues()
+-----
+## CountIssues {#HappeningManager_countIssues}
+
+### Spec
+
+CountIssues():int
 
 ### Returns
 
 count happens in this instance and all child HappeningManager.  
 include dirty resolved happens.  
 
-## isCleaned()
+-----
+## IsCleaned {#HappeningManager_IsCleaned}
+
+### Spec
+
+IsCleaned():bool
 
 ### Returns
 
 true means no happens in this instance and all child HappeningManager.  
-(same to countIssues() returns 0)  
+(same to CountIssues() returns 0)  
 
-## cleanup()
+-----
+## Cleanup {#HappeningManager_Cleanup}
+
+### Spec
+
+Cleanup():void
 
 remove dirty resolved happens in this instance and all child HappeningManager.  
 
-## getInfo():HappeningInfo
+-----
+## GetInfo {#HappeningManager_GetInfo}
+
+### Spec
+
+GetInfo():@ref HappeningManager_HappeningInfo
 
 ### Returns
 
 unresolved happenings info in an object.  
 
-## Type: HappeningInfo
+-----
+## Poll {#HappeningManager_poll}
 
-Name | Type | Means
------|------|------
-name | string | name of target HappeningManager
-issues | array<object> | GetProp() of each unresolved happenings
-children | array<HappeningInfo> | getInfo() of each children
+### Spec
 
-## poll(cb)
+Poll(cb):void
 
 iterate all unresolved Happening include all child HappeningManager.  
 
-Name | Type | Means
------|------|------
-cb | function<PollHappening> | call by each Happening
+| Name | Type | Means |
+|------|------|-------|
+| cb | func<@ref pg_class_happening> | call by each Happening |
 
-## Type: function<PollHappening>
+-----
+## HappenMsg {#HappeningManager_HappenMsg}
 
-### Args
+### Spec
 
-Name | Type | Means
------|------|------
-hap | Happening | source happening
-
-## happenMsg(msg,init=null):Happening
+HappenMsg(msg,init=null):@ref pg_class_happening
 
 add a Happening from a message.  
 
 ### Args
 
-Name | Type | Means
------|------|------
-msg | string | happening message
-init? | HappeningOption | optional params
+| Name | Type | Means |
+|------|------|-------|
+| msg | string | happening message |
+| init | @ref HappeningOption? | optional params |
 
 ### Returns
 
 the Happening instance
 
-## happenProp(prop,init=null):Happening
+-----
+## HappenProp {#HappeningManager_HappenProp}
+
+### Spec
+
+HappenProp(prop,init=null):@ref pg_class_happening
 
 add a Happening from properties.  
 
 ### Args
 
-Name | Type | Means
------|------|------
-prop | object | happening properties
-init? | HappeningOption | optional params
+| Name | Type | Means |
+|------|------|-------|
+| prop | dict<string,any> | happening properties |
+| init | @ref HappeningManager_HappeningOption? | optional params |
 
 ### Returns
 
 the Happening instance
 
-## happenError(err,init=null):Happening
+-----
+## HappenError {#HappeningManager_HappenError}
+
+### Spec
+
+HappenError(err,init=null):@ref pg_class_happening
 
 add a Happening from Error instance.  
-init? | HappeningOption | optional params
 
 ### Args
 
-Name | Type | Means
------|------|------
-err | Error | happening Error
+| Name | Type | Means |
+|------|------|-------|
+| err | Error | error instance |
+| init | @ref HappeningManager_HappeningOption? | optional params |
 
 ### Returns
 
 the Happening instance
-
-## Type: HappeningOption
-
-Name | Type | Means
------|------|------
-name | string? | instance name
-Resolved | function<Resolved>? | call on resolved (@sa @ref pg_class_happening)
-Abandoned | function<Abandoned>? | call on abandoned (@sa @ref pg_class_happening)
-User | object? | other user definitions
-

@@ -7,102 +7,103 @@
 (()=>{ // local namespace 
 
 YgEs.HTTPClient={
-	name:'YgEs_HTTP',
+	name:'YgEs.HTTP',
 	User:{},
 }
 
-function _yges_http_retry(ctx,hap){
-	hap.resolve();
-	return ctx.retry();
+function _retry(ctx,hap){
+	hap.Resolve();
+	return ctx.Retry();
 }
 
-YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
+YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 
 	var req=new XMLHttpRequest();
 	var ctx={
-		name:'YgEs_HTTP_Request',
+		name:'YgEs.HTTP_Request',
 		User:{},
-		url:url,
-		opt:opt,
-		accepted:false,
-		end:false,
-		send_progress:0.0,
-		recv_progress:0.0,
-		progress:0.0,
-		req:req,
-		abort:()=>{
+		URL:url,
+		Opt:opt,
+		Accepted:false,
+		End:false,
+		OK:false,
+		SendProgress:0.0,
+		RecvProgress:0.0,
+		Progress:0.0,
+		Req:req,
+		Abort:()=>{
 			req.abort();
 		},
-		retry:()=>{
-			return YgEs.HTTPClient.request(method,url,opt,cbres,cbok,cbng);
+		Retry:()=>{
+			return YgEs.HTTPClient.Request(method,url,opt,cb_res,cb_ok,cb_ng);
 		},
 	}
 	var res={
-		status:0,
-		msg:'',
-		timeout:false,
-		data:null,
+		Status:0,
+		Msg:'',
+		TimeOut:false,
+		Data:null,
 	}
 
-	var happen=opt.happen??YgEs.HappeningManager;
+	var happen=opt.HappenTo??YgEs.HappeningManager;
 
-	var sendratio=opt.sendratio??0.0;
+	var sendratio=opt.SendRatio??0.0;
 	if(sendratio<0.0)sendratio=0.0;
 	else if(sendratio>1.0)sendratio=1.0;
 
 	req.addEventListener('loadstart',(ev)=>{
-		ctx.accepted=true;
-		ctx.send_progress=1.0;
-		ctx.progress=sendratio;
+		ctx.Accepted=true;
+		ctx.SendProgress=1.0;
+		ctx.Progress=sendratio;
 	});
-	req.addEventListener('progress',(ev)=>{
+	req.addEventListener('Progress',(ev)=>{
 		if(!ev.lengthComputable)return;
 		if(ev.total<1)return;
-		ctx.recv_progress=ev.loaded/ev.total;
-		ctx.progress=sendratio+((1.0-sendratio)*ctx.recv_progress);
+		ctx.RecvProgress=ev.loaded/ev.total;
+		ctx.Progress=sendratio+((1.0-sendratio)*ctx.RecvProgress);
 	});
 	req.addEventListener('load',(ev)=>{
-		if(ctx.end)return;
-		ctx.end=true;
-		ctx.recv_progress=1.0;
-		res.status=req.status;
-		res.msg=req.statusText;
-		res.body=req.response;
+		if(ctx.End)return;
+		ctx.End=true;
+		ctx.RecvProgress=1.0;
+		res.Status=req.status;
+		res.Msg=req.statusText;
+		res.Body=req.response;
 		res.head={}
-		if(opt.refhead){
-			for(var k of opt.refhead){
+		if(opt.RefHead){
+			for(var k of opt.RefHead){
 				res.head[k]=req.getResponseHeader(k);
 			}
 		}
 
-		if(opt.cbgate){
+		if(opt.OnGate){
 			try{
-				var r=opt.cbgate(res);
-				if(r)cbres=r;
+				var r=opt.OnGate(res);
+				if(r)cb_res=r;
 			}
 			catch(e){
-				var hap=happen.happenError(e,{
-					name:'YgEs_HTTP_Error',
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+				var hap=happen.HappenError(e,{
+					Name:'YgEs.HTTP_Error',
+					User:{Retry:()=>_retry(ctx,hap)},
 				});
-				if(cbng)cbng(hap);
+				if(cb_ng)cb_ng(hap);
 				return;
 			}
 		}
-		else if(res.status>299){
-			var hap=happen.happenProp(res,{
-				name:'YgEs_HTTP_Bad',
-				user:{retry:()=>_yges_http_retry(ctx,hap)},
+		else if(res.Status>299){
+			var hap=happen.HappenProp(res,{
+				Name:'YgEs_HTTP_Bad',
+				User:{Retry:()=>_retry(ctx,hap)},
 			});
-			if(cbng)cbng(hap);
+			if(cb_ng)cb_ng(hap);
 			return;
 		}
 
-		if(cbres){
+		if(cb_res){
 			var r=null;
 			var e=null;
 			try{
-				r=cbres(res);
+				r=cb_res(res);
 			}
 			catch(exc){
 				e=exc;
@@ -110,173 +111,187 @@ YgEs.HTTPClient.request=(method,url,opt,cbres=null,cbok=null,cbng=null)=>{
 			}
 
 			if(e){
-				var hap=happen.happenError(e,{
-					name:'YgEs_HTTP_Error',
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+				var hap=happen.HappenError(e,{
+					Name:'YgEs.HTTP_Error',
+					User:{Retry:()=>_retry(ctx,hap)},
 				});
-				if(cbng)cbng(hap);
+				if(cb_ng)cb_ng(hap);
 			}
 			else if(r===null){
-				var hap=happen.happenProp({
-					name:'YgEs_HTTP_Invalid',
-					msg:'invalid response:',
-					res:req.response,
-					user:{retry:()=>_yges_http_retry(ctx,hap)},
+				var hap=happen.HappenProp({
+					Name:'YgEs_HTTP_Invalid',
+					Msg:'invalid response:',
+					Res:req.response,
+					User:{Retry:()=>_retry(ctx,hap)},
 				});
-				if(cbng)cbng(hap);
+				if(cb_ng)cb_ng(hap);
 			}
 			else{
-				if(cbok)cbok(r);
+				ctx.OK=true;
+				if(cb_ok)cb_ok(r);
 			}
 		}
 		else{
-			if(cbok)cbok(res.body);
+			ctx.OK=true;
+			if(cb_ok)cb_ok(res.Body);
 		}
 	});
 	req.addEventListener('error',(ev)=>{
-		if(ctx.end)return;
-		ctx.end=true;
-		res.msg='HTTP request error';
-		if(cbng)cbng(error_msg(res.msg));
-		else log_fatal(res.msg);
+		if(ctx.End)return;
+		ctx.End=true;
+		res.Msg='HTTP request error';
+
+		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
+			Name:'YgEs.HTTP_Error',
+			User:{Retry:()=>_retry(ctx,hap)},
+		}));
+		else log_fatal(res.Msg);
 	});
 	req.addEventListener('timeout',(ev)=>{
-		if(ctx.end)return;
-		ctx.end=true;
-		res.timeout=true;
-		res.msg='HTTP timeout';
-		if(cbng)cbng(error_msg(res.msg));
-		else log_fatal(res.msg);
+		if(ctx.End)return;
+		ctx.End=true;
+		res.TimeOut=true;
+		res.Msg='HTTP timeout';
+
+		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
+			Name:'YgEs.HTTP_Error',
+			User:{Retry:()=>_retry(ctx,hap)},
+		}));
+		else log_fatal(res.Msg);
 	});
 	req.addEventListener('abort',(ev)=>{
-		if(ctx.end)return;
-		ctx.end=true;
-		res.msg='aborted';
-		if(cbng)cbng(error_msg(res.msg));
-		else log_notice(res.msg);
+		if(ctx.End)return;
+		ctx.End=true;
+		res.Msg='aborted';
+
+		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
+			Name:'YgEs.HTTP_Error',
+			User:{Retry:()=>_retry(ctx,hap)},
+		}));
+		else log_notice(res.Msg);
 	});
 
-	if(opt.restype)req.responseType=opt.restype;
-	if(opt.timeout)req.timeout=opt.timeout;
-	if(opt.header){
-		for(var k in opt.header){
-			req.setRequestHeader(k,opt.header[k]);
+	if(opt.ResType)req.responseType=opt.ResType;
+	if(opt.TimeOut)req.timeout=opt.TimeOut;
+	if(opt.Header){
+		for(var k in opt.Header){
+			req.setRequestHeader(k,opt.Header[k]);
 		}
 	}
 
-	if(opt.body){
-		req.upload.addEventListener('progress',(ev)=>{
-			if(ctx.end)return;
+	if(opt.Body){
+		req.upload.addEventListener('Progress',(ev)=>{
+			if(ctx.End)return;
 			if(ev.total<1)return;
-			ctx.send_progress=ev.loaded/ev.total;
-			ctx.progress=sendratio*ctx.send_progress;
+			ctx.SendProgress=ev.loaded/ev.total;
+			ctx.Progress=sendratio*ctx.SendProgress;
 		});
 	}
 
 	req.open(method,url);
-	if(opt.body){
-		if(opt.type)req.setRequestHeader('Content-Type',opt.type);
-		req.send(opt.body);
+	if(opt.Body){
+		if(opt.Type)req.setRequestHeader('Content-Type',opt.Type);
+		req.send(opt.Body);
 	}
 	else req.send();
 
 	return ctx;
 }
 
-YgEs.HTTPClient.getText=(url,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.GetText=(url,cb_ok=null,cb_ng=null,opt={})=>{
 
-	return YgEs.HTTPClient.request('GET',url,opt,
+	return YgEs.HTTPClient.Request('GET',url,opt,
 	(res)=>{
-		if(res.status!=200)return null;
-		return res.body;
-	},cbok,cbng);
+		if(res.Status!=200)return null;
+		return res.Body;
+	},cb_ok,cb_ng);
 }
 
-YgEs.HTTPClient.getBlob=(url,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.GetBlob=(url,cb_ok=null,cb_ng=null,opt={})=>{
 
-	return YgEs.HTTPClient.request('GET',url,Object.assign({
-		restype:'blob',
+	return YgEs.HTTPClient.Request('GET',url,Object.assign({
+		ResType:'blob',
 	},opt),
 	(res)=>{
-		if(res.status!=200)return null;
-		return res.body;
-	},cbok,cbng);
+		if(res.Status!=200)return null;
+		return res.Body;
+	},cb_ok,cb_ng);
 }
 
-YgEs.HTTPClient.getBuf=(url,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.GetBuf=(url,cb_ok=null,cb_ng=null,opt={})=>{
 
-	return YgEs.HTTPClient.request('GET',url,Object.assign({
-		restype:'arraybuffer',
+	return YgEs.HTTPClient.Request('GET',url,Object.assign({
+		ResType:'arraybuffer',
 	},opt),
 	(res)=>{
-		if(res.status!=200)return null;
-		return res.body;
-	},cbok,cbng);
+		if(res.Status!=200)return null;
+		return res.Body;
+	},cb_ok,cb_ng);
 }
 
-YgEs.HTTPClient.getJSON=(url,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.GetJSON=(url,cb_ok=null,cb_ng=null,opt={})=>{
 
-	return YgEs.HTTPClient.request('GET',url,opt,
+	return YgEs.HTTPClient.Request('GET',url,opt,
 	(res)=>{
-		if(res.status!=200)return null;
-		return JSON.parse(res.body);
-	},cbok,cbng);
+		if(res.Status!=200)return null;
+		return JSON.parse(res.Body);
+	},cb_ok,cb_ng);
 }
 
-YgEs.HTTPClient.getXML=(url,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.GetXML=(url,cb_ok=null,cb_ng=null,opt={})=>{
 
-	return YgEs.HTTPClient.request('GET',url,opt,
+	return YgEs.HTTPClient.Request('GET',url,opt,
 	(res)=>{
-		if(res.status!=200)return null;
+		if(res.Status!=200)return null;
 		var psr=new DOMParser();
-		return psr.parseFromString(res.body,"text/xml");
-	},cbok,cbng);
+		return psr.parseFromString(res.Body,"text/xml");
+	},cb_ok,cb_ng);
 }
 
-YgEs.HTTPClient.postText=(url,text,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.PostText=(url,text,cb_ok=null,cb_ng=null,opt={})=>{
 
-	return YgEs.HTTPClient.request('POST',url,Object.assign({
+	return YgEs.HTTPClient.Request('POST',url,Object.assign({
 		headers:{'Content-Type':'text/plain'},
-		body:text,
-		sendratio:0.99,
+		Body:text,
+		SendRatio:0.99,
 	},opt),
 	(res)=>{
-		return res.body;
-	},cbok,cbng);
+		return res.Body;
+	},cb_ok,cb_ng);
 }
 
-YgEs.HTTPClient.postJSON=(url,data,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.PostJSON=(url,data,cb_ok=null,cb_ng=null,opt={})=>{
 
-	return YgEs.HTTPClient.request('POST',url,Object.assign({
+	return YgEs.HTTPClient.Request('POST',url,Object.assign({
 		headers:{'Content-Type':'application/json'},
-		body:JSON.stringify(data),
-		sendratio:0.99,
+		Body:JSON.stringify(data),
+		SendRatio:0.99,
 	},opt),
 	(res)=>{
-		return res.body;
-	},cbok,cbng);
+		return res.Body;
+	},cb_ok,cb_ng);
 }
 
-YgEs.HTTPClient.postFile=(url,bin,file,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.PostFile=(url,bin,file,cb_ok=null,cb_ng=null,opt={})=>{
 
 	readfile(bin,file,(name,data)=>{
-		return YgEs.HTTPClient.request('POST',url,Object.assign({
-			type:file.type?file.type:'application/octet-stream',
-			body:data,
-			sendratio:0.99,
+		return YgEs.HTTPClient.Request('POST',url,Object.assign({
+			Type:file.type?file.type:'application/octet-stream',
+			Body:data,
+			SendRatio:0.99,
 		},opt),
 		(res)=>{
-			return res.body;
-		},cbok,cbng);
-	},cbng);
+			return res.Body;
+		},cb_ok,cb_ng);
+	},cb_ng);
 }
 
-YgEs.HTTPClient.delete=(url,cbok=null,cbng=null,opt={})=>{
+YgEs.HTTPClient.Delete=(url,cb_ok=null,cb_ng=null,opt={})=>{
 
-	return YgEs.HTTPClient.request('DELETE',url,opt,
+	return YgEs.HTTPClient.Request('DELETE',url,opt,
 	(res)=>{
-		return res.body;
-	},cbok,cbng);
+		return res.Body;
+	},cb_ok,cb_ng);
 }
 
 })();

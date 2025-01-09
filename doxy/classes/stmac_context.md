@@ -1,54 +1,72 @@
-﻿@page pg_class_stmac_context StMacContext
+﻿@page pg_class_stmac_context StateMachineContext
 
 # What's It?
 
-@sa @ref pg_feat_stmac @n
+created by @ref pg_class_stmac_container
 
+-----
 # Properties
 
-Name | Type | Means
------|------|------
-User | object | user definitions (on this context, not shared to states User)
+| Name | Type | Means |
+|------|------|-------|
+| User | @ref StMac_UserShared | user definitions and kept in this context |
 
-
+-----
 # Methods
 
-## getPrevState():string?
+-----
+## GetPrevState {#StMac_GetPrevState}
+
+### Spec
+
+GetPrevState():string?
 
 ### Returns
 
 previous state
 
+-----
+## GetCurState {#StMac_GetCurState}
 
-## getCurState():string?
+### Spec
+
+GetCurState():string?
 
 ### Returns
 
 current state
 
+-----
+## GetNextState {#StMac_GetNextState}
 
-## getNextState():string?
+### Spec
+
+GetNextState():string?
 
 ### Returns
 
 next state
 
+-----
+## GetHappeningManager {#StMac_GetHappeningManager}
 
-## getHappeningManager():HappeningManager
+### Spec
+
+GetHappeningManager():@ref pg_class_happening_manager
 
 ### Returns
 
 target HappeningManager of this states 
 
-
+-----
 # Inherited
 
 some methods are inherited from @ref pg_class_procedure  
 
-- isStarted()
-- isFinished()
-- isAborted()
-- isEnd()
-- abort()
-- sync()
-- toPromise()
+- IsStarted()
+- IsFinished()
+- IsAborted()
+- IsEnd()
+- Abort()
+- Sync()
+- ToPromise()
