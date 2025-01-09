@@ -7,6 +7,10 @@ Controlling file system directories.
 -----
 # Import
 
+## for web
+
+(not supported)
+
 ## for Node/Deno
 
 ```

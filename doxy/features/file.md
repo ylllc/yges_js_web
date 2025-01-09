@@ -7,6 +7,10 @@ Controlling files.
 -----
 # Import
 
+## for web
+
+(not supported)
+
 ## for Node/Deno
 
 ```

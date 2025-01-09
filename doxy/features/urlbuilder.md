@@ -18,7 +18,7 @@ advanced URL parser.
 
 ```
 <script src="yges/ipl.js"></script>
-<script src="yges/urlbuild.js"></script>
+<script src="yges/urlbuilder.js"></script>
 ```
 use YgEs.URLBuilder
 

@@ -16,6 +16,10 @@ QHT is very simple web view interface.
 ```
 use YgEs
 
+## for Node/Deno
+
+(not supported)
+
 -----
 # How to Use
 

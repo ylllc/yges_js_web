@@ -65,7 +65,7 @@ console.log(t2.Count()); // will get 1
 ```
 
 -----
-## Prop Mode
+## Dict Mode
 
 ```
 var t3=PropTree.Create({},true);

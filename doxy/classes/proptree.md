@@ -87,11 +87,11 @@ all values in this
 -----
 ## ToArray {#PropTree_ToArray}
 
+target object substructure is converted to an array.
+
 ### Spec
 
 ToArray(...keys)
-
-target object substructure is converted to an array.
 
 ### Args
 
@@ -102,11 +102,11 @@ target object substructure is converted to an array.
 -----
 ## ToDict {#PropTree_ToDict}
 
+target array substructure is converted to an object.
+
 ### Spec
 
 ToDict(...keys)
-
-target array substructure is converted to an object.
 
 ### Args
 
@@ -138,6 +138,8 @@ something stored at target location
 
 Ref(...keys):PropTree?
 
+### Args
+
 | Name | Type | Means |
 |------|------|-------|
 | keys | @ref PropTree_PropTreeKeys | substructure location |
@@ -152,6 +154,8 @@ subinstance at target locateion (or undefined)
 ### Spec
 
 Dig(...args):PropTree
+
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -168,6 +172,8 @@ subinstance at target
 ### Spec
 
 Count(...keys):int
+
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -186,6 +192,8 @@ ARRAY,DICT type returns subinstances count.
 
 Get(...keys):any
 
+### Args
+
 | Name | Type | Means |
 |------|------|-------|
 | keys | @ref PropTree_PropTreeKeys | substructure location |
@@ -197,12 +205,14 @@ export from target subinstances (or undefined)
 -----
 ## Set {#PropTree_Set}
 
+set a content to target subinstances.  
+and it is converted to ARRAY/DICT by key type.  
+
 ### Spec
 
 Set(...keys,val):PropTree
 
-set a content to target subinstances.  
-and it is converted to ARRAY/DICT by key type.  
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -216,12 +226,14 @@ reference of target subinstances
 ---
 ## Cut {#PropTree_Cut}
 
+in MONO type, erase target value with undefiend.  
+in ARRAY,DICT type, target subinstances is cut out from its node.  
+
 ### Spec
 
 Cut(...keys):any
 
-in MONO type, erase target value with undefiend.  
-in ARRAY,DICT type, target subinstances is cut out from its node.  
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -237,12 +249,14 @@ ARRAY,DICT type returns reference of removed subinstances.
 -----
 ## Merge {#PropTree_Merge}
 
+overwrite a structure to target subinstances.  
+and it is converted to ARRAY/DICT by key type.  
+
 ### Spec
 
 Merge(...keys,val):PropTree
 
-overwrite a structure to target subinstances.  
-and it is converted to ARRAY/DICT by key type.  
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -256,12 +270,14 @@ reference of target subinstances
 -----
 ## Push {#PropTree_Push}
 
+add a content to endside of target subinstances.  
+and it is converted to ARRAY.  
+
 ### Spec
 
 Push(...keys,val):PropTree
 
-add a content to endside of target subinstances.  
-and it is converted to ARRAY.  
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -275,12 +291,14 @@ reference of target subinstances
 -----
 ## Unshift {#PropTree_Unshift}
 
+add a content to beginside of target subinstances.  
+and it is converted to ARRAY.  
+
 ### Spec
 
 Unshift(...keys,val):PropTree
 
-add a content to beginside of target subinstances.  
-and it is converted to ARRAY.  
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -294,12 +312,14 @@ reference of target subinstances
 -----
 ## Pop {#PropTree_Pop}
 
+cut out a content from endside of target subinstances.  
+and it is converted to ARRAY.  
+
 ### Spec
 
 Pop(...keys):any
 
-cut out a content from endside of target subinstances.  
-and it is converted to ARRAY.  
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -312,12 +332,14 @@ cut content
 -----
 ## Shift {#PropTree_Shift}
 
+cut out a content from beginside of target subinstances.  
+and it is converted to ARRAY.  
+
 ### Spec
 
 Shift(...keys):any
 
-cut out a content from beginside of target subinstances.  
-and it is converted to ARRAY.  
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -330,11 +352,13 @@ cut content
 -----
 ## Each {#PropTree_Each}
 
+iterate on target subinstances.  
+
 ### Spec
 
 Each(...keys,cb):quadinary
 
-iterate on target subinstances.  
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
