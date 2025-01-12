@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset="utf-8">
+	<title>Yggdrasil Essense</title>
+	<link href="main.css" rel="stylesheet">
+</head>
+<body onload="ipl_ready()"><div class=screen>
+<header>
+<a href="./">Yggdrasil Essense</a> / 
+Key Code View
+<hr>
+</header>
+<main>
+<h1 class="pagetitle">Key Code View</h1>
+<noscript><div class="warning">(JavaScript required)</div></noscript>
+<div id=mainboard class=main></div>
+</main>
+<footer>
+<hr>
+&copy; 2024 Yggdrasil Leaves, LLC.<br>
+Repositories: 
+<a target="_blank" href="https://github.com/ylllc/yges_js_web">[web]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_node">[Node.js]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_deno">[Deno]</a>
+</footer>
+<div id=modules>
+<script src="yges/ipl.js"></script>
+</div>
+<script><!--
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
+mainboard.Clear();
+let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
+
+async function ipl_ready(){
+
+	ipl_loading.Remove();
+
+	let ktd=[]
+
+	let tbl=YgEs.NewQHT({Target:mainboard,Tag:'table',Attr:{class:'table_center',border:'border'}});
+	let thr=YgEs.NewQHT({Target:tbl,Tag:'tr'});
+	YgEs.NewQHT({Target:thr,Tag:'th'});
+	for(let i=0;i<16;++i){
+		YgEs.NewQHT({Target:thr,Tag:'th',Sub:['+'+i.toString(16).toUpperCase()]});
+	}
+	for(let j=0;j<16;++j){
+		let tdr=YgEs.NewQHT({Target:tbl,Tag:'tr'});
+		YgEs.NewQHT({Target:tdr,Tag:'th',Sub:[YgEs.Util.FillZero((j<<4).toString(16).toUpperCase(),2)]});
+		for(let i=0;i<16;++i){
+			let td=YgEs.NewQHT({Target:tdr,Tag:'td',Style:{width:'4em'}});
+			td.User.loc={}
+			ktd.push(td);
+		}
+	}
+
+	document.onkeydown=(ev)=>{
+		if(ev.isComposing)return;
+		let k=ev.keyCode;
+		if(k<0 || k>255){
+			console.warn('invalid keydown code: '+k+' ('+ev.key+')');
+			return;
+		}
+		let l=ev.location;
+		if(ktd[k].User.loc[l]){
+			console.warn('over down: '+k+' ('+ev.key+') - '+l);
+			return;
+		}
+		let n='['+ev.key+']';
+		if(l>0)n+='-'+l;
+		ktd[k].User.loc[l]=n;
+		ktd[k].Element.innerHTML=Object.values(ktd[k].User.loc).toString();
+	};
+	document.onkeyup=(ev)=>{
+		if(ev.isComposing)return;
+		let k=ev.keyCode;
+		if(k<0 || k>255){
+			console.warn('invalid keydown code: '+k+' ('+ev.key+')');
+			return;
+		}
+		let l=ev.location;
+		if(!ktd[k].User.loc[l]){
+			console.warn('up without down: '+k+' ('+ev.key+') - '+l);
+			return;
+		}
+		delete ktd[k].User.loc[l];
+		ktd[k].Element.innerHTML=Object.values(ktd[k].User.loc).toString();
+	};
+}
+//--></script></div></body></html>

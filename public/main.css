@@ -61,6 +61,10 @@ main{
 	font-size: 250%;
 }
 
+.table_center{
+	margin:auto;
+}
+
 .yges_loadmon_view{
 }
 .yges_loadmon_table{
