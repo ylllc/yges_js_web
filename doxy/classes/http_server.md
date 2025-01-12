@@ -73,6 +73,26 @@ make HTTP response to walker.Response
 | User | @ref HTTPServer_UserShared? | user definition |
 
 -----
+## ServerDirInfo {#HTTPServer_ServerDirInfo}
+
+| Name | Type | Means |
+|------|------|-------|
+| Parent bool | parent dir is enabled |
+| Dirs | dict<string,@ref HTTPServer_ServeDirInfo> | subdirs |
+| Files | dict<string,@ref HTTPServer_ServeFileInfo> | files |
+
+-----
+## ServerFileInfo {#HTTPServer_ServerFileInfo}
+
+| Name | Type | Means |
+|------|------|-------|
+| Size | int | file size |
+| MTime | string? | modified time in ISO 8601 (optional) |
+| CTime | string? | status changed time in ISO 8601 (optional) |
+| ATime | string? | access time in ISO 8601 (optional) |
+| BTime | string? | birth time in ISO 8601 (optional) |
+
+-----
 ## ServeOption {#HTTPServer_ServeOption}
 
 | Name | Type | Means |
