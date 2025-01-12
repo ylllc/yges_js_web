@@ -26,7 +26,6 @@ Repositories:
 </footer>
 <div id=modules>
 <script src="yges/ipl.js"></script>
-<script src="yges/logger_view.js"></script>
 </div>
 <script><!--
 let modules=YgEs.ToQHT(document.getElementById('modules'));
@@ -53,12 +52,36 @@ async function ipl_ready(){
 	loader.Plug('JS',YgEs.DownloadManager.PlugJS(modules));
 
 	loader.Load('logview.css','CSS','logview.css');
-//	loader.Load('logger_view.js','JS','yges/logger_view.js');
+	loader.Load('logger_view.js','JS','yges/logger_view.js');
 	await YgEs.Timing.SyncKit(10,()=>{return loader.IsReady();}).ToPromise();
 	monitor.Dispose();
 
 	let logview=YgEs.LogView.SetUp(YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_logview_window'}}));
 	logview.Attach(log);
+	let ctrlpnl=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_logview_ctrlpnl'}});
+
+	let btn_save=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_button'},Sub:['Save']});
+	btn_save.Element.onclick=()=>{
+		var saver=YgEs.CreateSaver();
+		saver.save(logview.GetText(),'log.txt','text/plain');
+		saver.Remove();
+	}
+
+	let btn_copy=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_button'},Sub:['Copy']});
+	btn_copy.Element.onclick=()=>{
+		if(!Navigator.clipboard){
+			log.Fatal('Clipboard not available');
+			return;
+
+		}
+		Navigator.clipboard.writeText(logview.GetText());
+	}
+
+	let btn_clear=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_button'},Sub:['Clear']});
+	btn_clear.Element.onclick=()=>{
+		logview.Clear();
+	}
+
 
 	log.Tick('TICK Log');
 	log.Trace('TRACE Log');

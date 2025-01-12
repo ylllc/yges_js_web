@@ -30,6 +30,12 @@ function _setup(target){
 		Attach:(log)=>{
 			log.Way=(src)=>_logway(target,src);
 		},
+		Clear:()=>{
+			target.Clear();
+		},
+		GetText:()=>{
+			return target.Element.innerText;
+		},
 	}
 	return ctrl;
 }
