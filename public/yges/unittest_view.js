@@ -13,7 +13,7 @@ function _view_scenaria(src,target){
 	for(let sct of src){
 		let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_testrun_scn'}});
 		let st=YgEs.NewQHT({Target:li,Tag:'span'});
-		YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_caption'},Sub:[sct.scn.Title]});
+		YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_caption'},Sub:[sct.Scenario.Title]});
 		const view={
 			UpdateResult:(f)=>{
 				if(f){

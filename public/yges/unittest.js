@@ -57,10 +57,10 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 						for(let scn of YgEs.Test.Scenaria[url]){
 							++runs;
 							let sct={
-								scn:scn,
-								view:null,
+								Scenario:scn,
+								View:null,
 								SetView:(v)=>{
-									sct.view=v;
+									sct.View=v;
 									if(v)v.UpdateResult(result);
 								},
 							}
@@ -89,7 +89,7 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 					let puf=false;
 					for(let i=0;i<user.Scenaria.length;++i){
 						let sct=user.Scenaria[i];
-						if(!sct.scn.Pickup)continue;
+						if(!sct.Scenario.Pickup)continue;
 						puf=true;
 						break;
 					}
@@ -98,24 +98,24 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 					for(let i=0;i<user.Scenaria.length;++i){
 						let sct=user.Scenaria[i];
 						try{
-							if(sct.scn.Filter===false || (puf && !sct.scn.Pickup)){
+							if(sct.Scenario.Filter===false || (puf && !sct.Scenario.Pickup)){
 								--runs;
-								if(sct.view){
-									sct.view.Skip();
+								if(sct.View){
+									sct.View.Skip();
 									if(result==null && runs<1)report(true);
 								}
 								continue;
 							}
 
-							await sct.scn.Proc({
+							await sct.Scenario.Proc({
 								Launcher:launcher.CreateLauncher(),
-								Log:YgEs.Log.CreateLocal(sct.scn.Title,YgEs.Log.LEVEL.DEBUG),
+								Log:YgEs.Log.CreateLocal(sct.Scenario.Title,YgEs.Log.LEVEL.DEBUG),
 							});
-							if(sct.view)sct.view.UpdateResult(true);
+							if(sct.View)sct.View.UpdateResult(true);
 							report(true);
 						}
 						catch(e){
-							if(sct.view)sct.view.SetError(e);
+							if(sct.View)sct.View.SetError(e);
 							report(false);
 						}
 					}
@@ -125,7 +125,7 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 		},
 	}
 
-	let user={
+	let ctrl={
 		Scenaria:[],
 		Hap:null,
 		Done:false,
@@ -133,19 +133,19 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 	let proc=YgEs.StateMachine.Run('Download',states,{
 		Name:'YgEs.UnitTest_Proc',
 		Launcher:launcher,
-		User:user,
+		User:ctrl,
 	});
 
-	user.SetView=(v)=>{
+	ctrl.SetView=(v)=>{
 		view=v;
 		if(view){
 			view.UpdateResult(result);
 			view.SetMsg(msg);
-			if(user.Done)view.SetScenaria(user.Scenaria);
+			if(ctrl.Done)view.SetScenaria(ctrl.Scenaria);
 		}
 	}
 
-	return user;
+	return ctrl;
 }
 
 function _setupTestDir(launcher,target,url,src,reportParent){
