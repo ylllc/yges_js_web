@@ -8,34 +8,34 @@
 
 function _view_scenaria(src,target){
 
-	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_test_layer'}});
+	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_testrun_layer'}});
 
 	for(let sct of src){
-		let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_test_scn'}});
+		let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_testrun_scn'}});
 		let st=YgEs.NewQHT({Target:li,Tag:'span'});
-		YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_test_caption'},Sub:[sct.scn.Title]});
+		YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_caption'},Sub:[sct.scn.Title]});
 		const view={
 			UpdateResult:(f)=>{
 				if(f){
 					st.Replace('[OK]');
-					st.Element.setAttribute('class','yges_test_stat_ok');
+					st.Element.setAttribute('class','yges_testrun_stat_ok');
 				}
 				else if(f===false){
 					st.Replace('[NG]');
-					st.Element.setAttribute('class','yges_test_stat_ng');
+					st.Element.setAttribute('class','yges_testrun_stat_ng');
 				}
 				else{
 					st.Replace('[...]');
-					st.Element.setAttribute('class','yges_test_stat_wip');
+					st.Element.setAttribute('class','yges_testrun_stat_wip');
 				}
 			},
 			Skip:()=>{
 				st.Replace('(skip)');
-				st.Element.setAttribute('class','yges_test_stat_skip');
+				st.Element.setAttribute('class','yges_testrun_stat_skip');
 			},
 			SetError:(e)=>{
 				view.UpdateResult(false);
-				YgEs.NewQHT({Target:li,Tag:'div',Attr:{class:'yges_test_error'},Sub:[e.toString()]});
+				YgEs.NewQHT({Target:li,Tag:'div',Attr:{class:'yges_testrun_error'},Sub:[e.toString()]});
 			},
 		}
 		sct.SetView(view);
@@ -44,11 +44,11 @@ function _view_scenaria(src,target){
 
 function _view_file(src,target,fn){
 
-	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_test_layer'}});
-	let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_test_file'}});
+	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_testrun_layer'}});
+	let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_testrun_file'}});
 	let st=YgEs.NewQHT({Target:li,Tag:'span'});
-	YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_test_caption'},Sub:[fn]});
-	let msg=YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_test_msg'}});
+	YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_caption'},Sub:[fn]});
+	let msg=YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_msg'}});
 
 	src.SetView({
 		SetMsg:(s)=>{
@@ -57,15 +57,15 @@ function _view_file(src,target,fn){
 		UpdateResult:(f)=>{
 			if(f){
 				st.Replace('[OK]');
-				st.Element.setAttribute('class','yges_test_stat_ok');
+				st.Element.setAttribute('class','yges_testrun_stat_ok');
 			}
 			else if(f===false){
 				st.Replace('[NG]');
-				st.Element.setAttribute('class','yges_test_stat_ng');
+				st.Element.setAttribute('class','yges_testrun_stat_ng');
 			}
 			else{
 				st.Replace('[...]');
-				st.Element.setAttribute('class','yges_test_stat_wip');
+				st.Element.setAttribute('class','yges_testrun_stat_wip');
 			}
 		},
 		SetScenaria:(src)=>{
@@ -76,23 +76,23 @@ function _view_file(src,target,fn){
 
 function _view_dir(src,target,dn){
 
-	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_test_layer'}});
-	let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_test_dir'}});
+	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_testrun_layer'}});
+	let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_testrun_dir'}});
 	let st=YgEs.NewQHT({Target:li,Tag:'span'});
-	YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_test_caption'},Sub:[dn]});
+	YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_caption'},Sub:[dn]});
 	src.SetView({
 		UpdateResult:(f)=>{
 			if(f){
 				st.Replace('[OK]');
-				st.Element.setAttribute('class','yges_test_stat_ok');
+				st.Element.setAttribute('class','yges_testrun_stat_ok');
 			}
 			else if(f===false){
 				st.Replace('[NG]');
-				st.Element.setAttribute('class','yges_test_stat_ng');
+				st.Element.setAttribute('class','yges_testrun_stat_ng');
 			}
 			else{
 				st.Replace('[...]');
-				st.Element.setAttribute('class','yges_test_stat_wip');
+				st.Element.setAttribute('class','yges_testrun_stat_wip');
 			}
 		},
 	});

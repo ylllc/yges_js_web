@@ -1,0 +1,32 @@
+
+.yges_testrun_layer{
+}
+.yges_testrun_dir{
+}
+.yges_testrun_file{
+}
+.yges_testrun_scn{
+}
+.yges_testrun_caption{
+	margin-left:0.5em;
+}
+.yges_testrun_msg{
+	margin-left:0.5em;
+}
+.yges_testrun_stat_wip{
+	color:#888888;
+}
+.yges_testrun_stat_skip{
+	color:#ffcc66;
+}
+.yges_testrun_stat_ok{
+	color:#66ffff;
+}
+.yges_testrun_stat_ng{
+	color:#ff6666;
+}
+.yges_testrun_error{
+	border-style:groove;
+	margin:0.2em;
+	padding:0.3em;
+}
