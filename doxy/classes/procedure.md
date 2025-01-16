@@ -15,6 +15,18 @@ created by @pg_class_launcher
 -----
 # Methods
 
+-----
+## GetInstanceID {#Log_GetInstanceID}
+
+### Spec
+
+GetInstanceID():int
+
+### Returns
+
+instance ID created by @ref Common_NextID
+
+-----
 ## IsStarted {#Procedure_IsStarted}
 
 ### Spec

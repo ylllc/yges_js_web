@@ -1,6 +1,6 @@
 // † Yggdrasil Essense for JavaScript † //
 // ====================================== //
-// © 2024 Yggdrasil Leaves, LLC.          //
+// © 2024-5 Yggdrasil Leaves, LLC.        //
 //        All rights reserved.            //
 
 // Common Store ------------------------- //
@@ -9,6 +9,21 @@
 let YgEs={
 	name:'YgEs',
 	User:{},
+};
+
+(()=>{ // local namespace 
+
+let _prevID=(1234567890+Date.now())&0x7fffffff;
+let _deltaID=727272727; // 31bit prime number, over 2 
+
+YgEs.InitID=(init,delta=null)=>{
+	_prevID=init;
+	if(delta)_deltaID=delta;
+}
+
+YgEs.NextID=()=>{
+	_prevID=(_prevID+_deltaID)&0x7fffffff;
+	return _prevID;
 }
 
 YgEs.CreateEnum=(src)=>{
@@ -81,6 +96,8 @@ YgEs.Inspect=(val)=>{
 	return JSON.stringify(val);
 }
 
+})();
+
 // Logger ------------------------------- //
 (()=>{ // local namespace 
 
@@ -133,6 +150,7 @@ function _create_local(capt=null,showable=null,parent=null){
 		_default_way(src);
 	}
 
+	const iid=YgEs.NextID();
 	let t={
 		name:'YgEs.LocalLog',
 		User:{},
@@ -147,6 +165,7 @@ function _create_local(capt=null,showable=null,parent=null){
 
 		CreateLocal:(capt=null,showable=null)=>_create_local(capt,showable,t),
 
+		GetInstanceID:()=>iid,
 		GetParent:()=>parent,
 		GetCaption:()=>{
 			for(let inst=t;inst;inst=inst.GetParent()){
@@ -498,10 +517,12 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 	let onResolved=init.OnResolved??_default_resolved;
 	let onAbandoned=init.OnAbandoned??_default_abandoned;
 
+	const iid=YgEs.NextID();
 	let hap={
 		Name:init.Name??'YgEs.Happening',
 		User:init.User??{},
 
+		GetInstanceID:()=>iid,
 		GetProp:cbprop,
 		ToString:cbstr,
 		toString:cbstr,
@@ -541,6 +562,7 @@ function _create_manager(prm,parent=null){
 		_default_happened(hap);
 	}
 
+	const iid=YgEs.NextID();
 	let mng={
 		name:prm.Name??'YgEs.HappeningManager',
 		OnHappen:prm.OnHappen??null,
@@ -552,6 +574,7 @@ function _create_manager(prm,parent=null){
 			return cm;
 		},
 
+		GetInstanceID:()=>iid,
 		GetParent:()=>parent,
 		GetChildren:()=>children,
 		GetIssues:()=>issues,
@@ -683,11 +706,13 @@ function _create_proc(prm){
 	let finished=false;
 	let aborted=false;
 
+	const iid=YgEs.NextID();
 	let proc={
 		name:prm.Name??CLASS_PROC,
 		HappenTo:(prm.HappenTo??HappeningManager).CreateLocal(),
 		User:prm.User??{},
 
+		GetInstanceID:()=>iid,
 		IsStarted:()=>started,
 		IsFinished:()=>finished,
 		IsAborted:()=>aborted,
@@ -820,6 +845,7 @@ function _yges_enginge_create_launcher(prm){
 	let launched=[]
 	let active=[]
 
+	const iid=YgEs.NextID();
 	let lnc={
 		name:prm.Name??CLASS_LAUNCHER,
 		HappenTo:(prm.HappenTo??HappeningManager).CreateLocal(),
@@ -827,6 +853,7 @@ function _yges_enginge_create_launcher(prm){
 		Cycle:prm.Cycle??DEFAULT_LAUNCHER_CYCLE,
 		User:prm.User??{},
 
+		GetInstanceID:()=>iid,
 		IsEnd:()=>{
 			if(launched.length>0)return false;
 			if(active.length>0)return false;

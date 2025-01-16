@@ -55,6 +55,17 @@
 # Methods
 
 -----
+## GetInstanceID {#Log_GetInstanceID}
+
+### Spec
+
+GetInstanceID():int
+
+### Returns
+
+instance ID created by @ref Common_NextID
+
+-----
 ## CreateLocal(prm={}):@ref pg_class_happening_manager {#HappeningManager_CreateLocal}
 
 create a child HappeningManager  

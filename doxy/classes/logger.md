@@ -119,6 +119,17 @@ usually, put src.Text
 # Methods
 
 -----
+## GetInstanceID {#Log_GetInstanceID}
+
+### Spec
+
+GetInstanceID():int
+
+### Returns
+
+instance ID created by @ref Common_NextID
+
+-----
 ## CreateLocal {#Log_CreateLocal}
 
 create a new local log instance  

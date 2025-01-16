@@ -42,6 +42,42 @@ Error caught in @ref pg_class_happening
 # Methods
 
 -----
+## InitID {#Common_InitID}
+
+reset params for @ref Common_NextID
+
+### Spec
+
+InitID(init,delta=null)
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| init | int | any 31bit value |
+| delta | int | any 31bit prime value, except 2 |
+
+### Notes
+
+- some YgEs classes use @ref Common_NextID. resetting after them may makes conflict.
+- feeding 2 or nonprime delta affect short to making ID cycle.  
+
+-----
+## NextID {#Common_NextID}
+
+### Spec
+
+NextID():int
+
+### Returns
+
+(tiny) identifiable number.  
+
+### Notes
+
+- calling over 2147483648 times, returns same to 1st returns repeatedly.  
+
+-----
 ## CreateEnum {#Common_CreateEnum}
 
 ### Spec

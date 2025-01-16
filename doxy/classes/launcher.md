@@ -51,6 +51,17 @@ user definied object kept in a @ref pg_class_procedure instance
 # Methods
 
 -----
+## GetInstanceID {#Log_GetInstanceID}
+
+### Spec
+
+GetInstanceID():int
+
+### Returns
+
+instance ID created by @ref Common_NextID
+
+-----
 ## IsEnd {#Launcher_IsEnd}
 
 ### Spec

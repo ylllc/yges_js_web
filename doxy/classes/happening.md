@@ -16,6 +16,17 @@ created and managed by @ref pg_class_happening_manager
 # Methods
 
 -----
+## GetInstanceID {#Log_GetInstanceID}
+
+### Spec
+
+GetInstanceID():int
+
+### Returns
+
+instance ID created by @ref Common_NextID
+
+-----
 ## GetProp {#Happening_GetProp}
 
 ### Spec
