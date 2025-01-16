@@ -20,7 +20,7 @@ YgEs.ToQHT=(el)=>{
 		},
 		Clear:()=>{
 			if(!qht.Element)return;
-			qht.Element.innerHTML='';
+			qht.Element.innerText='';
 		},
 		Append:(src)=>{
 			if(!qht.Element)return;
@@ -29,11 +29,11 @@ YgEs.ToQHT=(el)=>{
 				if(src._yges_qht_)qht.Element.append(src.Element);
 				else qht.Element.append(src);
 			}
-			else qht.Element.innerHTML+=src;
+			else qht.Element.append(src);
 		},
 		Replace:(src)=>{
 			if(!qht.Element)return;
-			qht.Element.innerHTML='';
+			qht.Element.innerText='';
 			qht.Append(src);
 		},
 	}
@@ -63,7 +63,7 @@ YgEs.NewQHT=(prm)=>{
 				if(t._yges_qht_)el.append(t.Element);
 				else el.append(t);
 			}
-			else el.innerHTML+=t;
+			else el.append(t);
 		}
 	}
 	if(prm.Target)prm.Target.Append(el);
