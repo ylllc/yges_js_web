@@ -14,7 +14,7 @@ let YgEs={
 (()=>{ // local namespace 
 
 let _prevID=(1234567890+Date.now())&0x7fffffff;
-let _deltaID=727272727; // 31bit prime number, over 2 
+let _deltaID=727272727; // 31bit prime number, except 2 
 
 YgEs.InitID=(init,delta=null)=>{
 	_prevID=init;
@@ -854,6 +854,10 @@ function _yges_enginge_create_launcher(prm){
 		User:prm.User??{},
 
 		GetInstanceID:()=>iid,
+		GetActive:()=>active,
+		GetHeld:()=>launched,
+		GetSub:()=>sublauncher,
+
 		IsEnd:()=>{
 			if(launched.length>0)return false;
 			if(active.length>0)return false;
@@ -1681,6 +1685,7 @@ YgEs.ToQHT=(el)=>{
 		Element:el,
 
 		Remove:()=>{
+			if(!qht.Element)return;
 			qht.Element.remove();
 			qht.Element=null;
 		},

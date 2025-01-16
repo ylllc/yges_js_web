@@ -14,7 +14,7 @@ let YgEs={
 (()=>{ // local namespace 
 
 let _prevID=(1234567890+Date.now())&0x7fffffff;
-let _deltaID=727272727; // 31bit prime number, over 2 
+let _deltaID=727272727; // 31bit prime number, except 2 
 
 YgEs.InitID=(init,delta=null)=>{
 	_prevID=init;
