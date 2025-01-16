@@ -15,6 +15,7 @@ YgEs.ToQHT=(el)=>{
 		Element:el,
 
 		Remove:()=>{
+			if(!qht.Element)return;
 			qht.Element.remove();
 			qht.Element=null;
 		},
