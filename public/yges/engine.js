@@ -178,6 +178,9 @@ function _yges_enginge_create_launcher(prm){
 		User:prm.User??{},
 
 		GetInstanceID:()=>iid,
+		GetActive:()=>active,
+		GetHeld:()=>launched,
+		GetSub:()=>sublauncher,
 
 		IsEnd:()=>{
 			if(launched.length>0)return false;
