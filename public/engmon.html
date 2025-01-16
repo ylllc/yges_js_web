@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset="utf-8">
+	<title>Yggdrasil Essense</title>
+	<link href="main.css" rel="stylesheet">
+</head>
+<body onload="ipl_ready()"><div class=screen>
+<header>
+<a href="./">Yggdrasil Essense</a> / 
+Engine Monitor Example
+<hr>
+</header>
+<main>
+<h1 class="pagetitle">Engine Monitor Example</h1>
+<noscript><div class="warning">(JavaScript required)</div></noscript>
+<div id=mainboard class=main></div>
+</main>
+<footer>
+<hr>
+&copy; 2024 Yggdrasil Leaves, LLC.<br>
+Repositories: 
+<a target="_blank" href="https://github.com/ylllc/yges_js_web">[web]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_node">[Node.js]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_deno">[Deno]</a>
+</footer>
+<div id=modules>
+<script src="yges/ipl.js"></script>
+<script src="yges/happening_view.js"></script>
+<script src="yges/engine_view.js"></script>
+</div>
+<script><!--
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
+mainboard.Clear();
+let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
+
+async function ipl_ready(){
+
+	ipl_loading.Remove();
+
+	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
+	let hapmng=YgEs.HappeningManager.CreateLocal({
+		Name:'YgEsTestHaps',
+		OnHappen:(hap)=>{log.Fatal(hap.ToString(),hap.GetProp())},
+	});
+
+	YgEs.Engine.Start();
+	let launcher=YgEs.Engine.CreateLauncher({HappenTo:hapmng});
+	let monitor=YgEs.DownloadMonitor.SetUp(mainboard,true);
+	let loader=YgEs.DownloadManager.Create(launcher,monitor);
+
+	loader.Plug('CSS',YgEs.DownloadManager.PlugCSS(modules));
+	loader.Plug('JS',YgEs.DownloadManager.PlugJS(modules));
+
+	loader.Load('engmon.css','CSS','engmon.css');
+//	loader.Load('happening_view.js','JS','yges/happening_view.js');
+//	loader.Load('engine_view.js','JS','yges/engine_view.js');
+	await YgEs.Timing.SyncKit(10,()=>{return loader.IsReady();}).ToPromise();
+	monitor.Dispose();
+
+	let h1=hapmng.HappenMsg('Test Happen 1');
+	let h2=hapmng.HappenProp({reason:'Test'});
+	let h3=hapmng.HappenError(new Error('Test Error'));
+	h2.Resolve();
+	h3.Abandon();
+
+	let hapview=YgEs.HappeningView.SetUp(YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_hapview_window'}}));
+	let engview=YgEs.EngineView.SetUp(YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_engview_window'}}));
+
+	hapview.Update();
+	engview.Update();
+}
+//--></script></div></body></html>

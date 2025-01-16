@@ -1,0 +1,86 @@
+
+.yges_hapview_window{
+	border:groove;
+}
+.yges_hapview_subview{
+	border:groove;
+}
+.yges_hapview_label{
+}
+.yges_hapview_capt{
+	margin-left:0.5em;
+}
+.yges_hapview_rmks{
+	margin-left:0.5em;
+}
+.yges_hapview_info{
+	margin-left:2em;
+}
+.yges_hapview_list{
+}
+.yges_hapview_status_ok{
+	color:#66ffff;
+}
+.yges_hapview_status_ng{
+	color:#ff6666;
+}
+.yges_hapview_happen{
+}
+.yges_hapview_happen_status_resolved{
+	color:#66ffff;
+}
+.yges_hapview_happen_status_abandoned{
+	color:#ffcc66;
+}
+.yges_hapview_happen_status_posed{
+	color:#ff6666;
+}
+.yges_hapview_happen_capt{
+	margin-left:0.5em;
+}
+.yges_hapview_happen_rmks{
+	margin-left:0.5em;
+}
+.yges_hapview_happen_prop{
+}
+
+.yges_engview_window{
+	border:ridge;
+}
+.yges_engview_subview{
+	border:ridge;
+}
+.yges_engview_label{
+}
+.yges_engview_status{
+}
+.yges_engview_capt{
+	margin-left:0.5em;
+}
+.yges_engview_rmks{
+	margin-left:0.5em;
+}
+.yges_engview_info{
+	margin-left:2em;
+}
+.yges_engview_list{
+}
+.yges_engview_proc_active{
+}
+.yges_engview_proc_held{
+	color:#aaa;
+}
+.yges_engview_proc_status_finished{
+}
+.yges_engview_proc_status_aborted{
+}
+.yges_engview_proc_status_standby{
+}
+.yges_engview_proc_status_running{
+}
+.yges_engview_proc_capt{
+	margin-left:0.5em;
+}
+.yges_engview_proc_rmks{
+	margin-left:0.5em;
+}
