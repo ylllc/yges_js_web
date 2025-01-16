@@ -70,7 +70,7 @@ async function ipl_ready(){
 		let n='['+ev.key+']';
 		if(l>0)n+='-'+l;
 		ktd[k].User.loc[l]=n;
-		ktd[k].Element.innerHTML=Object.values(ktd[k].User.loc).toString();
+		ktd[k].Element.innerText=Object.values(ktd[k].User.loc).toString();
 	};
 	document.onkeyup=(ev)=>{
 		if(ev.isComposing)return;
@@ -85,7 +85,7 @@ async function ipl_ready(){
 			return;
 		}
 		delete ktd[k].User.loc[l];
-		ktd[k].Element.innerHTML=Object.values(ktd[k].User.loc).toString();
+		ktd[k].Element.innerText=Object.values(ktd[k].User.loc).toString();
 	};
 }
 //--></script></div></body></html>
