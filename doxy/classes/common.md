@@ -161,7 +161,7 @@ InitFrontend(moduleplace,viewplace=null):void
 
 | Name | Type | Means |
 |------|------|-------|
-| moduleplace | QHT | downloaded HTML resources placed in |
+| moduleplace | QHT? | downloaded HTML resources placed in (or cannot apply CSS and JS) |
 | viewplace | QHT? | show download monitor in (or hidden) |
 
 -----
@@ -172,7 +172,7 @@ download CSS source and apply.
 
 ### Premises
 
-call InitFrontend()  
+call @ref Common_InitFrontend with moduleplace  
 
 ### Spec
 
@@ -189,6 +189,10 @@ LoadCSS(url,label=null):void
 
 call LoadSync() and wait for it.  
 
+### Notes
+
+- loaded content put on an Element. required a module place targetted by @ref Common_InitFrontend
+
 -----
 ## LoadJS {#Common_LoadJS}
 
@@ -197,7 +201,7 @@ download JS source and apply.
 
 ### Premises
 
-call InitFrontend()  
+call @ref Common_InitFrontend with moduleplace  
 
 ### Spec
 
@@ -217,6 +221,7 @@ call LoadSync() and wait for it.
 
 ### Notes
 
+- loaded content put on an Element. required a module place targetted by @ref Common_InitFrontend
 - can unload, but loaded structures are not removed.  
 
 -----
@@ -227,7 +232,7 @@ download JSON source and parse.
 
 ### Premises
 
-call InitFrontend()  
+call @ref Common_InitFrontend  
 
 ### Spec
 
@@ -252,7 +257,7 @@ wait for downloads.
 
 ### Premises
 
-call InitFrontend()  
+call @ref Common_InitFrontend  
 
 ### Spec
 
@@ -278,7 +283,7 @@ access to a downloaded content.
 
 ### Premises
 
-call InitFrontend()  
+call @ref Common_InitFrontend  
 
 ### Spec
 
@@ -302,7 +307,7 @@ remove a downloaded content.
 
 ### Premises
 
-call InitFrontend()  
+call @ref Common_InitFrontend  
 
 ### Spec
 
@@ -322,7 +327,7 @@ remove the download monitor.
 
 ### Premises
 
-call InitFrontend()  
+call @ref Common_InitFrontend  
 
 ### Spec
 
