@@ -28,9 +28,34 @@ function _default_format(src){
 
 function _default_way(src){
 
-	let s=src.Text;
-	if(src.Prop)s+='; '+YgEs.Inspect(src.Prop);
-	console.log(s);
+	switch(src.Lev){
+		case Log.LEVEL.TICK:
+		case Log.LEVEL.TRACE:
+		case Log.LEVEL.DEBUG:
+		console.debug(src.Msg);
+		break;
+
+		case Log.LEVEL.INFO:
+		case Log.LEVEL.NOTICE:
+		console.info(src.Msg);
+		break;
+
+		case Log.LEVEL.WARN:
+		console.warn(src.Msg);
+		break;
+
+		case Log.LEVEL.FATAL:
+		case Log.LEVEL.CRIT:
+		case Log.LEVEL.ALERT:
+		case Log.LEVEL.EMERG:
+		console.error(src.Msg);
+		break;
+
+		default:
+		console.log(src.Msg);
+	}
+
+	if(src.Prop)console.dir(src.Prop);
 }
 
 // create local instance 
