@@ -1641,7 +1641,9 @@ function _standby(prm){
 				if(happen.IsCleaned())return 'HEALTHY';
 
 				try{
+					let c=happen.CountIssues();
 					if(prm.OnPollInTrouble)prm.OnPollInTrouble(agent);
+					if(c<happen.CountIssues())return 'HALT';
 				}
 				catch(e){
 					happen.HappenProp({
@@ -1650,8 +1652,8 @@ function _standby(prm){
 							Src:GetInfo('OnRecover'),
 							Err:YgEs.FromError(e),
 					});
+					return 'HALT';
 				}
-				if(!happen.IsCleaned())return 'HALT';
 			},
 		},
 		'HALT':{
