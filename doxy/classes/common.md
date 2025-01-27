@@ -161,8 +161,8 @@ InitFrontend(moduleplace,viewplace=null):void
 
 | Name | Type | Means |
 |------|------|-------|
-| moduleplace | QHT? | downloaded HTML resources placed in (or cannot apply CSS and JS) |
-| viewplace | QHT? | show download monitor in (or hidden) |
+| moduleplace | @ref pg_class_qht? | downloaded HTML resources placed in (or cannot apply CSS and JS) |
+| viewplace | @ref pg_class_qht? | show download monitor in (or hidden) |
 
 -----
 ## LoadCSS {#Common_LoadCSS}

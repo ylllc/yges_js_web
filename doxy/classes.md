@@ -19,6 +19,8 @@
 - @subpage pg_class_http_walker
 - @subpage pg_class_launcher
 - @subpage pg_class_logger
+- @subpage pg_class_logger_view
+- @subpage pg_class_logger_view_container
 - @subpage pg_class_parsedurl
 - @subpage pg_class_procedure
 - @subpage pg_class_proptree

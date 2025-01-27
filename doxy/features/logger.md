@@ -13,8 +13,16 @@ the advanced log feature.
 ```
 <script src="yges/ipl.js"></script>
 ```
-use YgEs.Log
+use YgEs.Log  
 
+### Viewer
+
+```
+<script src="yges/logger_view.js"></script>
+```
+use YgEs.LogView
+
+-----
 ## for Node/Deno
 
 ```
@@ -137,6 +145,17 @@ ll2.Info('super-overridden local log');
 ```
 
 -----
+## Log Viewer
+
+(web only)
+```
+let board=YgEs.ToQHT(document.getElementById('board'));
+let logview=YgEs.LogView.SetUp(board,YgEs.Log);
+```
+
+-----
 # Class Reference
 
-@sa @ref pg_class_logger
+@sa @ref pg_class_logger @n
+	@ref pg_class_logger_view @n
+	@ref pg_class_logger_view_container @n

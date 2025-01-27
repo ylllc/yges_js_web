@@ -13,6 +13,18 @@
 	font-size:125%;
 }
 
+.yges_logview_toggle_off{
+	font-size:125%;
+	background-color:auto;
+	background-color:#666;
+	font-color:#444;
+}
+.yges_logview_toggle_on{
+	font-size:125%;
+	background-color:#cc4;
+	font-color:#000;
+}
+
 .yges_logview_line_tick{color:#888;}
 .yges_logview_line_trace{color:#ccc;}
 .yges_logview_line_debug{color:#fff;}
