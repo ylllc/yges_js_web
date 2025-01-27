@@ -19,7 +19,7 @@ const CLASS_LAUNCHERPROC='YgEs.LauncherProc';
 const CLASS_DELAYPROC='YgEs.DelayProc';
 const CLASS_ROOT='YgEs.RootLauncher';
 
-function _create_proc(prm){
+function _create_proc(prm,launcher){
 
 	let onStart=prm.OnStart??null;
 	let onPoll=prm.OnPoll;
@@ -33,7 +33,7 @@ function _create_proc(prm){
 	const iid=YgEs.NextID();
 	let proc={
 		name:prm.Name??CLASS_PROC,
-		HappenTo:(prm.HappenTo??HappeningManager).CreateLocal(),
+		HappenTo:prm.HappenTo??launcher.HappenTo??HappeningManager,
 		User:prm.User??{},
 
 		GetInstanceID:()=>iid,
@@ -174,7 +174,7 @@ function _yges_enginge_create_launcher(prm){
 	const iid=YgEs.NextID();
 	let lnc={
 		name:prm.Name??CLASS_LAUNCHER,
-		HappenTo:(prm.HappenTo??HappeningManager).CreateLocal(),
+		HappenTo:prm.HappenTo??HappeningManager,
 		Limit:prm.Limit??-1,
 		Cycle:prm.Cycle??DEFAULT_LAUNCHER_CYCLE,
 		User:prm.User??{},
@@ -235,7 +235,7 @@ function _yges_enginge_create_launcher(prm){
 				return;
 			}
 
-			let proc=_create_proc(prm);
+			let proc=_create_proc(prm,lnc);
 			if(lnc.Limit<0 || active.length<lnc.Limit){
 				active.push(proc);
 				proc._start();
