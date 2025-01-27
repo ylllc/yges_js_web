@@ -3,7 +3,7 @@
 // © 2024-5 Yggdrasil Leaves, LLC.        //
 //        All rights reserved.            //
 
-// Statemachine ------------------------- //
+// StateMachine ------------------------- //
 (()=>{ // local namespace 
 
 const Engine=YgEs.Engine;
@@ -54,7 +54,7 @@ function _run(start,states={},opt={}){
 		}
 		cur=states[state_next]??null;
 		if(!cur){
-			stmac.HappenTo.HappenProp({
+			happen.HappenProp({
 				Class:'YgEs_Statemachine_Error',
 				Cause:'state missing: '+state_next,
 				Info:GetInfo('selecing'),
@@ -70,13 +70,14 @@ function _run(start,states={},opt={}){
 			poll_cur=poll_up;
 		}
 		catch(e){
-			stmac.HappenTo.HappenProp({
+			happen.HappenProp({
 				Class:'YgEs_Statemachine_Error',
 				Cause:'throw from a callback',
 				Info:GetInfo('cb_start'),
 				Err:YgEs.FromError(e),
 			});
 			poll_cur=poll_nop;
+			return;
 		}
 		// can try extra polling 
 		poll_cur(user);
@@ -86,13 +87,14 @@ function _run(start,states={},opt={}){
 			var r=cur.OnPollInUp?cur.OnPollInUp(ctrl,user):true;
 		}
 		catch(e){
-			stmac.HappenTo.HappenProp({
+			happen.HappenProp({
 				Class:'YgEs_Statemachine_Error',
 				Cause:'throw from a callback',
 				Info:GetInfo('poll_up'),
 				Err:YgEs.FromError(e),
 			});
-			r=false;
+			poll_cur=poll_nop;
+			return;
 		}
 		if(r==null)return; // continuing 
 		else if(r===false)proc.Abort();
@@ -103,13 +105,14 @@ function _run(start,states={},opt={}){
 				poll_cur=poll_keep;
 			}
 			catch(e){
-				stmac.HappenTo.HappenProp({
+				happen.HappenProp({
 					Class:'YgEs_Statemachine_Error',
 					Cause:'throw from a callback',
 					Info:GetInfo('cb_ready'),
 					Err:YgEs.FromError(e),
 				});
 				poll_cur=poll_nop;
+				return;
 			}
 			// can try extra polling 
 			poll_cur(user);
@@ -125,13 +128,14 @@ function _run(start,states={},opt={}){
 			var r=cur.OnPollInKeep?cur.OnPollInKeep(ctrl,user):true;
 		}
 		catch(e){
-			stmac.HappenTo.HappenProp({
+			happen.HappenProp({
 				Class:'YgEs_Statemachine_Error',
 				Cause:'throw from a callback',
 				Info:GetInfo('poll_keep'),
 				Err:YgEs.FromError(e),
 			});
-			r=false;
+			poll_cur=poll_nop;
+			return;
 		}
 		if(r==null)return; // continuing 
 		else if(r===false)proc.Abort();
@@ -152,13 +156,14 @@ function _run(start,states={},opt={}){
 			poll_cur=poll_down;
 		}
 		catch(e){
-			stmac.HappenTo.HappenProp({
+			happen.HappenProp({
 				Class:'YgEs_Statemachine_Error',
 				Cause:'throw from a callback',
 				Info:GetInfo('cb_stop'),
 				Err:YgEs.FromError(e),
 			});
 			poll_cur=poll_nop;
+			return;
 		}
 		// can try extra polling 
 		poll_cur(user);
@@ -168,13 +173,14 @@ function _run(start,states={},opt={}){
 			var r=cur.OnPollInDown?cur.OnPollInDown(ctrl,user):true;
 		}
 		catch(e){
-			stmac.HappenTo.HappenProp({
+			happenHappenProp({
 				Class:'YgEs_Statemachine_Error',
 				Cause:'throw from a callback',
 				Info:GetInfo('poll_down'),
 				Err:YgEs.FromError(e),
 			});
-			r=false;
+			poll_cur=poll_nop;
+			return;
 		}
 		if(r==null)return; // continuing 
 		else if(r===false)proc.Abort();
@@ -194,13 +200,14 @@ function _run(start,states={},opt={}){
 			call_start(user);
 		}
 		catch(e){
-			stmac.HappenTo.HappenProp({
+			happen.HappenProp({
 				Class:'YgEs_Statemachine_Error',
 				Cause:'throw from a callback',
 				Info:GetInfo('cb_end'),
 				Err:YgEs.FromError(e),
 			});
 			poll_cur=poll_nop;
+			return;
 		}
 	}
 
