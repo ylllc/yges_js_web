@@ -87,6 +87,14 @@ endnote
 ```
 use YgEs.HappeningManager
 
+### Viewer
+
+```
+<script src="yges/happening_view.js"></script>
+```
+use YgEs.HappeningView
+
+-----
 ## for Node/Deno
 
 ```
@@ -175,7 +183,19 @@ and Abandoned instance still can resolve and retract abandoned.
 
 
 -----
+## Happening Viewer
+
+(web only)
+```
+let board=YgEs.ToQHT(document.getElementById('board'));
+let hapview=YgEs.HappeningView.SetUp(board);
+```
+
+-----
 # Class Reference
 
 @sa @ref pg_class_happening @n
-	@ref pg_class_happening_manager
+	@ref pg_class_happening_manager @n
+	@ref pg_class_happening_view @n
+	@ref pg_class_happening_manager_view @n
+	@ref pg_class_happening_view_container @n

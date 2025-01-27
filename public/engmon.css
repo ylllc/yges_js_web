@@ -65,6 +65,9 @@
 }
 .yges_engview_list{
 }
+.yges_engview_proc_trouble{
+	background-color:#410;
+}
 .yges_engview_proc_active{
 }
 .yges_engview_proc_held{
@@ -73,6 +76,8 @@
 .yges_engview_proc_status_finished{
 }
 .yges_engview_proc_status_aborted{
+}
+.yges_engview_proc_status_trouble{
 }
 .yges_engview_proc_status_standby{
 }
@@ -83,4 +88,8 @@
 }
 .yges_engview_proc_rmks{
 	margin-left:0.5em;
+}
+.yges_engview_proc_info{
+}
+.yges_engview_proc_haps{
 }

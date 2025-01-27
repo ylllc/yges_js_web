@@ -12,17 +12,32 @@ function _view_proc(target,src,tick,active){
 	view._tick=0;
 
 	view.Status=YgEs.NewQHT({Target:view,Tag:'span'});
-
-
 	YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_engview_proc_capt'},Sub:[src.name]});
 	YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_engview_proc_rmks'},Sub:['{'+src.GetInstanceID()+'}']});
 
+	view.Info=YgEs.NewQHT({Target:view,Tag:'div',Attr:{class:'yges_engview_proc_info'}});
+	view.Haps=YgEs.NewQHT({Target:target,Tag:'div',Attr:{class:'yges_engview_proc_haps'}});
+
+	let hapview=null;
 	view.Update=(tick=null)=>{
 		if(!view.Element)return;
 		if(tick==null)tick=++view._tick;
 		else view._tick=tick;
 
-		if(active){
+		let hm=src.HappenTo;
+		if(!hapview){
+			if(!hm.IsCleaned())hapview=YgEs.HappeningView.SetUp(view.Haps,hm);
+		}
+		else if(!hm.IsCleaned())hapview.Update();
+		else{
+			hapview=null;
+			view.Haps.Clear();
+		}
+
+		if(hapview){
+			view.Element.setAttribute('class','yges_engview_proc_trouble');
+		}
+		else if(active){
 			view.Element.setAttribute('class','yges_engview_proc_active');
 		}
 		else{
@@ -37,6 +52,10 @@ function _view_proc(target,src,tick,active){
 			view.Status.Element.setAttribute('class','yges_engview_proc_status_aborted');
 			view.Status.Element.innerText='(Aborted)';
 		}
+		else if(hapview){
+			view.Status.Element.setAttribute('class','yges_engview_proc_status_trouble');
+			view.Status.Element.innerText='(Trouble)';
+		}
 		else if(!src.IsStarted()){
 			view.Status.Element.setAttribute('class','yges_engview_proc_status_standby');
 			view.Status.Element.innerText='(Standby)';
@@ -45,6 +64,9 @@ function _view_proc(target,src,tick,active){
 			view.Status.Element.setAttribute('class','yges_engview_proc_status_running');
 			view.Status.Element.innerText='(Running)';
 		}
+
+		let info=YgEs.Inspect(src.GetInfo());
+		view.Info.Element.innerText=(info=='{}')?'':info;
 	}
 
 	view.Update(tick);
@@ -113,9 +135,10 @@ YgEs.EngineView={
 	name:'YgEs.EngineView',
 	User:{},
 
-	SetUp:(target)=>{
+	SetUp:(target,src=null)=>{
+		if(!src)src=YgEs.Engine;
 		let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:{class:'yges_hapview_window'}});
-		return _view_launcher(view,YgEs.Engine);
+		return _view_launcher(view,src);
 	},
 }
 

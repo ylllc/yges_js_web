@@ -33,7 +33,9 @@ function _view_hap(target,hap,tick){
 		}
 		view.Capt.Element.innerText=hap.ToString();
 		view.Rmks.Element.innerText='{'+hap.GetInstanceID()+'}';
-		view.Prop.Element.innerText=YgEs.Inspect(hap.GetProp());
+
+		let pv=YgEs.Inspect(hap.GetProp());
+		view.Prop.Element.innerText=(pv=='{}')?'':pv;
 	}
 
 	view.Update(tick);
@@ -108,9 +110,10 @@ YgEs.HappeningView={
 	name:'YgEs.HappeningView',
 	User:{},
 
-	SetUp:(target)=>{
+	SetUp:(target,src=null)=>{
+		if(!src)src=YgEs.HappeningManager;
 		let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:{class:'yges_hapview_window'}});
-		return _view_manager(view,YgEs.HappeningManager);
+		return _view_manager(view,src);
 	},
 }
 
