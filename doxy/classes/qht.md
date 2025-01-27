@@ -28,7 +28,7 @@ remove this Element.
 Remove():void
 
 -----
-## Clear {#QHT_Remove}
+## Clear {#QHT_Clear}
 
 clear inner contents.  
 
