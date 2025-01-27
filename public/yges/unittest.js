@@ -107,9 +107,18 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 								continue;
 							}
 
+							let hap2=YgEs.HappeningManager.CreateLocal({
+								Name:'Happened in '+sct.Scenario.Title,
+								OnHappen:(hap)=>{throw hap.ToError()},
+							});
+							let log2=YgEs.Log.CreateLocal(sct.Scenario.Title,YgEs.Log.LEVEL.DEBUG);
+							let lnc2=launcher.CreateLauncher({
+								HappenTo:hap2,
+							});
 							await sct.Scenario.Proc({
-								Launcher:launcher.CreateLauncher(),
-								Log:YgEs.Log.CreateLocal(sct.Scenario.Title,YgEs.Log.LEVEL.DEBUG),
+								HappenTo:hap2,
+								Launcher:lnc2,
+								Log:log2,
 							});
 							if(sct.View)sct.View.UpdateResult(true);
 							report(true);
