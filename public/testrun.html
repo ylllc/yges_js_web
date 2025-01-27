@@ -39,32 +39,27 @@ async function ipl_ready(){
 
 	ipl_loading.Remove();
 
+	YgEs.InitFrontend(modules,mainboard);
+
+	// resources 
+	YgEs.LoadCSS('testrun.css');
+	YgEs.LoadJS('yges/quickqueue.js');
+	YgEs.LoadJS('yges/proptree.js',['yges/quickqueue.js']);
+	YgEs.LoadJS('yges/urlbuilder.js',['yges/proptree.js']);
+	YgEs.LoadJS('yges/unittest.js');
+	YgEs.LoadJS('yges/unittest_view.js');
+	YgEs.LoadJSON(TestBase,'TestInfo');
+	await YgEs.LoadSync().ToPromise();
+	YgEs.DisposeMonitor();
+
 	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
 	let hapmng=YgEs.HappeningManager.CreateLocal({
 		name:'YgEsTestHaps',
 		happen:(hap)=>{log.Fatal(hap.ToString(),hap.GetProp())},
 	});
 
-	YgEs.Engine.Start();
-	let launcher=YgEs.Engine.CreateLauncher({happen:hapmng});
-	let monitor=YgEs.DownloadMonitor.SetUp(mainboard,true);
-	let loader=YgEs.DownloadManager.Create(launcher,monitor);
-
-	loader.Plug('CSS',YgEs.DownloadManager.PlugCSS(modules));
-	loader.Plug('JS',YgEs.DownloadManager.PlugJS(modules));
-	loader.Plug('JSON',YgEs.DownloadManager.PlugJSON());
-
-	loader.Load('testrun.css','CSS','testrun.css');
-	loader.Load('quickqueue.js','JS','yges/quickqueue.js');
-	loader.Load('proptree.js','JS','yges/proptree.js',['quickqueue.js']);
-	loader.Load('urlbuilder.js','JS','yges/urlbuilder.js',['proptree.js']);
-	loader.Load('unittest.js','JS','yges/unittest.js');
-	loader.Load('unittest_view.js','JS','yges/unittest_view.js');
-	loader.Load('TestInfo','JSON',TestBase);
-	await YgEs.Timing.SyncKit(10,()=>{return loader.IsReady();}).ToPromise();
-	monitor.Dispose();
-
-	let test=YgEs.Test.SetUp(launcher,modules,TestBase,loader.Ready.TestInfo);
+	let launcher=YgEs.Engine.CreateLauncher({HappenTo:hapmng});
+	let test=YgEs.Test.SetUp(launcher,modules,TestBase,YgEs.Peek('TestInfo'));
 	let view=YgEs.TestView.SetUp(test,mainboard);
 }
 //--></script></div></body></html>
