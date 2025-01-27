@@ -601,7 +601,7 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 
 	const iid=YgEs.NextID();
 	let hap={
-		Name:init.Name??'YgEs.Happening',
+		name:init.Name??'YgEs.Happening',
 		User:init.User??{},
 
 		GetInstanceID:()=>iid,
@@ -634,6 +634,7 @@ function _create_manager(prm,parent=null){
 
 	let issues=[]
 	let children=[]
+	let abandoned=false;
 
 	const onHappen=(hap)=>{
 		for(let hm=mng;hm;hm=hm.GetParent()){
@@ -660,6 +661,7 @@ function _create_manager(prm,parent=null){
 		GetParent:()=>parent,
 		GetChildren:()=>children,
 		GetIssues:()=>issues,
+		IsAbandoned:()=>abandoned,
 
 		Abandon:()=>{
 			for(let sub of children){
@@ -669,6 +671,7 @@ function _create_manager(prm,parent=null){
 				hap.Abandon();
 			}
 			issues=[]
+			abandoned=true;
 		},
 
 		CountIssues:()=>{
@@ -692,13 +695,17 @@ function _create_manager(prm,parent=null){
 			}
 			issues=tmp;
 
+			tmp=[]
 			for(let sub of children){
+				if(sub.IsAbandoned())continue;
 				sub.CleanUp();
+				tmp.push(sub);
 			}
+			children=tmp;
 		},
 
 		GetInfo:()=>{
-			let info={Name:mng.name,Issues:[],Children:[]}
+			let info={Name:mng.name,Abandoned:abandoned,Issues:[],Children:[]}
 			for(let hap of issues){
 				if(hap.IsResolved())continue;
 				info.Issues.push({Name:hap.name,Prop:hap.GetProp()});
@@ -993,7 +1000,7 @@ function _yges_enginge_create_launcher(prm){
 				return;
 			}
 
-			let proc=_create_proc(prm,this);
+			let proc=_create_proc(prm,lnc);
 			if(lnc.Limit<0 || active.length<lnc.Limit){
 				active.push(proc);
 				proc._start();
