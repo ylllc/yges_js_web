@@ -96,7 +96,7 @@ YgEs.Inspect=(val)=>{
 	return JSON.stringify(val);
 }
 
-YgEs.InitFrontend=(moduleplace,viewplace=null)=>{
+YgEs.InitFrontend=(moduleplace=null,viewplace=null)=>{
 
 	YgEs.Engine.Start();
 	let hapmng=YgEs.HappeningManager.CreateLocal({
@@ -110,15 +110,25 @@ YgEs.InitFrontend=(moduleplace,viewplace=null)=>{
 	let monitor=viewplace?YgEs.DownloadMonitor.SetUp(viewplace,true):null;
 	let loader=YgEs.DownloadManager.Create(launcher,monitor);
 
-	loader.Plug('CSS',YgEs.DownloadManager.PlugCSS(moduleplace));
-	loader.Plug('JS',YgEs.DownloadManager.PlugJS(moduleplace));
+	if(moduleplace){
+		loader.Plug('CSS',YgEs.DownloadManager.PlugCSS(moduleplace));
+		loader.Plug('JS',YgEs.DownloadManager.PlugJS(moduleplace));
+	}
 	loader.Plug('JSON',YgEs.DownloadManager.PlugJSON());
 
 	YgEs.LoadCSS=(url,label=null)=>{
+		if(!moduleplace){
+			YgEs.Log.Fatal('no place for downloaded style, assign a QHT and call YgEs.InitFrontend()');
+			return;
+		}
 		if(!label)label=url;
 		loader.Load(label,'CSS',url);
 	}
 	YgEs.LoadJS=(url,depends=[],label=null)=>{
+		if(!moduleplace){
+			YgEs.Log.Fatal('no place for downloaded script, assign a QHT and call YgEs.InitFrontend()');
+			return;
+		}
 		if(!label)label=url;
 		loader.Load(label,'JS',url,depends);
 	}
