@@ -14,24 +14,33 @@ function _view_scenaria(src,target){
 		let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_testrun_scn'}});
 		let st=YgEs.NewQHT({Target:li,Tag:'span'});
 		YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_caption'},Sub:[sct.Scenario.Title]});
+		let dbg=YgEs.NewQHT({Target:li,Tag:'div'});
+		let endmon=null;
 		const view={
-			UpdateResult:(f)=>{
-				if(f){
-					st.Replace('[OK]');
-					st.Element.setAttribute('class','yges_testrun_stat_ok');
-				}
-				else if(f===false){
-					st.Replace('[NG]');
-					st.Element.setAttribute('class','yges_testrun_stat_ng');
-				}
-				else{
-					st.Replace('[...]');
-					st.Element.setAttribute('class','yges_testrun_stat_wip');
-				}
-			},
 			Skip:()=>{
 				st.Replace('(skip)');
 				st.Element.setAttribute('class','yges_testrun_stat_skip');
+			},
+			Start:(logger,launcher)=>{
+				st.Replace('[...]');
+				st.Element.setAttribute('class','yges_testrun_stat_wip');
+				let lv=YgEs.LogView.SetUp(dbg,logger);
+				let ev=YgEs.EngineView.SetUp(dbg,launcher);
+				endmon=YgEs.Timing.Poll(100,()=>{ev.Update();});
+			},
+			UpdateResult:(f)=>{
+				if(f){
+					if(endmon)endmon();
+					st.Replace('[OK]');
+					st.Element.setAttribute('class','yges_testrun_stat_ok');
+					dbg.Remove();
+					dbg=null;
+				}
+				else if(f===false){
+					if(endmon)endmon();
+					st.Replace('[NG]');
+					st.Element.setAttribute('class','yges_testrun_stat_ng');
+				}
 			},
 			SetError:(e)=>{
 				view.UpdateResult(false);
@@ -49,8 +58,14 @@ function _view_file(src,target,fn){
 	let st=YgEs.NewQHT({Target:li,Tag:'span'});
 	YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_caption'},Sub:[fn]});
 	let msg=YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_msg'}});
+	let sub=YgEs.NewQHT({Target:li,Tag:'div'});
 
 	src.SetView({
+		Reset:()=>{
+			st.Replace('[--]');
+			st.Element.setAttribute('class','yges_testrun_stat_idle');
+			sub.Clear();
+		},
 		SetMsg:(s)=>{
 			msg.Replace(s);
 		},
@@ -69,7 +84,7 @@ function _view_file(src,target,fn){
 			}
 		},
 		SetScenaria:(src)=>{
-			_view_scenaria(src,li);
+			_view_scenaria(src,sub);
 		},
 	});
 }
@@ -80,7 +95,19 @@ function _view_dir(src,target,dn){
 	let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_testrun_dir'}});
 	let st=YgEs.NewQHT({Target:li,Tag:'span'});
 	YgEs.NewQHT({Target:li,Tag:'span',Attr:{class:'yges_testrun_caption'},Sub:[dn]});
-	src.SetView({
+	let sub=YgEs.NewQHT({Target:li,Tag:'div'});
+	let view={
+		Reset:()=>{
+			st.Replace('[--]');
+			st.Element.setAttribute('class','yges_testrun_stat_idle');
+			sub.Clear();
+			for(let fn in src.Files){
+				_view_file(src.Files[fn],sub,fn);
+			}
+			for(let dn in src.Dirs){
+				_view_dir(src.Dirs[dn],sub,dn);
+			}
+		},
 		UpdateResult:(f)=>{
 			if(f){
 				st.Replace('[OK]');
@@ -95,14 +122,9 @@ function _view_dir(src,target,dn){
 				st.Element.setAttribute('class','yges_testrun_stat_wip');
 			}
 		},
-	});
-
-	for(let fn in src.Files){
-		_view_file(src.Files[fn],li,fn);
 	}
-	for(let dn in src.Dirs){
-		_view_dir(src.Dirs[dn],li,dn);
-	}
+	src.SetView(view);
+	view.Reset();
 }
 
 YgEs.TestView={

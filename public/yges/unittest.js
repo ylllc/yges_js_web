@@ -17,11 +17,19 @@ function _assert(cond,msg){
 	throw new Error('Test Assertion: '+msg);
 }
 
-function _setupTestFile(launcher,target,url,stat,reportParent){
+function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 
+	let sig_reset=false;
+	let sig_run=false;
+	let pickup=false;
+	let running=false;
 	let result=null;
+	let items=0;
 	let runs=0;
+	let runloc=0;
 	let msg='';
+	let loaded=null;
+	let installed=null;
 	let view=null;
 
 	const setMsg=(s)=>{
@@ -46,29 +54,10 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 		'Download':{
 			OnStart:(ctrl,user)=>{
 				setMsg('(download)');
+				if(view)view.UpdateResult(result);
 				YgEs.HTTPClient.GetText(url,(src)=>{
-					setMsg('(install)');
-					src='YgEs.Test.Scenaria["'+url+'"]=(()=>{'+src+'return scenaria;})();';
-					YgEs.NewQHT({Target:target,Tag:'script',Sub:[src]});
-					if(!YgEs.Test.Scenaria[url]){
-						user.Hap=launcher.HappenTo.HappenMsg('Syntex Error');
-					}
-					else{
-						for(let scn of YgEs.Test.Scenaria[url]){
-							++runs;
-							let sct={
-								Scenario:scn,
-								View:null,
-								SetView:(v)=>{
-									sct.View=v;
-									if(v)v.UpdateResult(result);
-								},
-							}
-							user.Scenaria.push(sct);
-						}
-						user.Done=true;
-						if(view)view.SetScenaria(user.Scenaria);
-					}
+					loaded='YgEs.Test.Scenaria["'+url+'"]=(()=>{'+src+'return scenaria;})();';
+					user.Loaded=true;
 				},(hap)=>{
 					user.Hap=hap;
 				});
@@ -78,58 +67,131 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 					setMsg('(error) '+user.Hap.ToString());
 					return false;
 				}
-				if(user.Done)return 'Run';
+				if(!user.Loaded)return;
+				return 'Install';
+			},
+		},
+		'Install':{
+			OnStart:(ctrl,user)=>{
+				setMsg('(install)');
+				installed=YgEs.NewQHT({Target:scriptstore,Tag:'script',Sub:[loaded]});
+				if(!YgEs.Test.Scenaria[url]){
+					user.Hap=launcher.HappenTo.HappenMsg('Syntex Error');
+				}
+				else{
+					for(let scn of YgEs.Test.Scenaria[url]){
+						++items;
+						let sct={
+							Scenario:scn,
+							View:null,
+							SetView:(v)=>{
+								sct.View=v;
+								if(v)v.UpdateResult(result);
+							},
+						}
+						user.Scenaria.push(sct);
+					}
+					user.Installed=true;
+					setMsg('(standby)');
+					if(view)view.SetScenaria(user.Scenaria);
+				}
+			},
+			OnPollInKeep:(ctrl,user)=>{
+				if(user.Hap){
+					setMsg('(error) '+user.Hap.ToString());
+					return false;
+				}
+				if(!user.Installed)return;
+				if(!sig_run)return;
+				sig_run=false;
+				runs=items;
+				runloc=0;
+				pickup=false;
+				for(let i=0;i<user.Scenaria.length;++i){
+					let sct=user.Scenaria[i];
+					if(!sct.Scenario.Pickup)continue;
+					pickup=true;
+					break;
+				}
+				setMsg('(running)');
+				return 'Select';
+			},
+		},
+		'Select':{
+			OnStart:(ctrl,user)=>{
+
+				for(;runloc<user.Scenaria.length;++runloc){
+					let sct=user.Scenaria[runloc];
+					if(sct.Scenario.Filter===false || (pickup && !sct.Scenario.Pickup)){
+						--runs;
+						if(sct.View){
+							sct.View.Skip();
+							if(result==null && runs<1)report(true);
+						}
+						continue;
+					}
+					break;
+				}
+			},
+			OnPollInKeep:(ctrl,user)=>{
+				if(runloc>=user.Scenaria.length)return 'Unload';
+				else return 'Run';
 			},
 		},
 		'Run':{
 			OnStart:(ctrl,user)=>{
-				setMsg('(standby)');
-				YgEs.Timing.ToPromise(async ()=>{
-
-					let puf=false;
-					for(let i=0;i<user.Scenaria.length;++i){
-						let sct=user.Scenaria[i];
-						if(!sct.Scenario.Pickup)continue;
-						puf=true;
-						break;
+				running=true;
+				let sct=user.Scenaria[runloc];
+				YgEs.Timing.ToPromise(async (ok,ng)=>{
+					let hap2=YgEs.HappeningManager.CreateLocal({
+						Name:'Happened in '+sct.Scenario.Title,
+						OnHappen:(hap)=>{throw hap.ToError()},
+					});
+					let log2=YgEs.Log.CreateLocal(sct.Scenario.Title,YgEs.Log.LEVEL.DEBUG);
+					let lnc2=launcher.CreateLauncher({
+						HappenTo:hap2,
+					});
+					if(sct.View)sct.View.Start(log2,lnc2);
+					try{
+						YgEs.HappeningManager.CleanUp();
+						await sct.Scenario.Proc({
+							HappenTo:hap2,
+							Launcher:lnc2,
+							Log:log2,
+						});
 					}
-
-					setMsg('(running)');
-					for(let i=0;i<user.Scenaria.length;++i){
-						let sct=user.Scenaria[i];
-						try{
-							if(sct.Scenario.Filter===false || (puf && !sct.Scenario.Pickup)){
-								--runs;
-								if(sct.View){
-									sct.View.Skip();
-									if(result==null && runs<1)report(true);
-								}
-								continue;
-							}
-
-							let hap2=YgEs.HappeningManager.CreateLocal({
-								Name:'Happened in '+sct.Scenario.Title,
-								OnHappen:(hap)=>{throw hap.ToError()},
-							});
-							let log2=YgEs.Log.CreateLocal(sct.Scenario.Title,YgEs.Log.LEVEL.DEBUG);
-							let lnc2=launcher.CreateLauncher({
-								HappenTo:hap2,
-							});
-							await sct.Scenario.Proc({
-								HappenTo:hap2,
-								Launcher:lnc2,
-								Log:log2,
-							});
-							if(sct.View)sct.View.UpdateResult(true);
-							report(true);
-						}
-						catch(e){
-							if(sct.View)sct.View.SetError(e);
-							report(false);
-						}
+					catch(e){
+						ng(e);
 					}
-					setMsg('');
+					lnc2.Abort();
+					hap2.CleanUp();
+					if(hap2.IsCleaned())ok();
+					else ng(new Error('Test Failure',hap2.GetInfo()));
+					hap2.Abandon();
+				},(r)=>{
+					if(sct.View)sct.View.UpdateResult(true);
+					report(true);
+					running=false;
+				},(e)=>{
+					if(sct.View)sct.View.SetError(e);
+					report(false);
+					running=false;
 				});
+			},
+			OnPollInKeep:(ctrl,user)=>{
+				if(running)return;
+				++runloc;
+				return 'Select';
+			},
+		},
+		'Unload':{
+			OnStart:(ctrl,user)=>{
+				setMsg('');
+				installed.Clear();
+				installed=null;
+			},
+			OnPollInKeep:(ctrl,user)=>{
+				return true;
 			},
 		},
 	}
@@ -137,29 +199,43 @@ function _setupTestFile(launcher,target,url,stat,reportParent){
 	let ctrl={
 		Scenaria:[],
 		Hap:null,
+		Loaded:false,
+		Installed:false,
 		Done:false,
 	}
-	let proc=YgEs.StateMachine.Run('Download',states,{
-		Name:'YgEs.UnitTest_Proc',
-		Launcher:launcher,
-		User:ctrl,
-	});
+
+	ctrl.Reset=()=>{
+		sig_reset=true;
+	}
+
+	ctrl.Load=()=>{
+		items=0;
+		YgEs.StateMachine.Run('Download',states,{
+			Name:'YgEs.UnitTest_Proc',
+			Launcher:launcher,
+			User:ctrl,
+		});
+	}
+
+	ctrl.Run=()=>{
+		sig_run=true;
+	}
 
 	ctrl.SetView=(v)=>{
 		view=v;
 		if(view){
-			view.UpdateResult(result);
+			view.Reset();
 			view.SetMsg(msg);
 			if(ctrl.Done)view.SetScenaria(ctrl.Scenaria);
 		}
 	}
-
 	return ctrl;
 }
 
-function _setupTestDir(launcher,target,url,src,reportParent){
+function _setupTestDir(launcher,scriptstore,url,src,reportParent){
 
 	let result=null;
+	let items=0;
 	let runs=0;
 	let ctrl={Dirs:{},Files:{}}
 	let view=null;
@@ -179,20 +255,42 @@ function _setupTestDir(launcher,target,url,src,reportParent){
 		else return;
 	}
 
-	for(let fn in src.Files){
-		++runs;
-		ctrl.Files[fn]=_setupTestFile(launcher,target,url+fn,src.Files[fn],report);
-	}
-	for(let dn in src.Dirs){
-		++runs;
-		ctrl.Dirs[dn]=_setupTestDir(launcher,target,url+dn+'/',src.Dirs[dn],report);
+	ctrl.Reset=(src2=null)=>{
+		if(!src2)src2=src;
+
+		if(view)view.Reset();
+
+		ctrl.Dirs={}
+		ctrl.Files={}
+		items=0;
+
+		for(let fn in src2.Files){
+			++items;
+			ctrl.Files[fn]=_setupTestFile(launcher,scriptstore,url+fn,src2.Files[fn],report);
+		}
+		for(let dn in src2.Dirs){
+			++items;
+			ctrl.Dirs[dn]=_setupTestDir(launcher,scriptstore,url+dn+'/',src2.Dirs[dn],report);
+		}
 	}
 
+	ctrl.Load=()=>{
+		if(view)view.UpdateResult(result);
+		for(let fn in ctrl.Files)ctrl.Files[fn].Load();
+		for(let dn in ctrl.Dirs)ctrl.Dirs[dn].Load();
+	}
+
+	ctrl.Run=()=>{
+		runs=items;
+		for(let fn in ctrl.Files)ctrl.Files[fn].Run();
+		for(let dn in ctrl.Dirs)ctrl.Dirs[dn].Run();
+	}
 	ctrl.SetView=(v)=>{
 		view=v;
-		if(view)view.UpdateResult(result);
+		if(view)view.Reset();
 	}
 
+	ctrl.Reset();
 	return ctrl;
 }
 
@@ -214,8 +312,8 @@ YgEs.Test={
 		// dummy 
 	},
 
-	SetUp:(launcher,target,url,src)=>{
-		return _setupTestDir(launcher,target,url,src,()=>{});
+	SetUp:(launcher,scriptstore,url,src)=>{
+		return _setupTestDir(launcher,scriptstore,url,src,()=>{});
 	},
 
 };

@@ -47,19 +47,31 @@ async function ipl_ready(){
 	YgEs.LoadJS('yges/proptree.js',['yges/quickqueue.js']);
 	YgEs.LoadJS('yges/urlbuilder.js',['yges/proptree.js']);
 	YgEs.LoadJS('yges/unittest.js');
+	YgEs.LoadJS('yges/logger_view.js');
+	YgEs.LoadJS('yges/happening_view.js');
+	YgEs.LoadJS('yges/engine_view.js');
 	YgEs.LoadJS('yges/unittest_view.js');
 	YgEs.LoadJSON(TestBase,'TestInfo');
 	await YgEs.LoadSync().ToPromise();
 	YgEs.DisposeMonitor();
 
-	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
+	// prepares 
 	let hapmng=YgEs.HappeningManager.CreateLocal({
-		name:'YgEsTestHaps',
-		happen:(hap)=>{log.Fatal(hap.ToString(),hap.GetProp())},
+		Name:'TestHaps',
+		HappenTo:(hap)=>{log.Fatal(hap.ToString(),hap.GetProp())},
+	});
+	let launcher=YgEs.Engine.CreateLauncher({
+		Name:'TestProcs',
+		HappenTo:hapmng,
+		SharedHappen:true,
 	});
 
-	let launcher=YgEs.Engine.CreateLauncher({HappenTo:hapmng});
+	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
+
 	let test=YgEs.Test.SetUp(launcher,modules,TestBase,YgEs.Peek('TestInfo'));
 	let view=YgEs.TestView.SetUp(test,mainboard);
+//	test.Reset();
+	test.Load();
+	test.Run();
 }
 //--></script></div></body></html>
