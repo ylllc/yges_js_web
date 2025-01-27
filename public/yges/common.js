@@ -96,4 +96,51 @@ YgEs.Inspect=(val)=>{
 	return JSON.stringify(val);
 }
 
+YgEs.InitFrontend=(moduleplace,viewplace=null)=>{
+
+	YgEs.Engine.Start();
+	let hapmng=YgEs.HappeningManager.CreateLocal({
+		Name:'LoaderHaps',
+	});
+	let launcher=YgEs.Engine.CreateLauncher({
+		Name:'LoaderProcs',
+		HappenTo:hapmng,
+		SharedHappen:true,
+	});
+	let monitor=viewplace?YgEs.DownloadMonitor.SetUp(viewplace,true):null;
+	let loader=YgEs.DownloadManager.Create(launcher,monitor);
+
+	loader.Plug('CSS',YgEs.DownloadManager.PlugCSS(moduleplace));
+	loader.Plug('JS',YgEs.DownloadManager.PlugJS(moduleplace));
+	loader.Plug('JSON',YgEs.DownloadManager.PlugJSON());
+
+	YgEs.LoadCSS=(url,label=null)=>{
+		if(!label)label=url;
+		loader.Load(label,'CSS',url);
+	}
+	YgEs.LoadJS=(url,depends=[],label=null)=>{
+		if(!label)label=url;
+		loader.Load(label,'JS',url,depends);
+	}
+	YgEs.LoadJSON=(url,label=null)=>{
+		if(!label)label=url;
+		loader.Load(label,'JSON',url);
+	}
+	YgEs.LoadSync=(cb_done=null,cb_abort=null,interval=null)=>{
+		if(!interval)interval=10;
+		return YgEs.Timing.SyncKit(interval,()=>{return loader.IsReady();},cb_done,cb_abort);
+	}
+	YgEs.Peek=(label)=>{
+		return loader.Ready[label];
+	}
+	YgEs.Unload=(label)=>{
+		loader.Unload(label);
+	}
+	YgEs.DisposeMonitor=()=>{
+		if(!monitor)return;
+		monitor.Dispose();
+		monitor=null;
+	}
+}
+
 })();

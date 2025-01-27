@@ -26,8 +26,6 @@ Repositories:
 </footer>
 <div id=modules>
 <script src="yges/ipl.js"></script>
-<script src="yges/happening_view.js"></script>
-<script src="yges/engine_view.js"></script>
 </div>
 <script><!--
 let modules=YgEs.ToQHT(document.getElementById('modules'));
@@ -39,6 +37,15 @@ async function ipl_ready(){
 
 	ipl_loading.Remove();
 
+	YgEs.InitFrontend(modules,mainboard);
+
+	// resources 
+	YgEs.LoadCSS('engmon.css');
+	YgEs.LoadJS('yges/happening_view.js');
+	YgEs.LoadJS('yges/engine_view.js');
+	await YgEs.LoadSync().ToPromise();
+	YgEs.DisposeMonitor();
+
 	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
 	let hapmng=YgEs.HappeningManager.CreateLocal({
 		Name:'YgEsTestHaps',
@@ -47,17 +54,6 @@ async function ipl_ready(){
 
 	YgEs.Engine.Start();
 	let launcher=YgEs.Engine.CreateLauncher({HappenTo:hapmng});
-	let monitor=YgEs.DownloadMonitor.SetUp(mainboard,true);
-	let loader=YgEs.DownloadManager.Create(launcher,monitor);
-
-	loader.Plug('CSS',YgEs.DownloadManager.PlugCSS(modules));
-	loader.Plug('JS',YgEs.DownloadManager.PlugJS(modules));
-
-	loader.Load('engmon.css','CSS','engmon.css');
-//	loader.Load('happening_view.js','JS','yges/happening_view.js');
-//	loader.Load('engine_view.js','JS','yges/engine_view.js');
-	await YgEs.Timing.SyncKit(10,()=>{return loader.IsReady();}).ToPromise();
-	monitor.Dispose();
 
 	let h1=hapmng.HappenMsg('Test Happen 1');
 	let h2=hapmng.HappenProp({reason:'Test'});

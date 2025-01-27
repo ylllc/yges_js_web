@@ -74,6 +74,19 @@ s = YgEs.Inspect([undefined]); // [undefined]
 ```
 
 -----
+## Quick Downloader
+
+(web only)  
+```
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+YgEs.InitFrontend(modules);
+YgEs.LoadJSON('https://example.com/test.json','TestJSON');
+await YgEs.LoadSync().ToPromise();
+
+console.dir(YgEs.Peek('TestJSON'));
+```
+
+-----
 # Class Reference
 
 @sa @ref pg_class_common

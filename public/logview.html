@@ -37,25 +37,15 @@ async function ipl_ready(){
 
 	ipl_loading.Remove();
 
+	YgEs.InitFrontend(modules,mainboard);
+
+	// resources 
+	YgEs.LoadCSS('logview.css');
+	YgEs.LoadJS('yges/logger_view.js');
+	await YgEs.LoadSync().ToPromise();
+	YgEs.DisposeMonitor();
+
 	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
-	let hapmng=YgEs.HappeningManager.CreateLocal({
-		Name:'YgEsTestHaps',
-		OnHappen:(hap)=>{log.Fatal(hap.ToString(),hap.GetProp())},
-	});
-
-	YgEs.Engine.Start();
-	let launcher=YgEs.Engine.CreateLauncher({HappenTo:hapmng});
-	let monitor=YgEs.DownloadMonitor.SetUp(mainboard,true);
-	let loader=YgEs.DownloadManager.Create(launcher,monitor);
-
-	loader.Plug('CSS',YgEs.DownloadManager.PlugCSS(modules));
-	loader.Plug('JS',YgEs.DownloadManager.PlugJS(modules));
-
-	loader.Load('logview.css','CSS','logview.css');
-	loader.Load('logger_view.js','JS','yges/logger_view.js');
-	await YgEs.Timing.SyncKit(10,()=>{return loader.IsReady();}).ToPromise();
-	monitor.Dispose();
-
 	let logview=YgEs.LogView.SetUp(YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_logview_window'}}));
 	logview.Attach(log);
 	let ctrlpnl=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_logview_ctrlpnl'}});

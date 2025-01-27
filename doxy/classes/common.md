@@ -148,3 +148,183 @@ fix to inspectable string.
 uses for debugging instead of JSON.stringify().  
 
 -----
+## InitFrontend {#Common_InitFrontend}
+
+(web only)  
+initialize for frontend.  
+
+### Spec
+
+InitFrontend(moduleplace,viewplace=null):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| moduleplace | QHT | downloaded HTML resources placed in |
+| viewplace | QHT? | show download monitor in (or hidden) |
+
+-----
+## LoadCSS {#Common_LoadCSS}
+
+(web only)  
+download CSS source and apply.  
+
+### Premises
+
+call InitFrontend()  
+
+### Spec
+
+LoadCSS(url,label=null):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| url | string | download from |
+| label | string | keep as label (or same to url) |
+
+### Promisings
+
+call LoadSync() and wait for it.  
+
+-----
+## LoadJS {#Common_LoadJS}
+
+(web only)  
+download JS source and apply.  
+
+### Premises
+
+call InitFrontend()  
+
+### Spec
+
+LoadJS(url,depends,label=null):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| url | string | download from |
+| depends | string[] | to apply, required labels wait for |
+| label | string | keep as label (or same to url) |
+
+### Promisings
+
+call LoadSync() and wait for it.  
+
+### Notes
+
+- can unload, but loaded structures are not removed.  
+
+-----
+## LoadJSON {#Common_LoadJSON}
+
+(web only)  
+download JSON source and parse.  
+
+### Premises
+
+call InitFrontend()  
+
+### Spec
+
+LoadJSON(url,label=null):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| url | string | download from |
+| label | string | keep as label (or same to url) |
+
+### Promisings
+
+call LoadSync() and wait for it.  
+
+-----
+## LoadSync {#Common_LoadSync}
+
+(web only)  
+wait for downloads.
+
+### Premises
+
+call InitFrontend()  
+
+### Spec
+
+LoadSync(cb_done=null,cb_abort=null,interval=null):@ref Timing_AsyncControlKit
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| cb_done | func? | called on end of downloading |
+| cb_abort | func? | called on aborted |
+| interval | int? | waiting in msec |
+
+### Returns
+
+controller for this procedure.  
+
+-----
+## Peek {#Common_Peek}
+
+(web only)  
+access to a downloaded content.  
+
+### Premises
+
+call InitFrontend()  
+
+### Spec
+
+Peek(label):any
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| label | string | download label |
+
+### Returns
+
+downloaded content.  
+
+-----
+## Unload {#Common_Unload}
+
+(web only)  
+remove a downloaded content.  
+
+### Premises
+
+call InitFrontend()  
+
+### Spec
+
+Unload(label):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| label | string | download label |
+
+-----
+## DisposeMonitor {#Common_DisposeMonitor}
+
+(web only)  
+remove the download monitor.  
+
+### Premises
+
+call InitFrontend()  
+
+### Spec
+
+DisposeMonitor(label):void
+
