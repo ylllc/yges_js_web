@@ -1155,7 +1155,7 @@ const HappeningManager=YgEs.HappeningManager;
 
 function _run(start,states={},opt={}){
 
-	let launcher=opt.Launcher??YgEs.Engine;
+	let launcher=opt.Launcher??Engine;
 	let cur=null;
 
 	let name=opt.Name??'YgEs.StateMachine';
@@ -1412,7 +1412,7 @@ function _standby(prm){
 
 	let name=prm.Name??'YgEs.Agent';
 	let happen=prm.HappenTo??HappeningManager;
-	let launcher=prm.Launcher??Engine.CreateLauncher();
+	let launcher=prm.Launcher??Engine;
 	let user=prm.User??{};
 
 	let GetInfo=(phase)=>{

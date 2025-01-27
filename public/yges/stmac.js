@@ -11,7 +11,7 @@ const HappeningManager=YgEs.HappeningManager;
 
 function _run(start,states={},opt={}){
 
-	let launcher=opt.Launcher??YgEs.Engine;
+	let launcher=opt.Launcher??Engine;
 	let cur=null;
 
 	let name=opt.Name??'YgEs.StateMachine';
