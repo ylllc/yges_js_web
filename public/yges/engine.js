@@ -42,6 +42,8 @@ function _create_proc(prm){
 		IsAborted:()=>aborted,
 		IsEnd:()=>finished||aborted,
 
+		GetInfo:()=>{return {}},
+
 		_start:()=>{
 			if(started)return;
 			if(proc.IsEnd())return;
