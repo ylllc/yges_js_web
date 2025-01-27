@@ -46,25 +46,76 @@ async function ipl_ready(){
 	await YgEs.LoadSync().ToPromise();
 	YgEs.DisposeMonitor();
 
-	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
+	// prepares 
 	let hapmng=YgEs.HappeningManager.CreateLocal({
-		Name:'YgEsTestHaps',
-		OnHappen:(hap)=>{log.Fatal(hap.ToString(),hap.GetProp())},
+		Name:'TestHaps',
+	});
+	let launcher=YgEs.Engine.CreateLauncher({
+		Name:'TestProcs',
+		HappenTo:hapmng,
 	});
 
-	YgEs.Engine.Start();
-	let launcher=YgEs.Engine.CreateLauncher({HappenTo:hapmng});
-
+	// test happenings 
 	let h1=hapmng.HappenMsg('Test Happen 1');
 	let h2=hapmng.HappenProp({reason:'Test'});
 	let h3=hapmng.HappenError(new Error('Test Error'));
 	h2.Resolve();
 	h3.Abandon();
 
+	// test download error 
+	YgEs.LoadJS('missing_file.js');
+
+	// test StateMachine error
+	const states={
+		'State1':{
+			OnReady:(ctx,user)=>{
+				user.since=Date.now();
+			},
+			OnPollInKeep:(ctx,user)=>{
+				if(Date.now()-user.since>5000)return 'State2';
+			},
+		},
+		'State2':{
+			OnReady:(ctx,user)=>{
+				user.since=Date.now();
+			},
+			OnPollInKeep:(ctx,user)=>{
+				if(Date.now()-user.since>5000){
+					throw new Error('Test Happening 4');
+				}
+			},
+		},
+	}
+	YgEs.StateMachine.Run('State1',states,{
+		Launcher:launcher,
+		HappenTo:YgEs.HappeningManager.CreateLocal({
+			Name:'TestStatemachine',
+		}),
+	});
+
+	// test Agent error
+	const workset={
+		Launcher:launcher,
+		HappenTo:YgEs.HappeningManager.CreateLocal({
+			Name:'TestAgent',
+		}),
+		OnOpen:(agent)=>{
+			agent.User.since=Date.now();
+			agent.WaitFor(()=>Date.now()-agent.User.since>3000);
+		},
+		OnReady:(agent)=>{
+			throw new Error('Test Happening 5');
+		},
+	}
+	let h=YgEs.AgentManager.Run(workset);
+
+	// viewer 
 	let hapview=YgEs.HappeningView.SetUp(YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_hapview_window'}}));
 	let engview=YgEs.EngineView.SetUp(YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_engview_window'}}));
 
-	hapview.Update();
-	engview.Update();
+	YgEs.Timing.Poll(50,()=>{
+		hapview.Update();
+		engview.Update();
+	});
 }
 //--></script></div></body></html>

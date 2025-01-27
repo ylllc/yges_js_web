@@ -2,6 +2,7 @@
 
 # What's It?
 
+(web only)  
 created by @ref pg_class_logger_view_container  
 this class is inherited from @ref pg_class_qht
 

@@ -35,6 +35,15 @@ the Engine can shutdown with all internal procedures, and can exit.
 ```
 use YgEs.Engine
 
+### Viewer
+
+```
+<script src="yges/happening_view.js"></script>
+<script src="yges/engine_view.js"></script>
+```
+use YgEs.EngineView
+
+-----
 ## for Node/Deno
 
 ```
@@ -136,8 +145,20 @@ all procedures in the Engine are aborted.
 and can exit.  
 
 -----
+## Engine Viewer
+
+(web only)
+```
+let board=YgEs.ToQHT(document.getElementById('board'));
+let engview=YgEs.EngineView.SetUp(board);
+```
+
+-----
 # Class Reference
 
 @sa @ref pg_class_engine @n
 	@ref pg_class_launcher @n
 	@ref pg_class_procedure @n
+	@ref pg_class_launcher_view @n
+	@ref pg_class_procedure_view @n
+	@ref pg_class_engine_view_container @n
