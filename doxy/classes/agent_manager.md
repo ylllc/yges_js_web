@@ -33,7 +33,10 @@ user defined object kept in an agent
 | OnOpen | func<@ref pg_class_agent> | on open from cleaned up |
 | OnReady | func<@ref pg_class_agent> | on opening completed |
 | OnPollInHealthy | func<@ref pg_class_agent> | in polling after ready in cleaned up |
+| OnTrouble | func<@ref pg_class_agent> | happening from healthy |
 | OnPollInTrouble | func<@ref pg_class_agent> | in polling after ready during happening |
+| OnHalt | func<@ref pg_class_agent> | more happening from trouble |
+| OnRecover | func<@ref pg_class_agent> | resolved all happenings in trouble,halt |
 | OnClose | func<@ref pg_class_agent> | on close from ready |
 | OnBack | func<@ref pg_class_agent> | on close from opening unsatisfactory |
 | User | @ref Agent_UserShared? | share on created @ref pg_class_agent |
