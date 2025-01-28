@@ -5,6 +5,20 @@
 created by @pg_class_launcher
 
 -----
+# Structures
+
+-----
+## ProcedureInfo {#Procedure_ProcedureInfo}
+
+| Name | Type | Means |
+|------|------|-------|
+| InstanceID | int | instance ID |
+| Name | string | instance name |
+| CrashSite | string | error at (or normally) |
+| Status | string | @ref Procedure_GetStatus returns |
+| User | dict<string,any> | user definition |
+
+-----
 # Properties
 
 | Name | Type | Means |
@@ -69,6 +83,35 @@ IsEnd():bool
 ### Returns
 
 this procedure is ended (fiinshed or aborted)
+
+-----
+## GetStatus {#Procedure_GetStatus}
+
+### Spec
+
+GetStatus():string
+
+### Returns
+
+status of this instance  
+
+| Value | Means |
+|-------|-------|
+| StandBy | not runs yet |
+| Running | running |
+| Aborted | cancel from external order |
+| Finished | completed |
+
+-----
+## GetInfo {#Procedure_GetInfo}
+
+### Spec
+
+GetInfo():@ref Procedure_ProcedureInfo
+
+### Returns
+
+procedure info.  
 
 -----
 ## Abort {#Procedure_IsEnd}

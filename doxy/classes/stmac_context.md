@@ -5,6 +5,21 @@
 created by @ref pg_class_stmac_container
 
 -----
+# Structures
+
+-----
+## StateMachineInfo {#StMac_StateMachineInfo}
+
+| Name | Type | Means |
+|------|------|-------|
+| Name | string | instance name |
+| CrashSite | string | error at (or normally) |
+| Prev | string | previous state |
+| Cur | string | current state |
+| Next | string | next state |
+| User | dict<string,any> | user definition |
+
+-----
 # Properties
 
 | Name | Type | Means |
@@ -46,6 +61,17 @@ GetNextState():string?
 ### Returns
 
 next state
+
+-----
+## GetInfo {#StMac_GetInfo}
+
+### Spec
+
+GetInfo():@ref StMac_StateMachineInfo
+
+### Returns
+
+statemachine info.  
 
 -----
 ## GetHappeningManager {#StMac_GetHappeningManager}

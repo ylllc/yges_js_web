@@ -25,13 +25,16 @@
 | User | dict<string,any> | user difinition |
 
 -----
-## HappeningInfo {#HappeningManager_HappeningInfo}
+## HappeningManagerInfo {#HappeningManager_HappeningManagerInfo}
 
 | Name | Type | Means |
 |------|------|-------|
-| Name | string | user class name of HappeningManager |
-| Issues | dict<string,any>[] | GetProp() of each unresolved happenings |
-| Children | @ref HappeningManager_HappeningInfo[] | GetInfo() of each children |
+| InstanceID | int | instance ID |
+| Name | string | instance name |
+| Status | string | @ref Happening_GetStatus returns |
+| User | dict<string,any> | user definition |
+| Issues | @ref Happening_HappeningInfo[] | happenings in this instance |
+| Sub | @ref HappeningManager_HappeningManagerInfo[] | submanagers in this instance |
 
 -----
 ## HappeningOption {#HappeningManager_HappeningOption}
@@ -132,6 +135,33 @@ Happening instances in this instance.
 include dirty resolved happens.  
 
 -----
+## GetStatus {#HappeningManager_GetStatus}
+
+### Spec
+
+GetStatus():string
+
+### Returns
+
+status of this instance  
+
+| Value | Means |
+|-------|-------|
+| Available | active instance |
+| Abandoned | no longer refered |
+
+-----
+## GetInfo {#HappeningManager_GetInfo}
+
+### Spec
+
+GetInfo():@ref HappeningManager_HappeningManagerInfo
+
+### Returns
+
+manager info.  
+
+-----
 ## Abandon {#HappeningManager_Abandon}
 
 ### Spec
@@ -173,17 +203,6 @@ true means no happens in this instance and all child HappeningManager.
 Cleanup():void
 
 remove dirty resolved happens in this instance and all child HappeningManager.  
-
------
-## GetInfo {#HappeningManager_GetInfo}
-
-### Spec
-
-GetInfo():@ref HappeningManager_HappeningInfo
-
-### Returns
-
-unresolved happenings info in an object.  
 
 -----
 ## Poll {#HappeningManager_poll}
