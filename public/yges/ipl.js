@@ -395,7 +395,7 @@ let Util=YgEs.Util={
 		if(bgn==end)return cnt;
 
 		if(step<0 != end-bgn<0){
-			HappeningManager.HappenProp({msg:'backward',bgn:bgn,end:end,step:step});
+			HappeningManager.Happen('backward',{bgn:bgn,end:end,step:step});
 			return cnt;
 		}
 
@@ -603,6 +603,7 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 	let hap={
 		name:init.Name??'YgEs.Happening',
 		User:init.User??{},
+		_yges_happening_:true, // means this is YgEs.Happening 
 
 		GetInstanceID:()=>iid,
 		GetProp:cbprop,
@@ -729,36 +730,45 @@ function _create_manager(prm,parent=null){
 			}
 		},
 
-		Happen:(hap)=>{
+		Happen:(src,prop={},init={})=>{
+
+			let hap=null;
+			if(typeof src!='object'){
+				hap=_create_happening(
+				()=>prop,
+					()=>''+src,
+					()=>new Error(''+src,prop),
+					init
+				);
+			}
+			else if(src._yges_happening_){
+				hap=_create_happening(
+					()=>src.GetProp(),
+					()=>''+src,
+					()=>new Error(''+src,src.GetProp()),
+					init
+				);
+			}
+			else if(src instanceof Error){
+				hap=_create_happening(
+					()=>YgEs.FromError(src),
+					()=>'{'+src.name+'} '+src.message,
+					()=>src,
+					init
+				);
+			}
+			else{
+				hap=_create_happening(
+					()=>Object.assign(src,prop),
+				()=>'Happening',
+					()=>new Error('Happening',Object.assign(src,prop)),
+				init
+				);
+			}
+
 			issues.push(hap);
 			onHappen(hap);
 			return hap;
-		},
-		HappenMsg:(msg,init={})=>{
-			return mng.Happen(_create_happening(
-				()=>{return {}},
-				()=>''+msg,
-				()=>new Error(msg),
-				init
-			));
-		},
-
-		HappenProp:(prop,init={})=>{
-			return mng.Happen(_create_happening(
-				()=>prop,
-				()=>'Happening',
-				()=>new Error('Happening',prop),
-				init
-			));
-		},
-
-		HappenError:(err,init={})=>{
-			return mng.Happen(_create_happening(
-				()=>{return YgEs.FromError(err)},
-				()=>'{'+err.name+'} '+err.message,
-				()=>err,
-				init
-			));
 		},
 	}
 	return mng;
@@ -807,7 +817,9 @@ function _create_proc(prm,launcher){
 		IsAborted:()=>aborted,
 		IsEnd:()=>finished||aborted,
 
-		GetInfo:()=>{return {}},
+		GetInfo:(phase='')=>{return {
+			Phase:phase,
+		}},
 
 		_start:()=>{
 			if(started)return;
@@ -818,11 +830,10 @@ function _create_proc(prm,launcher){
 					onStart(proc.User);
 				}
 				catch(e){
-					proc.HappenTo.HappenProp({
+					proc.HappenTo.Happen(e,{
 						Class:CLASS_PROC,
-						Cause:'throw from start',
-						Src:proc,
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnStart'),
 					});
 					proc.Abort();
 				}
@@ -836,19 +847,19 @@ function _create_proc(prm,launcher){
 					onAbort(proc.User);
 				}
 				catch(e){
-					proc.HappenTo.HappenProp({
+					proc.HappenTo.Happen(e,{
 						Class:CLASS_PROC,
-						Cause:'throw from abort',
-						Src:proc,
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnAbort'),
 					});
 				}
 			}
 			else{
-				proc.HappenTo.HappenProp({
+				proc.HappenTo.Happen(
+					'Aborted',{
 					Class:CLASS_PROC,
-					Cause:'abort',
-					Src:proc,
+					Cause:'Aborted',
+					Info:GetInfo('Aborted'),
 				});
 			}
 		},
@@ -858,11 +869,10 @@ function _create_proc(prm,launcher){
 				if(onPoll(proc.User))return true;
 			}
 			catch(e){
-				proc.HappenTo.HappenProp({
+				proc.HappenTo.Happen(e,{
 					Class:CLASS_PROC,
-					Cause:'throw from poll',
-					Src:proc,
-					Err:YgEs.FromError(e),
+					Cause:'ThrownFromCallback',
+					Info:GetInfo('OnPoll'),
 				});
 				proc.Abort();
 				return false;
@@ -873,11 +883,10 @@ function _create_proc(prm,launcher){
 					finished=true;
 				}
 				catch(e){
-					proc.HappenTo.HappenProp({
+					proc.HappenTo.Happen(e,{
 						Class:CLASS_PROC,
-						Cause:'throw from done',
-						Src:proc,
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnDone'),
 					});
 					proc.Abort();
 					return false;
@@ -891,9 +900,11 @@ function _create_proc(prm,launcher){
 
 		Sync:(cb_sync,interval=null)=>{
 			if(!cb_sync){
-				proc.HappenTo.HappenProp({
-					Class:CLASS_LAUNCHER,
-					Cause:'empty callback from sync',
+				proc.HappenTo.Happen(
+					'Empty callback for sync',{
+					Class:CLASS_PROC,
+					Cause:'EmptySyncCallback',
+					Info:GetInfo('CannotSync'),
 				});
 				return;
 			}
@@ -905,11 +916,10 @@ function _create_proc(prm,launcher){
 						cb_sync(proc.User);
 					}
 					catch(e){
-						proc.HappenTo.HappenProp({
+						proc.HappenTo.Happen(e,{
 							Class:CLASS_PROC,
-							Cause:'throw from sync',
-							Src:proc,
-							Err:YgEs.FromError(e),
+							Cause:'ThrownFromCallback',
+							Info:GetInfo('OnSync'),
 						});
 					}
 				},
@@ -982,7 +992,7 @@ function _yges_enginge_create_launcher(prm){
 
 		Launch:(prm={})=>{
 			if(Engine.IsAbandoned()){
-				lnc.HappenTo.HappenMsg('the Engine was abandoned, no longer launch new procedures.');
+				lnc.HappenTo.Happen('the Engine was abandoned, no longer launch new procedures.');
 				return;
 			}
 			if(!_working){
@@ -993,9 +1003,10 @@ function _yges_enginge_create_launcher(prm){
 				return;
 			}
 			if(!prm.OnPoll){
-				lnc.HappenTo.HappenProp({
+				lnc.HappenTo.Happen(
+					'Empty callback for poll',{
 					Class:CLASS_LAUNCHER,
-					Cause:'empty pollee',
+					Cause:'CannotPoll',
 				});
 				return;
 			}
@@ -1046,9 +1057,10 @@ function _yges_enginge_create_launcher(prm){
 
 		Sync:(cb_sync,interval=null)=>{
 			if(!cb_sync){
-				lnc.HappenTo.HappenProp({
+				lnc.HappenTo.Happen(
+					'Empty callback for sync',{
 					Class:CLASS_LAUNCHER,
-					Cause:'empty callback from sync',
+					Cause:'CannotSync',
 				});
 				return;
 			}
@@ -1063,11 +1075,9 @@ function _yges_enginge_create_launcher(prm){
 						cb_sync(lnc.User);
 					}
 					catch(e){
-						lnc.HappenTo.HappenProp({
+						lnc.HappenTo.Happen(e,{
 							Class:CLASS_PROC,
-							Cause:'throw from sync',
-							Src:lnc,
-							Err:YgEs.FromError(e),
+							Cause:'ThrownFromCallback',
 						});
 					}
 				}
@@ -1198,10 +1208,11 @@ function _run(start,states={},opt={}){
 		}
 		cur=states[state_next]??null;
 		if(!cur){
-			happen.HappenProp({
-				Class:'YgEs_Statemachine_Error',
-				Cause:'state missing: '+state_next,
-				Info:GetInfo('selecing'),
+			happen.Happen(
+				'Missing State: '+state_next,{
+				Class:'YgEs.StateMachine',
+				Cause:'MissingState',
+				Info:GetInfo('selecting'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1214,11 +1225,10 @@ function _run(start,states={},opt={}){
 			poll_cur=poll_up;
 		}
 		catch(e){
-			happen.HappenProp({
-				Class:'YgEs_Statemachine_Error',
-				Cause:'throw from a callback',
-				Info:GetInfo('cb_start'),
-				Err:YgEs.FromError(e),
+			happen.Happen(e,{
+				Class:'YgEs.StateMachine',
+				Cause:'ThrownFromCallback',
+				Info:GetInfo('OnStart'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1231,11 +1241,10 @@ function _run(start,states={},opt={}){
 			var r=cur.OnPollInUp?cur.OnPollInUp(ctrl,user):true;
 		}
 		catch(e){
-			happen.HappenProp({
-				Class:'YgEs_Statemachine_Error',
-				Cause:'throw from a callback',
-				Info:GetInfo('poll_up'),
-				Err:YgEs.FromError(e),
+			happen.Happen(e,{
+				Class:'YgEs.StateMachine',
+				Cause:'ThrownFromCallback',
+				Info:GetInfo('OnPollInUp'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1249,11 +1258,10 @@ function _run(start,states={},opt={}){
 				poll_cur=poll_keep;
 			}
 			catch(e){
-				happen.HappenProp({
-					Class:'YgEs_Statemachine_Error',
-					Cause:'throw from a callback',
-					Info:GetInfo('cb_ready'),
-					Err:YgEs.FromError(e),
+				happen.Happen(e,{
+					Class:'YgEs.StateMachine',
+					Cause:'ThrownFromCallback',
+					Info:GetInfo('OnReady'),
 				});
 				poll_cur=poll_nop;
 				return;
@@ -1272,11 +1280,10 @@ function _run(start,states={},opt={}){
 			var r=cur.OnPollInKeep?cur.OnPollInKeep(ctrl,user):true;
 		}
 		catch(e){
-			happen.HappenProp({
-				Class:'YgEs_Statemachine_Error',
-				Cause:'throw from a callback',
-				Info:GetInfo('poll_keep'),
-				Err:YgEs.FromError(e),
+			happen.Happen(e,{
+				Class:'YgEs.StateMachine',
+				Cause:'ThrownFromCallback',
+				Info:GetInfo('OnPollInKeep'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1300,11 +1307,10 @@ function _run(start,states={},opt={}){
 			poll_cur=poll_down;
 		}
 		catch(e){
-			happen.HappenProp({
-				Class:'YgEs_Statemachine_Error',
-				Cause:'throw from a callback',
-				Info:GetInfo('cb_stop'),
-				Err:YgEs.FromError(e),
+			happen.Happen(e,{
+				Class:'YgEs.StateMachine',
+				Cause:'ThrownFromCallback',
+				Info:GetInfo('OnStop'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1317,11 +1323,10 @@ function _run(start,states={},opt={}){
 			var r=cur.OnPollInDown?cur.OnPollInDown(ctrl,user):true;
 		}
 		catch(e){
-			happenHappenProp({
-				Class:'YgEs_Statemachine_Error',
-				Cause:'throw from a callback',
-				Info:GetInfo('poll_down'),
-				Err:YgEs.FromError(e),
+			happen.Happen(e,{
+				Class:'YgEs.StateMachine',
+				Cause:'ThrownFromCallback',
+				Info:GetInfo('OnPollInDown'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1344,11 +1349,10 @@ function _run(start,states={},opt={}){
 			call_start(user);
 		}
 		catch(e){
-			happen.HappenProp({
-				Class:'YgEs_Statemachine_Error',
-				Cause:'throw from a callback',
-				Info:GetInfo('cb_end'),
-				Err:YgEs.FromError(e),
+			happen.Happen(e,{
+				Class:'YgEs.StateMachine',
+				Cause:'ThrownFromCallback',
+				Info:GetInfo('OnEnd'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1460,11 +1464,10 @@ function _standby(prm){
 					if(prm.OnRepair)prm.OnRepair(agent);
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
-						Src:GetInfo('OnRepair'),
-						Err:YgEs.FromError(e),
+						Info:GetInfo('OnRepair'),
 					});
 				}
 			},
@@ -1482,11 +1485,10 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
-							Src:GetInfo('wait for repair'),
-							Err:YgEs.FromError(e),
+							Info:GetInfo('wait for repair'),
 						});
 					}
 				}
@@ -1520,11 +1522,10 @@ function _standby(prm){
 					}
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
-						Src:GetInfo(back?'OnBack':'OnClose'),
-						Err:YgEs.FromError(e),
+						Info:GetInfo(back?'OnBack':'OnClose'),
 					});
 				}
 			},
@@ -1538,11 +1539,10 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
-							Src:GetInfo('wait for down'),
-							Err:YgEs.FromError(e),
+							Info:GetInfo('wait for down'),
 						});
 					}
 				}
@@ -1567,11 +1567,10 @@ function _standby(prm){
 					}
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
-						Src:GetInfo('OnOpen'),
-						Err:YgEs.FromError(e),
+						Info:GetInfo('OnOpen'),
 					});
 				}
 			},
@@ -1586,11 +1585,10 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
-							Src:GetInfo('wait for up'),
-							Err:YgEs.FromError(e),
+							Info:GetInfo('wait for up'),
 						});
 					}
 				}
@@ -1606,11 +1604,10 @@ function _standby(prm){
 						if(prm.OnReady)prm.OnReady(agent);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.AgentError',
-							Cause:'throw from a callback',
-							Src:GetInfo('OnReady'),
-							Err:YgEs.FromError(e),
+							Cause:'ThrownFromCallback',
+							Info:GetInfo('OnReady'),
 						});
 					}
 				}
@@ -1628,11 +1625,10 @@ function _standby(prm){
 					if(prm.OnPollInHealthy)prm.OnPollInHealthy(agent);
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.AgentError',
-						Cause:'throw from a callback',
-						Src:GetInfo('OnPollInHealthy'),
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnPollInHealthy'),
 					});
 					return 'TROUBLE';
 				}
@@ -1644,11 +1640,10 @@ function _standby(prm){
 					if(prm.OnTrouble)prm.OnTrouble(agent);
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.AgentError',
-						Cause:'throw from a callback',
-						Src:GetInfo('OnTrouble'),
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnTrouble'),
 					});
 				}
 			},
@@ -1666,11 +1661,10 @@ function _standby(prm){
 					if(c<happen.CountIssues())return 'HALT';
 				}
 				catch(e){
-					happen.HappenProp({
-							Class:'YgEs.AgentError',
-							Cause:'throw from a callback',
-						Src:GetInfo('OnPollInTrouble'),
-						Err:YgEs.FromError(e),
+					happen.Happen(e,{
+						Class:'YgEs.AgentError',
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnPollInTrouble'),
 					});
 					return 'HALT';
 				}
@@ -1681,12 +1675,11 @@ function _standby(prm){
 						if(prm.OnRecover)prm.OnRecover(agent);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.AgentError',
-							Cause:'throw from a callback',
-							Src:GetInfo('OnRecover'),
-							Err:YgEs.FromError(e),
-					});
+							Cause:'ThrownFromCallback',
+							Info:GetInfo('OnRecover'),
+						});
 					}
 				}
 			},
@@ -1699,11 +1692,10 @@ function _standby(prm){
 					if(prm.OnHalt)prm.OnHalt(agent);
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.AgentError',
-						Cause:'throw from a callback',
-						Src:GetInfo('OnHalt'),
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnHalt'),
 					});
 				}
 			},
@@ -1723,11 +1715,10 @@ function _standby(prm){
 						if(prm.OnRecover)prm.OnRecover(agent);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.AgentError',
-							Cause:'throw from a callback',
-							Src:GetInfo('OnRecover'),
-							Err:YgEs.FromError(e),
+							Cause:'ThrownFromCallback',
+							Info:GetInfo('OnRecover'),
 						});
 					}
 				}
@@ -1998,8 +1989,8 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 				if(r)cb_res=r;
 			}
 			catch(e){
-				var hap=happen.HappenError(e,{
-					Name:'YgEs.HTTP_Error',
+				var hap=happen.Happen(e,{},{
+					Name:'YgEs.HTTP.Error',
 					User:{Retry:()=>_retry(ctx,hap)},
 				});
 				if(cb_ng)cb_ng(hap);
@@ -2007,8 +1998,9 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 			}
 		}
 		else if(res.Status>299){
-			var hap=happen.HappenProp(res,{
-				Name:'YgEs_HTTP_Bad',
+			var hap=happen.Happen(
+				'Bad Status',res,{
+				Name:'YgEs.HTTP.Bad',
 				User:{Retry:()=>_retry(ctx,hap)},
 			});
 			if(cb_ng)cb_ng(hap);
@@ -2027,16 +2019,16 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 			}
 
 			if(e){
-				var hap=happen.HappenError(e,{
-					Name:'YgEs.HTTP_Error',
+				var hap=happen.Happen(e,{},{
+					Name:'YgEs.HTTP.Error',
 					User:{Retry:()=>_retry(ctx,hap)},
 				});
 				if(cb_ng)cb_ng(hap);
 			}
 			else if(r===null){
-				var hap=happen.HappenProp({
-					Name:'YgEs_HTTP_Invalid',
-					Msg:'invalid response:',
+				var hap=happen.Happen(
+					'Invalid Response',{
+					Name:'YgEs.HTTP.Invalid',
 					Res:req.response,
 					User:{Retry:()=>_retry(ctx,hap)},
 				});
@@ -2057,8 +2049,8 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 		ctx.End=true;
 		res.Msg='HTTP request error';
 
-		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
-			Name:'YgEs.HTTP_Error',
+		if(cb_ng)cb_ng(happen.Happen(res.Msg,{},{
+			Name:'YgEs.HTTP.Error',
 			User:{Retry:()=>_retry(ctx,hap)},
 		}));
 		else log_fatal(res.Msg);
@@ -2069,8 +2061,8 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 		res.TimeOut=true;
 		res.Msg='HTTP timeout';
 
-		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
-			Name:'YgEs.HTTP_Error',
+		if(cb_ng)cb_ng(happen.Happen(res.Msg,{},{
+			Name:'YgEs.HTTP.Error',
 			User:{Retry:()=>_retry(ctx,hap)},
 		}));
 		else log_fatal(res.Msg);
@@ -2080,8 +2072,8 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 		ctx.End=true;
 		res.Msg='aborted';
 
-		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
-			Name:'YgEs.HTTP_Error',
+		if(cb_ng)cb_ng(happen.Happen(res.Msg,{},{
+			Name:'YgEs.HTTP.Error',
 			User:{Retry:()=>_retry(ctx,hap)},
 		}));
 		else log_notice(res.Msg);

@@ -56,9 +56,9 @@ async function ipl_ready(){
 	});
 
 	// test happenings 
-	let h1=hapmng.HappenMsg('Test Happen 1');
-	let h2=hapmng.HappenProp({reason:'Test'});
-	let h3=hapmng.HappenError(new Error('Test Error'));
+	let h1=hapmng.Happen('Test Happening 1');
+	let h2=hapmng.Happen('Test Happening 2',{reason:'Test'});
+	let h3=hapmng.Happen(new Error('Test Happening 3'));
 	h2.Resolve();
 	h3.Abandon();
 

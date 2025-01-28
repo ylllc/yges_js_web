@@ -44,6 +44,19 @@
 | User | dict<string,any>? | other user definitions kept on created @ref pg_class_happening |
 
 -----
+# Unions
+
+-----
+## HappeningSource {#HappeningManager_HappeningSource}
+
+| Type | Means |
+|------|-------|
+| string | message |
+| Error | from Error |
+| @ref pg_class_happening | rehappening |
+| dict<string,any> | merge to prop |
+
+-----
 # Properties
 
 | Name | Type | Means |
@@ -66,9 +79,13 @@ GetInstanceID():int
 instance ID created by @ref Common_NextID
 
 -----
-## CreateLocal(prm={}):@ref pg_class_happening_manager {#HappeningManager_CreateLocal}
+## CreateLocal {#HappeningManager_CreateLocal}
 
 create a child HappeningManager  
+
+### Spec
+
+CreateLocal(prm={}):@ref pg_class_happening_manager
 
 ### Args
 
@@ -182,60 +199,21 @@ iterate all unresolved Happening include all child HappeningManager.
 | cb | func<@ref pg_class_happening> | call by each Happening |
 
 -----
-## HappenMsg {#HappeningManager_HappenMsg}
+## Happen {#HappeningManager_Happen}
 
 ### Spec
 
-HappenMsg(msg,init=null):@ref pg_class_happening
+Happen(src,prop,init=null):@ref pg_class_happening
 
-add a Happening from a message.  
+add a Happening.  
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
-| msg | string | happening message |
+| src | @ref HappeningManager_HappeningSource | happening source |
+| prop | dict<string,any> | extra properties |
 | init | @ref HappeningOption? | optional params |
-
-### Returns
-
-the Happening instance
-
------
-## HappenProp {#HappeningManager_HappenProp}
-
-### Spec
-
-HappenProp(prop,init=null):@ref pg_class_happening
-
-add a Happening from properties.  
-
-### Args
-
-| Name | Type | Means |
-|------|------|-------|
-| prop | dict<string,any> | happening properties |
-| init | @ref HappeningManager_HappeningOption? | optional params |
-
-### Returns
-
-the Happening instance
-
------
-## HappenError {#HappeningManager_HappenError}
-
-### Spec
-
-HappenError(err,init=null):@ref pg_class_happening
-
-add a Happening from Error instance.  
-
-### Args
-
-| Name | Type | Means |
-|------|------|-------|
-| err | Error | error instance |
-| init | @ref HappeningManager_HappeningOption? | optional params |
 
 ### Returns
 
