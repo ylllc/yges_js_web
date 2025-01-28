@@ -76,7 +76,7 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 				setMsg('(install)');
 				installed=YgEs.NewQHT({Target:scriptstore,Tag:'script',Sub:[loaded]});
 				if(!YgEs.Test.Scenaria[url]){
-					user.Hap=launcher.HappenTo.HappenMsg('Syntex Error');
+					user.Hap=launcher.HappenTo.Happen('Syntex Error');
 				}
 				else{
 					for(let scn of YgEs.Test.Scenaria[url]){

@@ -123,7 +123,7 @@ HappeningManager.OnHappen=(h)=>{
 ## Feature side happening and suggestion
 
 ```
-var h=HappeningManager.HappenProp({type:'Test',msg:'Happened'},{
+var h=HappeningManager.Happen('Happening Message',{type:'Test',msg:'Happened'},{
 	// user resolving protocol 
 	User:{
 		retry:()=>{

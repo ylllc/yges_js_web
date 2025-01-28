@@ -1,6 +1,6 @@
 // † Yggdrasil Essense for JavaScript † //
 // ====================================== //
-// © 2024 Yggdrasil Leaves, LLC.          //
+// © 2024-5 Yggdrasil Leaves, LLC.        //
 //        All rights reserved.            //
 
 // Low Level HTTP for web --------------- //
@@ -82,8 +82,8 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 				if(r)cb_res=r;
 			}
 			catch(e){
-				var hap=happen.HappenError(e,{
-					Name:'YgEs.HTTP_Error',
+				var hap=happen.Happen(e,{},{
+					Name:'YgEs.HTTP.Error',
 					User:{Retry:()=>_retry(ctx,hap)},
 				});
 				if(cb_ng)cb_ng(hap);
@@ -91,8 +91,9 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 			}
 		}
 		else if(res.Status>299){
-			var hap=happen.HappenProp(res,{
-				Name:'YgEs_HTTP_Bad',
+			var hap=happen.Happen(
+				'Bad Status',res,{
+				Name:'YgEs.HTTP.Bad',
 				User:{Retry:()=>_retry(ctx,hap)},
 			});
 			if(cb_ng)cb_ng(hap);
@@ -111,16 +112,16 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 			}
 
 			if(e){
-				var hap=happen.HappenError(e,{
-					Name:'YgEs.HTTP_Error',
+				var hap=happen.Happen(e,{},{
+					Name:'YgEs.HTTP.Error',
 					User:{Retry:()=>_retry(ctx,hap)},
 				});
 				if(cb_ng)cb_ng(hap);
 			}
 			else if(r===null){
-				var hap=happen.HappenProp({
-					Name:'YgEs_HTTP_Invalid',
-					Msg:'invalid response:',
+				var hap=happen.Happen(
+					'Invalid Response',{
+					Name:'YgEs.HTTP.Invalid',
 					Res:req.response,
 					User:{Retry:()=>_retry(ctx,hap)},
 				});
@@ -141,8 +142,8 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 		ctx.End=true;
 		res.Msg='HTTP request error';
 
-		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
-			Name:'YgEs.HTTP_Error',
+		if(cb_ng)cb_ng(happen.Happen(res.Msg,{},{
+			Name:'YgEs.HTTP.Error',
 			User:{Retry:()=>_retry(ctx,hap)},
 		}));
 		else log_fatal(res.Msg);
@@ -153,8 +154,8 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 		res.TimeOut=true;
 		res.Msg='HTTP timeout';
 
-		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
-			Name:'YgEs.HTTP_Error',
+		if(cb_ng)cb_ng(happen.Happen(res.Msg,{},{
+			Name:'YgEs.HTTP.Error',
 			User:{Retry:()=>_retry(ctx,hap)},
 		}));
 		else log_fatal(res.Msg);
@@ -164,8 +165,8 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 		ctx.End=true;
 		res.Msg='aborted';
 
-		if(cb_ng)cb_ng(happen.HappenMsg(res.Msg,{
-			Name:'YgEs.HTTP_Error',
+		if(cb_ng)cb_ng(happen.Happen(res.Msg,{},{
+			Name:'YgEs.HTTP.Error',
 			User:{Retry:()=>_retry(ctx,hap)},
 		}));
 		else log_notice(res.Msg);

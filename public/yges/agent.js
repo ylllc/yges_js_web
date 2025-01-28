@@ -71,11 +71,10 @@ function _standby(prm){
 					if(prm.OnRepair)prm.OnRepair(agent);
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
-						Src:GetInfo('OnRepair'),
-						Err:YgEs.FromError(e),
+						Info:GetInfo('OnRepair'),
 					});
 				}
 			},
@@ -93,11 +92,10 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
-							Src:GetInfo('wait for repair'),
-							Err:YgEs.FromError(e),
+							Info:GetInfo('wait for repair'),
 						});
 					}
 				}
@@ -131,11 +129,10 @@ function _standby(prm){
 					}
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
-						Src:GetInfo(back?'OnBack':'OnClose'),
-						Err:YgEs.FromError(e),
+						Info:GetInfo(back?'OnBack':'OnClose'),
 					});
 				}
 			},
@@ -149,11 +146,10 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
-							Src:GetInfo('wait for down'),
-							Err:YgEs.FromError(e),
+							Info:GetInfo('wait for down'),
 						});
 					}
 				}
@@ -178,11 +174,10 @@ function _standby(prm){
 					}
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
-						Src:GetInfo('OnOpen'),
-						Err:YgEs.FromError(e),
+						Info:GetInfo('OnOpen'),
 					});
 				}
 			},
@@ -197,11 +192,10 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
-							Src:GetInfo('wait for up'),
-							Err:YgEs.FromError(e),
+							Info:GetInfo('wait for up'),
 						});
 					}
 				}
@@ -217,11 +211,10 @@ function _standby(prm){
 						if(prm.OnReady)prm.OnReady(agent);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.AgentError',
-							Cause:'throw from a callback',
-							Src:GetInfo('OnReady'),
-							Err:YgEs.FromError(e),
+							Cause:'ThrownFromCallback',
+							Info:GetInfo('OnReady'),
 						});
 					}
 				}
@@ -239,11 +232,10 @@ function _standby(prm){
 					if(prm.OnPollInHealthy)prm.OnPollInHealthy(agent);
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.AgentError',
-						Cause:'throw from a callback',
-						Src:GetInfo('OnPollInHealthy'),
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnPollInHealthy'),
 					});
 					return 'TROUBLE';
 				}
@@ -255,11 +247,10 @@ function _standby(prm){
 					if(prm.OnTrouble)prm.OnTrouble(agent);
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.AgentError',
-						Cause:'throw from a callback',
-						Src:GetInfo('OnTrouble'),
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnTrouble'),
 					});
 				}
 			},
@@ -277,11 +268,10 @@ function _standby(prm){
 					if(c<happen.CountIssues())return 'HALT';
 				}
 				catch(e){
-					happen.HappenProp({
-							Class:'YgEs.AgentError',
-							Cause:'throw from a callback',
-						Src:GetInfo('OnPollInTrouble'),
-						Err:YgEs.FromError(e),
+					happen.Happen(e,{
+						Class:'YgEs.AgentError',
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnPollInTrouble'),
 					});
 					return 'HALT';
 				}
@@ -292,12 +282,11 @@ function _standby(prm){
 						if(prm.OnRecover)prm.OnRecover(agent);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.AgentError',
-							Cause:'throw from a callback',
-							Src:GetInfo('OnRecover'),
-							Err:YgEs.FromError(e),
-					});
+							Cause:'ThrownFromCallback',
+							Info:GetInfo('OnRecover'),
+						});
 					}
 				}
 			},
@@ -310,11 +299,10 @@ function _standby(prm){
 					if(prm.OnHalt)prm.OnHalt(agent);
 				}
 				catch(e){
-					happen.HappenProp({
+					happen.Happen(e,{
 						Class:'YgEs.AgentError',
-						Cause:'throw from a callback',
-						Src:GetInfo('OnHalt'),
-						Err:YgEs.FromError(e),
+						Cause:'ThrownFromCallback',
+						Info:GetInfo('OnHalt'),
 					});
 				}
 			},
@@ -334,11 +322,10 @@ function _standby(prm){
 						if(prm.OnRecover)prm.OnRecover(agent);
 					}
 					catch(e){
-						happen.HappenProp({
+						happen.Happen(e,{
 							Class:'YgEs.AgentError',
-							Cause:'throw from a callback',
-							Src:GetInfo('OnRecover'),
-							Err:YgEs.FromError(e),
+							Cause:'ThrownFromCallback',
+							Info:GetInfo('OnRecover'),
 						});
 					}
 				}

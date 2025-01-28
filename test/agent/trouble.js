@@ -23,7 +23,7 @@ let workset={
 
 		// happening after ready 
 		// required resolving it to recover 
-		agent.GetHappeningManager().HappenMsg('Test Hap.');
+		agent.GetHappeningManager().Happen('Test Hap.');
 	},
 	OnPollInHealthy:(agent)=>{
 		agent.User.Count+=4;
@@ -56,7 +56,7 @@ let workset={
 
 const scenaria=[
 	{
-		Title:'Agent Repairing',
+		Title:'Agent Recovering',
 		Proc:async (tool)=>{
 			workset.Launcher=tool.Launcher;
 			workset.HappenTo=tool.Launcher.HappenTo.CreateLocal({
