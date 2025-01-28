@@ -143,13 +143,22 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 				running=true;
 				let sct=user.Scenaria[runloc];
 				YgEs.Timing.ToPromise(async (ok,ng)=>{
+
+					let abend=false;
 					let hap2=YgEs.HappeningManager.CreateLocal({
 						Name:'Happened in '+sct.Scenario.Title,
-						OnHappen:(hap)=>{throw hap.ToError()},
+						OnHappen:(hap)=>{
+							abend=true;
+							console.error(hap.ToString());
+							console.dir(hap.GetProp());
+						},
 					});
 					let log2=YgEs.Log.CreateLocal(sct.Scenario.Title,YgEs.Log.LEVEL.DEBUG);
-					let lnc2=launcher.CreateLauncher({
+					let lnc2=YgEs.Engine.CreateLauncher({
 						HappenTo:hap2,
+					});
+					let end=YgEs.Timing.Poll(10,()=>{
+						if(abend)lnc2.Abort();
 					});
 					if(sct.View)sct.View.Start(log2,lnc2);
 					try{
@@ -159,15 +168,20 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 							Launcher:lnc2,
 							Log:log2,
 						});
+						end();
+						lnc2.Abort();
 					}
 					catch(e){
-						ng(e);
+						end();
+						lnc2.Abort();
+						hap2.Happen(e);
 					}
-					lnc2.Abort();
 					hap2.CleanUp();
-					if(hap2.IsCleaned())ok();
-					else ng(new Error('Test Failure',hap2.GetInfo()));
+					let err=lnc2.HappenTo.IsCleaned()?null:new Error('Happen in Test: '+t.Title,{cause:lnc2.HappenTo.GetInfo()});
+					lnc2.Abandon();
 					hap2.Abandon();
+					if(err)ng(err);
+					else ok();
 				},(r)=>{
 					if(sct.View)sct.View.UpdateResult(true);
 					report(true);
