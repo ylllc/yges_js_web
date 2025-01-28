@@ -37,6 +37,22 @@ user definied object kept in a @ref pg_class_procedure instance
 | User | @ref Launcher_UserShared | user definitions |
 
 -----
+## LauncherInfo {#Launcher_LauncherInfo}
+
+| Name | Type | Means |
+|------|------|-------|
+| InstanceID | int | instance ID |
+| Name | string | instance name |
+| CrashSite | string | error at (or normally) |
+| Status | string | @ref Launcher_GetStatus returns |
+| Limit | int | running procedures limit |
+| Cycle | int | polling interval msec |
+| User | dict<string,any> | user definition |
+| Active | @ref Procedure_ProcedureInfo[] | running procedures |
+| Held | @ref Procedure_ProcedureInfo[] | standby procedures |
+| Sub | @ref Launcher_LauncherInfo[] | subinstances |
+
+-----
 # Properties
 
 -----
@@ -51,7 +67,7 @@ user definied object kept in a @ref pg_class_procedure instance
 # Methods
 
 -----
-## GetInstanceID {#Log_GetInstanceID}
+## GetInstanceID {#Launcher_GetInstanceID}
 
 ### Spec
 
@@ -60,6 +76,61 @@ GetInstanceID():int
 ### Returns
 
 instance ID created by @ref Common_NextID
+
+-----
+## GetActive {#Launcher_GetActive}
+
+access to running procedures
+
+### Spec
+
+GetActive():@ref pg_class_procedure[]
+
+-----
+## GetHeld {#Launcher_GetHeld}
+
+access to standby procedures
+
+### Spec
+
+GetHeld():@ref pg_class_procedure[]
+
+-----
+## GetSub {#Launcher_GetSub}
+
+access to sublauncheres
+
+### Spec
+
+GetSub():@ref pg_class_launcher[]
+
+-----
+## GetStatus {#Launcher_GetStatus}
+
+### Spec
+
+GetStatus():string
+
+### Returns
+
+status of this instance  
+
+| Value | Means |
+|-------|-------|
+| Ready | active |
+| Aborted | @ref Launcher_Abort called |
+| Abandoned | @ref Launcher_CountActive called |
+
+-----
+## GetInfo {#Launcher_GetInfo}
+
+### Spec
+
+GetInfo():@ref Launcher_LauncherInfo
+
+### Returns
+
+launcher info.  
 
 -----
 ## IsEnd {#Launcher_IsEnd}

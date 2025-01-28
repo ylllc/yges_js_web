@@ -609,10 +609,25 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 		GetProp:cbprop,
 		ToString:cbstr,
 		toString:cbstr,
-		ToJSON:()=>JSON.stringify(hap.GetProp()),
 		ToError:cberr,
 
 		IsResolved:()=>resolved,
+		IsAbandoned:()=>abandoned && !resolved,
+
+		GetStatus:()=>{
+			if(resolved)return 'Resolved';
+			if(abandoned)return 'Abandoned';
+			return 'Posed';
+		},
+		GetInfo:()=>{return {
+			InstanceID:iid,
+			Name:hap.name,
+			Status:hap.GetStatus(),
+			Msg:cbstr(),
+			Prop:cbprop(),
+			User:hap.User,
+		}},
+
 		Resolve:()=>{
 			if(resolved)return;
 			resolved=true;
@@ -620,7 +635,6 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 			if(onResolved)onResolved(hap);
 		},
 
-		IsAbandoned:()=>abandoned && !resolved,
 		Abandon:()=>{
 			if(resolved)return;
 			if(abandoned)return;
@@ -664,6 +678,24 @@ function _create_manager(prm,parent=null){
 		GetIssues:()=>issues,
 		IsAbandoned:()=>abandoned,
 
+		GetStatus:()=>{
+			if(abandoned)return 'Abandoned';
+			return 'Available';
+		},
+		GetInfo:()=>{
+			let r={
+				InstanceID:iid,
+				Name:mng.name,
+				Status:mng.GetStatus(),
+				User:mng.User,
+				Issues:[],
+				Sub:[],
+			}
+			for(let hap of issues)r.Issues.push(hap.GetInfo());
+			for(let sub of children)r.Sub.push(sub.GetInfo());
+			return r;
+		},
+
 		Abandon:()=>{
 			for(let sub of children){
 				sub.Abandon();
@@ -705,19 +737,6 @@ function _create_manager(prm,parent=null){
 			children=tmp;
 		},
 
-		GetInfo:()=>{
-			let info={Name:mng.name,Abandoned:abandoned,Issues:[],Children:[]}
-			for(let hap of issues){
-				if(hap.IsResolved())continue;
-				info.Issues.push({Name:hap.name,Prop:hap.GetProp()});
-			}
-			for(let sub of children){
-				let si=sub.GetInfo();
-				if(si.Issues.length>0 || si.Children.length>0)info.Children.push(si);
-			}
-			return info;
-		},
-
 		Poll:(cb)=>{
 			if(!cb)return;
 			for(let hap of issues){
@@ -737,7 +756,7 @@ function _create_manager(prm,parent=null){
 				hap=_create_happening(
 				()=>prop,
 					()=>''+src,
-					()=>new Error(''+src,prop),
+					()=>new Error(''+src,{cause:prop}),
 					init
 				);
 			}
@@ -745,7 +764,7 @@ function _create_manager(prm,parent=null){
 				hap=_create_happening(
 					()=>src.GetProp(),
 					()=>''+src,
-					()=>new Error(''+src,src.GetProp()),
+					()=>new Error(''+src,{cause:src.GetProp()}),
 					init
 				);
 			}
@@ -761,7 +780,7 @@ function _create_manager(prm,parent=null){
 				hap=_create_happening(
 					()=>Object.assign(src,prop),
 				()=>'Happening',
-					()=>new Error('Happening',Object.assign(src,prop)),
+					()=>new Error('Happening',{cause:Object.assign(src,prop)}),
 				init
 				);
 			}
@@ -817,8 +836,18 @@ function _create_proc(prm,launcher){
 		IsAborted:()=>aborted,
 		IsEnd:()=>finished||aborted,
 
-		GetInfo:(phase='')=>{return {
-			Phase:phase,
+		GetStatus:()=>{
+			if(finished)return 'Finished';
+			if(aborted)return 'Aborted';
+			if(started)return 'Running';
+			return 'StandBy';
+		},
+		GetInfo:(site='')=>{return {
+			InstanceID:iid,
+			Name:proc.name,
+			CrashSite:site,
+			Status:proc.GetStatus(),
+			User:proc.User,
 		}},
 
 		_start:()=>{
@@ -833,7 +862,7 @@ function _create_proc(prm,launcher){
 					proc.HappenTo.Happen(e,{
 						Class:CLASS_PROC,
 						Cause:'ThrownFromCallback',
-						Info:GetInfo('OnStart'),
+						Info:proc.GetInfo('OnStart'),
 					});
 					proc.Abort();
 				}
@@ -850,7 +879,7 @@ function _create_proc(prm,launcher){
 					proc.HappenTo.Happen(e,{
 						Class:CLASS_PROC,
 						Cause:'ThrownFromCallback',
-						Info:GetInfo('OnAbort'),
+						Info:proc.GetInfo('OnAbort'),
 					});
 				}
 			}
@@ -859,7 +888,7 @@ function _create_proc(prm,launcher){
 					'Aborted',{
 					Class:CLASS_PROC,
 					Cause:'Aborted',
-					Info:GetInfo('Aborted'),
+					Info:proc.GetInfo('Aborted'),
 				});
 			}
 		},
@@ -872,7 +901,7 @@ function _create_proc(prm,launcher){
 				proc.HappenTo.Happen(e,{
 					Class:CLASS_PROC,
 					Cause:'ThrownFromCallback',
-					Info:GetInfo('OnPoll'),
+					Info:proc.GetInfo('OnPoll'),
 				});
 				proc.Abort();
 				return false;
@@ -886,7 +915,7 @@ function _create_proc(prm,launcher){
 					proc.HappenTo.Happen(e,{
 						Class:CLASS_PROC,
 						Cause:'ThrownFromCallback',
-						Info:GetInfo('OnDone'),
+						Info:proc.GetInfo('OnDone'),
 					});
 					proc.Abort();
 					return false;
@@ -904,7 +933,7 @@ function _create_proc(prm,launcher){
 					'Empty callback for sync',{
 					Class:CLASS_PROC,
 					Cause:'EmptySyncCallback',
-					Info:GetInfo('CannotSync'),
+					Info:proc.GetInfo('CannotSync'),
 				});
 				return;
 			}
@@ -919,7 +948,7 @@ function _create_proc(prm,launcher){
 						proc.HappenTo.Happen(e,{
 							Class:CLASS_PROC,
 							Cause:'ThrownFromCallback',
-							Info:GetInfo('OnSync'),
+							Info:proc.GetInfo('OnSync'),
 						});
 					}
 				},
@@ -958,6 +987,30 @@ function _yges_enginge_create_launcher(prm){
 		GetActive:()=>active,
 		GetHeld:()=>launched,
 		GetSub:()=>sublauncher,
+
+		GetStatus:()=>{
+			if(abandoned)return 'Abandoned';
+			if(aborted)return 'Aborted';
+			return 'Ready';
+		},
+		GetInfo:(site='')=>{
+			let r={
+				InstanceID:iid,
+				Name:lnc.name,
+				CrashSite:site,
+				Status:lnc.GetStatus(),
+				Limit:lnc.Limit,
+				Cycle:lnc.Cycle,
+				User:lnc.User,
+				Active:[],
+				Held:[],
+				Sub:[],
+			}	
+			for(let proc of active)r.Active.push(proc.GetInfo());
+			for(let proc of launched)r.Held.push(proc.GetInfo());
+			for(let sub of sublauncher)r.Sub.push(sub.GetInfo());
+			return r;
+		},
 
 		IsEnd:()=>{
 			if(launched.length>0)return false;
@@ -1078,6 +1131,7 @@ function _yges_enginge_create_launcher(prm){
 						lnc.HappenTo.Happen(e,{
 							Class:CLASS_PROC,
 							Cause:'ThrownFromCallback',
+							Info:lnc.GetInfo('OnSync'),
 						});
 					}
 				}
@@ -1088,7 +1142,7 @@ function _yges_enginge_create_launcher(prm){
 			return Timing.ToPromise((ok,ng)=>{
 				lnc.Sync(()=>{
 					if(breakable || !aborted)ok(lnc.User);
-					else ng(new Error('abort',{cause:lnc.User}));
+					else ng(new Error('abort',{cause:lnc.GetInfo('abort')}));
 				},interval);
 			});
 		},
@@ -1176,6 +1230,17 @@ function _run(start,states={},opt={}){
 	let state_cur=null;
 	let state_next=start;
 
+	let GetInfo=(site='')=>{
+		return {
+			Name:name,
+			CrashSite:site,
+			Prev:state_prev,
+			Cur:state_cur,
+			Next:state_next,
+			User:user,
+		}
+	}
+
 	let ctrl={
 		name:name+'_Control',
 		User:user,
@@ -1183,17 +1248,7 @@ function _run(start,states={},opt={}){
 		GetPrevState:()=>state_prev,
 		GetCurState:()=>state_cur,
 		GetNextState:()=>state_next,
-	}
-
-	let GetInfo=(phase)=>{
-		return {
-			Name:name,
-			Prev:state_prev,
-			Cur:state_cur,
-			Next:state_next,
-			Phase:phase,
-			User:user,
-		}
+		GetInfo:()=>GetInfo(),
 	}
 
 	let poll_nop=(user)=>{}
@@ -1378,7 +1433,8 @@ function _run(start,states={},opt={}){
 	}
 
 	let proc=launcher.Launch(stmac);
-	proc.GetInfo=()=>GetInfo('');
+	let ProcInfo=proc.GetInfo;
+	proc.GetInfo=()=>Object.assign(ProcInfo(),{StateMachine:GetInfo()});
 	ctrl.IsStarted=proc.IsStarted;
 	ctrl.IsFinished=proc.IsFinished;
 	ctrl.IsAborted=proc.IsAborted;
@@ -1429,13 +1485,21 @@ function _standby(prm){
 	let launcher=prm.Launcher??Engine;
 	let user=prm.User??{};
 
-	let GetInfo=(phase)=>{
+	let GetInfo=(site='')=>{
 		return {
 			Name:name,
-			Phase:phase,
+			CrashSite:site,
 			State:ctrl?ctrl.GetCurState():'NONE',
-			Wait:wait,
+			Busy:!!ctrl,
+			Ready:ready,
+			Halt:halt,
+			Aborted:aborted,
+			Restarting:restart,
+			Handles:opencount,
+			Waiting:wait.length,
 			User:user,
+			Happening:happen.GetInfo(),
+			Launcher:launcher.GetInfo(),
 		}
 	}
 
@@ -1737,6 +1801,7 @@ function _standby(prm){
 		IsReady:()=>ready && opencount>0,
 		IsHalt:()=>halt,
 		GetState:()=>ctrl?ctrl.GetCurState():'NONE',
+		GetInfo:()=>GetInfo(''),
 
 		GetLauncher:()=>{return launcher;},
 		GetHappeningManager:()=>{return happen;},
@@ -1799,12 +1864,7 @@ function _standby(prm){
 				if(!ctrl){
 					ctrl=StateMachine.Run('IDLE',states,ctrlopt);
 					let StMacInfo=ctrl.GetInfo;
-					ctrl.GetInfo=()=>{
-						return {
-							'StMac':StMacInfo(),
-							'Agent':GetInfo(''),
-						}
-					}
+					ctrl.GetInfo=()=>Object.assign(StMacInfo(),{Agent:GetInfo('')});
 				}
 			},
 			Close:()=>{

@@ -6,6 +6,21 @@
 created and managed by @ref pg_class_happening_manager  
 
 -----
+# Structures
+
+-----
+## HappeningInfo {#Happening_HappeningInfo}
+
+| Name | Type | Means |
+|------|------|-------|
+| InstanceID | int | instance ID |
+| Name | string | instance name |
+| Status | string | @ref Happening_GetStatus returns |
+| Msg | string | happening message |
+| Prop | dict<string,any> | happening properties |
+| User | dict<string,any> | user definition |
+
+-----
 # Properties
 
 | Name | Type | Means |
@@ -50,17 +65,6 @@ toString():string
 message of the happening.  
 
 -----
-## ToJSON {#Happening_ToJSON}
-
-### Spec
-
-ToJSON():string
-
-### Returns
-
-properties by JSON.  
-
------
 ## ToError {#Happening_ToError}
 
 ### Spec
@@ -93,6 +97,34 @@ IsAbandoned():bool
 
 means the Happening is abandoned and not resolved.  
 (resolved Happening returns false)  
+
+-----
+## GetStatus {#Happening_GetStatus}
+
+### Spec
+
+GetStatus():string
+
+### Returns
+
+status of this instance  
+
+| Value | Means |
+|-------|-------|
+| Posed | untreated happening |
+| Resolved | treated correctly |
+| Abandoned | ignoring decision |
+
+-----
+## GetInfo {#Happening_GetInfo}
+
+### Spec
+
+GetInfo():@ref Happening_HappeningInfo
+
+### Returns
+
+happening info.  
 
 -----
 ## Resolve {#Happening_Resolve}

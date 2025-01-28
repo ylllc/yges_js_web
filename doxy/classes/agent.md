@@ -5,6 +5,26 @@
 created by @ref pg_class_agent_manager
 
 -----
+# Structures
+
+-----
+## AgentInfo {#Agent_AgentInfo}
+
+| Name | Type | Means |
+|------|------|-------|
+| Name | string | instance name |
+| CrashSite | string | error at (or normally) |
+| State | string | running state |
+| Busy | bool | in working |
+| Ready | bool | setup completed |
+| Halt | bool | not poll by overbroken |
+| Aborted | bool | cancelled from external order |
+| Waiting | bool | prepareing in up or down |
+| User | dict<string,any> | user definition |
+| Happening | @ref Happening_HappeningInfo | happening manager info |
+| Launcher | @ref Launcher_LauncherInfo | launcher info |
+
+-----
 # Callbacks
 
 -----
@@ -36,6 +56,17 @@ GetState():string
 ### Returns
 
 current state  
+
+-----
+## GetInfo {#Agent_GetInfo}
+
+### Spec
+
+GetInfo():@ref Agent_AgentInfo
+
+### Returns
+
+agent info.  
 
 -----
 ## IsBusy {#Agent_IsBusy}

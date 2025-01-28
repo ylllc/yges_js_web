@@ -22,6 +22,17 @@ function _run(start,states={},opt={}){
 	let state_cur=null;
 	let state_next=start;
 
+	let GetInfo=(site='')=>{
+		return {
+			Name:name,
+			CrashSite:site,
+			Prev:state_prev,
+			Cur:state_cur,
+			Next:state_next,
+			User:user,
+		}
+	}
+
 	let ctrl={
 		name:name+'_Control',
 		User:user,
@@ -29,17 +40,7 @@ function _run(start,states={},opt={}){
 		GetPrevState:()=>state_prev,
 		GetCurState:()=>state_cur,
 		GetNextState:()=>state_next,
-	}
-
-	let GetInfo=(phase)=>{
-		return {
-			Name:name,
-			Prev:state_prev,
-			Cur:state_cur,
-			Next:state_next,
-			Phase:phase,
-			User:user,
-		}
+		GetInfo:()=>GetInfo(),
 	}
 
 	let poll_nop=(user)=>{}
@@ -224,7 +225,8 @@ function _run(start,states={},opt={}){
 	}
 
 	let proc=launcher.Launch(stmac);
-	proc.GetInfo=()=>GetInfo('');
+	let ProcInfo=proc.GetInfo;
+	proc.GetInfo=()=>Object.assign(ProcInfo(),{StateMachine:GetInfo()});
 	ctrl.IsStarted=proc.IsStarted;
 	ctrl.IsFinished=proc.IsFinished;
 	ctrl.IsAborted=proc.IsAborted;
