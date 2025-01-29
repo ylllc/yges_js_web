@@ -15,7 +15,7 @@ created by @ref pg_class_agent_manager
 | Name | string | instance name |
 | CrashSite | string | error at (or normally) |
 | State | string | running state |
-| Busy | bool | in working |
+| Busy | bool | in running |
 | Ready | bool | setup completed |
 | Halt | bool | not poll by overbroken |
 | Aborted | bool | cancelled from external order |
@@ -162,7 +162,7 @@ dependencies of this Agent
 
 ### Spec
 
-WaitFor(cb_wait)
+WaitFor(label,cb_wait,prop={})
 
 in UP,DOWN and REPAIR.  
 add required condition to complete its phase.  
@@ -171,7 +171,9 @@ add required condition to complete its phase.
 
 | Name | Type | Means |
 |------|------|-------|
+| label | string | for info |
 | cb_wait | @ref Agent_CB_Wait | condition checking |
+| prop | dict<string,any> | for info |
 
 -----
 ## Restart {#Agent_Restart}

@@ -242,7 +242,7 @@ var agent=AgentManager.StandBy({
 		}
 
 		// need time to resolve, add conditions. 
-		agent.WaitFor(()=>{/* return true after resolved */});
+		agent.WaitFor('UserLabel',()=>{/* return true after resolved */});
 	},
 
 });

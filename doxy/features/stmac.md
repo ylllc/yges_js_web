@@ -197,5 +197,5 @@ Engine.Sync((dmy)=>{
 -----
 # Class Reference
 
-@sa @ref pg_class_stmac_control @n
+@sa @ref pg_class_stmac_context @n
 	@ref pg_class_stmac_container
