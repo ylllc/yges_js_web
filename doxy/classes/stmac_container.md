@@ -41,10 +41,12 @@
 | OnPollinDown | func<@ref pg_class_stmac_context,@ref StMac_UserShared>:@ref StMac_StateSwitching | call by each polling in down phase |
 | OnEnd | func<@ref pg_class_stmac_context,@ref StMac_UserShared> | call at end of current state down |
 
+-----
 ## UserShared {#StMac_UserShared}
 
 user defined object kept in a control
 
+-----
 ## StatesOption {#StMac_StatesOption}
 
 | Name | Type | Means |

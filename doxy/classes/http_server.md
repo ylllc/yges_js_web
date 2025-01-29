@@ -77,7 +77,7 @@ make HTTP response to walker.Response
 
 | Name | Type | Means |
 |------|------|-------|
-| Parent bool | parent dir is enabled |
+| Parent | bool | parent dir is enabled |
 | Dirs | dict<string,@ref HTTPServer_ServeDirInfo> | subdirs |
 | Files | dict<string,@ref HTTPServer_ServeFileInfo> | files |
 
@@ -157,12 +157,12 @@ SetUp(port,route,opt={}):HTTPListener
 -----
 ## Serve() {#HTTPServer_Serve}
 
+routing target makes relative file path from base directory.  
+this response of the HTTP request means transfering target file.  
+
 ### Spec
 
 Serve(dir,opt={}):HTTPRoute
-
-routing target makes relative file path from base directory.  
-this response of the HTTP request means transfering target file.  
 
 | Name | Type | Means |
 |------|------|-------|
@@ -172,12 +172,12 @@ this response of the HTTP request means transfering target file.
 -----
 ## Present() {#HTTPServer_Serve}
 
+routing terminal of this HTTP request.  
+calling meth[HTTP method] to makes a response by method.  
+
 ### Spec
 
 Present(meth,opt={}):HTTPRoute
-
-routing terminal of this HTTP request.  
-calling meth[HTTP method] to makes a response by method.  
 
 | Name | Type | Means |
 |------|------|-------|
@@ -187,12 +187,12 @@ calling meth[HTTP method] to makes a response by method.
 -----
 ## Route() {#HTTPServer_Route}
 
+stepping route of this HTTP request.  
+branching by HTTP path layer.  
+
 ### Spec
 
 Route(map,opt={}):HTTPRoute
-
-stepping route of this HTTP request.  
-branching by HTTP path layer.  
 
 | Name | Type | Means |
 |------|------|-------|

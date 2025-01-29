@@ -24,6 +24,8 @@ this class is inherited from @ref pg_class_launcher
 
 Start():void
 
+### Promisings
+
 the Engine is started.  
 and cannot exit until call Stop() or ShutDown()  
 
@@ -34,7 +36,9 @@ and cannot exit until call Stop() or ShutDown()
 
 Stop():void
 
-stop the Engine.  
+### Promisings
+
+the Engine is stopped.  
 and all procedures are aborted.  
 can Start() again.  
 
@@ -45,6 +49,8 @@ can Start() again.
 
 ShutDown():void
 
-stop the Engine.  
+### Promisings
+
+the Engine is stopped.  
 and all procedures are aborted.  
 no longer restart it.  

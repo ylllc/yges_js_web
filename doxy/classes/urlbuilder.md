@@ -35,11 +35,11 @@ parse a URL and store it.
 -----
 ## ExtractHost() {#URLBuilder_ExtractHost}
 
+split by .
+
 ### Spec
 
 ExtractHost(src):string[]
-
-split by .
 
 ### Args
 
@@ -54,11 +54,11 @@ extracted host name
 -----
 ## BakeHost() {#URLBuilder_BakeHost}
 
+join with .
+
 ### Spec
 
 BakeHost(src):string
-
-join with .
 
 ### Args
 
@@ -73,11 +73,11 @@ baked host name
 -----
 ## ExtractPath() {#URLBuilder_ExtractPath}
 
+split by / and URL decode
+
 ### Spec
 
 ExtractPath(src):string[]
-
-split by / and URL decode
 
 ### Args
 
@@ -92,11 +92,11 @@ extracted path name
 -----
 ## BakePath() {#URLBuilder_BakePath}
 
+URL encode and join with /
+
 ### Spec
 
 BakePath(src):string
-
-URL encode and join with /
 
 ### Args
 
@@ -111,11 +111,11 @@ baked path name
 -----
 ## ExtractArgs() {#URLBuilder_ExtractArgs}
 
+split by + and URL decode
+
 ### Spec
 
 ExtractArgs(src):string[]
-
-split by + and URL decode
 
 ### Args
 
@@ -130,11 +130,11 @@ extracted query
 -----
 ## BakeArgs() {#URLBuilder_BakeArgs}
 
+URL encode and join with +
+
 ### Spec
 
 BakeArgs(src):string
-
-URL encode and join with +
 
 ### Args
 
@@ -149,14 +149,14 @@ baked query
 -----
 ## ExtractProp() {#URLBuilder_ExtractProp}
 
-### Spec
-
-ExtractProp(src):dict<string,string>
-
 extract to a KVS structure.  
 that supported PHP's substructure partially.  
 PHP's array can coexistence sequential array and KVS structure.  
 but JavaScript not.  
+
+### Spec
+
+ExtractProp(src):dict<string,string>
 
 ### Args
 
@@ -171,11 +171,11 @@ extracted query
 -----
 ## BakeProp() {#URLBuilder_BakeProp}
 
+bake from a KVS structure.  
+
 ### Spec
 
 BakeProp(src):string
-
-bake from a KVS structure.  
 
 ### Args
 

@@ -17,6 +17,14 @@ you can write test scripts with commonized features.
 ```
 use YgEs.Test
 
+### Viewer
+
+```
+<script src="yges/unittest_view.js"></script>
+```
+use YgEs.TestView
+
+-----
 ## for Node/Deno
 
 ```
@@ -122,8 +130,29 @@ $ deno test TargetSourceFile
 
 ### web
 
-call YgEs.Test.setupGUI() to setup a Test Runner GUI.  
-(see sample test.html)  
+```
+// download test files info 
+YgEs.LoadJSON(TestURLBase,'TestInfo');
+await YgEs.LoadSync().ToPromise();
+
+// test scripts running on 
+let launcher=YgEs.Engine.CreateLauncher({
+	Name:'TestProcs',
+});
+
+// test scripts loaded in 
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+
+// create test environment 
+let test=YgEs.Test.SetUp(launcher,modules,TestURLBase,YgEs.Peek('TestInfo'));
+
+// test viewer showes in 
+let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
+let view=YgEs.TestView.SetUp(mainboard,test);
+
+// run tests 
+test.Run();
+```
 
 -----
 # Class Reference

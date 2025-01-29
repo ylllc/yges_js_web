@@ -20,44 +20,17 @@
 
 | Name | Type | Means |
 |------|------|-------|
-| Dirs | @ref Test_TestDirInfo | test dirs |
-| Files | @ref Test_TestFileInfo | test files |
-| SetView | func<@ref Test_TestDirView> | test view |
-
------
-## TestDirView {#Test_TestDirView}
-
-| Name | Type | Means |
-|------|------|-------|
-| UpdateResult | func<bool?> | test result |
+| Parent | bool | has parent, not base directory |
+| Dirs | @ref Test_TestDirInfo[] | test dirs |
+| Files | @ref Test_TestFileInfo[] | test files |
 
 -----
 ## TestFileInfo {#Test_TestFileInfo}
 
 | Name | Type | Means |
 |------|------|-------|
-| Scenaria | @ref Test_TestScenaria | test scenaria |
-| Hap | @ref pg_class_happening | happening |
-| Done | bool | test done |
-| SetView | func<@ref Test_TestFileView> | test view |
-
------
-## TestFileView {#Test_TestFileView}
-
-| Name | Type | Means |
-|------|------|-------|
-| SetMsg | func<string> | tes running message for the file |
-| UpdateResult | func<bool?> | test result |
-| SetScenaria | func<@ref Test_TestScenaria> | scenaria info |
-
------
-## TestScenaria {#Test_TestScenaria}
-
-| Name | Type | Means |
-|------|------|-------|
-| Scenario | @ref Test_TestScenario | test scenario |
-| View | TestScenarioView | view instance |
-| SetView | func<@ref Test_TestScenarioView> | test view |
+| Size | int | file size |
+| MTime | string | modifiled time in ISO 8601 |
 
 -----
 ## TestScenario {#Test_TestScenario}
@@ -70,19 +43,11 @@
 | Filter | bool? | when defined, true to run |
 
 -----
-## TestScenarioView {#Test_TestScenarioView}
-
-| Name | Type | Means |
-|------|------|-------|
-| UpdateResult | func<bool?> | test result |
-| Skip | func | test is skipped |
-| SetError | func<Error> | an error happened in the test |
-
------
 ## TestTools {#Test_TestTools}
 
 | Name | Type | Means |
 |------|------|-------|
+| HappenTo | @ref pg_class_happening_manager | happenings put in |
 | Launcher | @ref pg_class_launcher | local launcher instance |
 | Log | @ref pg_class_logger | local log instance |
 
@@ -99,11 +64,11 @@
 -----
 ## Never() {#Test_Never}
 
+mark always failed
+
 ### Spec
 
 Never(msg=null)
-
-mark always failed
 
 ### Args
 
@@ -267,12 +232,12 @@ Run(scn):void
 -----
 ## SetUp() {#Test_SetUp}
 
+(web only)  
 setup test runner.  
-(for web only)  
 
 ### Spec 
 
-Setup(launcher,target,url,src):@ref pg_class_unittest_dirinfo
+Setup(launcher,target,url,src):@ref pg_class_unittest_dir
 
 ### Args
 

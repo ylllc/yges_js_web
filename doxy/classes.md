@@ -38,6 +38,9 @@
 - @subpage pg_class_stmac_container
 - @subpage pg_class_stmac_context
 - @subpage pg_class_unittest
+- @subpage pg_class_unittest_dir
+- @subpage pg_class_unittest_file
+- @subpage pg_class_unittest_view_container
 - @subpage pg_class_timing
 - @subpage pg_class_urlbuilder
 - @subpage pg_class_util
