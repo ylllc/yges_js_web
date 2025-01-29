@@ -41,7 +41,7 @@
 # Methods
 
 -----
-## ToQHT {#QHT_ToQHT}
+## ToQHT() {#QHT_ToQHT}
 
 create @ref pg_class_qht from an Element.  
 
@@ -60,7 +60,7 @@ ToQHT(elem):@ref pg_class_qht
 created @ref pg_class_qht instance.
 
 -----
-## NewQHT {#QHT_NewQHT}
+## NewQHT() {#QHT_NewQHT}
 
 create new @ref pg_class_qht instance.
 

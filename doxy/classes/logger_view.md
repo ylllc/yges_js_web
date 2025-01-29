@@ -10,7 +10,7 @@ this class is inherited from @ref pg_class_qht
 # Methods
 
 -----
-## Clear {#LogView_Clear}
+## Clear() {#LogView_Clear}
 
 clear view and pooled logs  
 
@@ -19,7 +19,7 @@ clear view and pooled logs
 Clear():void
 
 -----
-## Show {#LogView_Show}
+## Show() {#LogView_Show}
 
 show this view  
 
@@ -28,7 +28,7 @@ show this view
 Show():void
 
 -----
-## Hide {#LogView_Hide}
+## Hide() {#LogView_Hide}
 
 hide this view  
 pooling logs are kept  
@@ -38,7 +38,7 @@ pooling logs are kept
 Hide():void
 
 -----
-## GetText {#LogView_GetText}
+## GetText() {#LogView_GetText}
 
 ### Spec
 

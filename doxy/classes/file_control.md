@@ -75,7 +75,7 @@
 # Methods
 
 -----
-## Exists {#FileControl_Exists}
+## Exists() {#FileControl_Exists}
 
 check path exists immediately.  
 
@@ -94,7 +94,7 @@ Exists(path):bool
 path exists
 
 -----
-## IsFile {#FileControl_IsFile}
+## IsFile() {#FileControl_IsFile}
 
 check path is file via Promise.  
 
@@ -121,7 +121,7 @@ a Promise of procedure
 | null | not exists |
 
 -----
-## Stat {#FileControl_Stat}
+## Stat() {#FileControl_Stat}
 
 detect file stat.  
 
@@ -145,7 +145,7 @@ a Promise of procedure
 file stat info wrapped to @ref pg_class_file_stat
 
 -----
-## Load {#FileControl_Load}
+## Load() {#FileControl_Load}
 
 load a file  
 
@@ -169,7 +169,7 @@ a Promise of procedure
 loaded data  
 
 -----
-## Save {#FileControl_Save}
+## Save() {#FileControl_Save}
 
 save to file  
 
@@ -190,7 +190,7 @@ Save(path,data,opt={}):Promise
 a Promise of procedure  
 
 -----
-## Remove {#FileControl_Remove}
+## Remove() {#FileControl_Remove}
 
 remove target file  
 
@@ -210,7 +210,7 @@ Remove(path,opt={}):Promise
 a Promise of procedure  
 
 -----
-## Glob {#FileControl_Glob}
+## Glob() {#FileControl_Glob}
 
 find files on a directory  
 

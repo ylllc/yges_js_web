@@ -136,7 +136,7 @@ user definition kept on a @ref pg_class_http_listener instance
 # Methods
 
 -----
-## SetUp {#HTTPServer_SetUp}
+## SetUp() {#HTTPServer_SetUp}
 
 ### Spec
 
@@ -155,7 +155,7 @@ SetUp(port,route,opt={}):HTTPListener
 @ref pg_class_http_listener instance  
 
 -----
-## Serve {#HTTPServer_Serve}
+## Serve() {#HTTPServer_Serve}
 
 ### Spec
 
@@ -170,7 +170,7 @@ this response of the HTTP request means transfering target file.
 | opt | @ref HTTPServer_ServeOption | optional |
 
 -----
-## Present {#HTTPServer_Serve}
+## Present() {#HTTPServer_Serve}
 
 ### Spec
 
@@ -185,7 +185,7 @@ calling meth[HTTP method] to makes a response by method.
 | opt | @ref HTTPServer_UserShared | optional |
 
 -----
-## Route {#HTTPServer_Route}
+## Route() {#HTTPServer_Route}
 
 ### Spec
 

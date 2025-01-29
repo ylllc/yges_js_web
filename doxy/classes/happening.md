@@ -31,7 +31,7 @@ created and managed by @ref pg_class_happening_manager
 # Methods
 
 -----
-## GetInstanceID {#Log_GetInstanceID}
+## GetInstanceID() {#Log_GetInstanceID}
 
 ### Spec
 
@@ -42,7 +42,7 @@ GetInstanceID():int
 instance ID created by @ref Common_NextID
 
 -----
-## GetProp {#Happening_GetProp}
+## GetProp() {#Happening_GetProp}
 
 ### Spec
 
@@ -53,7 +53,7 @@ GetProp():dict<string,any>
 properties of the happening.  
 
 -----
-## ToString {#Happening_ToString}
+## ToString() {#Happening_ToString}
 
 ### Spec
 
@@ -65,7 +65,7 @@ toString():string
 message of the happening.  
 
 -----
-## ToError {#Happening_ToError}
+## ToError() {#Happening_ToError}
 
 ### Spec
 
@@ -76,7 +76,7 @@ ToError():Error
 convert to an Error.  
 
 -----
-## IsResolved {#Happening_IsResolved}
+## IsResolved() {#Happening_IsResolved}
 
 ### Spec
 
@@ -87,7 +87,7 @@ IsResolved():bool
 means the Happening is resolved.  
 
 -----
-## IsAbandoned {#Happening_IsAbandoned}
+## IsAbandoned() {#Happening_IsAbandoned}
 
 ### Spec
 
@@ -99,7 +99,7 @@ means the Happening is abandoned and not resolved.
 (resolved Happening returns false)  
 
 -----
-## GetStatus {#Happening_GetStatus}
+## GetStatus() {#Happening_GetStatus}
 
 ### Spec
 
@@ -116,7 +116,7 @@ status of this instance
 | Abandoned | ignoring decision |
 
 -----
-## GetInfo {#Happening_GetInfo}
+## GetInfo() {#Happening_GetInfo}
 
 ### Spec
 
@@ -127,7 +127,7 @@ GetInfo():@ref Happening_HappeningInfo
 happening info.  
 
 -----
-## Resolve {#Happening_Resolve}
+## Resolve() {#Happening_Resolve}
 
 ### Spec
 
@@ -137,7 +137,7 @@ the Happening marks resolved.
 and retract abandoned.  
 
 -----
-## Abandon {#Happening_Abandon}
+## Abandon() {#Happening_Abandon}
 
 ### Spec
 

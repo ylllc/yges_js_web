@@ -8,7 +8,7 @@ created by @ref pg_class_agent
 # Methods
 
 -----
-## GetAgent {#Agent_GetAgent}
+## GetAgent() {#Agent_GetAgent}
 
 ### Spec
 
@@ -19,7 +19,7 @@ GetAgent():@ref pg_class_agent
 target Agent  
 
 -----
-## GetLauncher {#Agent_GetLauncher}
+## GetLauncher() {#Agent_GetLauncher}
 
 ### Spec
 
@@ -30,7 +30,7 @@ GetLauncher():@ref pg_class_launcher
 procedures running on target Agent  
 
 -----
-## GetHappeningManager {#Agent_GetHappeningManager}
+## GetHappeningManager() {#Agent_GetHappeningManager}
 
 ### Spec
 
@@ -41,7 +41,7 @@ GetHappeningManager():@ref pg_class_happening_manager
 happenings reported in target Agent
 
 -----
-## GetDependencies {#Agent_GetDependencies}
+## GetDependencies() {#Agent_GetDependencies}
 
 ### Spec
 
@@ -52,7 +52,7 @@ GetDependencies():dict<string,@ref pg_class_agent_handle>
 dependencies of target Agent
 
 -----
-## GetState {#Agent_GetState}
+## GetState() {#Agent_GetState}
 
 GetState():string
 
@@ -61,7 +61,7 @@ GetState():string
 current state  
 
 -----
-## IsBusy {#Agent_IsBusy}
+## IsBusy() {#Agent_IsBusy}
 
 ### Spec
 
@@ -75,7 +75,7 @@ IsBusy():bool
 | false | not runnning |
 
 -----
-## IsOpen {#Agent_IsOpen}
+## IsOpen() {#Agent_IsOpen}
 
 ### Spec
 
@@ -89,7 +89,7 @@ IsOpen():bool
 | false | closed from all handles |
 
 -----
-## IsReady {#Agent_IsReady}
+## IsReady() {#Agent_IsReady}
 
 ### Spec
 
@@ -103,7 +103,7 @@ IsReady():bool
 | false | in down or not running |
 
 -----
-## IsHalt {#Agent_IsHalt}
+## IsHalt() {#Agent_IsHalt}
 
 ### Spec
 
@@ -117,7 +117,7 @@ IsHalt():bool
 | false | otherwise |
 
 -----
-## Restart {#Agent_Restart}
+## Restart() {#Agent_Restart}
 
 ### Spec
 
@@ -126,7 +126,7 @@ Restart():void
 do DOWN and UP in this Agent  
 
 -----
-## Fetch {#Agent_Fetch}
+## Fetch() {#Agent_Fetch}
 
 ### Spec
 
@@ -137,7 +137,7 @@ Fetch():@ref pg_class_agent_handle
 create a new AgentHandle.  
 
 -----
-## Open {#Agent_Open}
+## Open() {#Agent_Open}
 
 ### Spec
 
@@ -146,7 +146,7 @@ Open():void
 open this handle.  
 
 -----
-## Close {#Agent_Close}
+## Close() {#Agent_Close}
 
 ### Spec
 

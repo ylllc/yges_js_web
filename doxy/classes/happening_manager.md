@@ -71,7 +71,7 @@
 # Methods
 
 -----
-## GetInstanceID {#Log_GetInstanceID}
+## GetInstanceID() {#Log_GetInstanceID}
 
 ### Spec
 
@@ -82,7 +82,7 @@ GetInstanceID():int
 instance ID created by @ref Common_NextID
 
 -----
-## CreateLocal {#HappeningManager_CreateLocal}
+## CreateLocal() {#HappeningManager_CreateLocal}
 
 create a child HappeningManager  
 
@@ -101,7 +101,7 @@ CreateLocal(prm={}):@ref pg_class_happening_manager
 created instance  
 
 -----
-## GetParent {#HappeningManager_GetParent}
+## GetParent() {#HappeningManager_GetParent}
 
 ### Spec
 
@@ -112,7 +112,7 @@ GetParent():@ref pg_class_happening_manager?
 parent instance (null from global instance)  
 
 -----
-## GetChildren {#HappeningManager_GetChildren}
+## GetChildren() {#HappeningManager_GetChildren}
 
 ### Spec
 
@@ -123,7 +123,7 @@ GetChildren():@ref pg_class_happening_manager[]
 child instances  
 
 -----
-## GetIssues {#HappeningManager_GetIssues}
+## GetIssues() {#HappeningManager_GetIssues}
 
 ### Spec
 
@@ -135,7 +135,7 @@ Happening instances in this instance.
 include dirty resolved happens.  
 
 -----
-## GetStatus {#HappeningManager_GetStatus}
+## GetStatus() {#HappeningManager_GetStatus}
 
 ### Spec
 
@@ -151,7 +151,7 @@ status of this instance
 | Abandoned | no longer refered |
 
 -----
-## GetInfo {#HappeningManager_GetInfo}
+## GetInfo() {#HappeningManager_GetInfo}
 
 ### Spec
 
@@ -162,7 +162,7 @@ GetInfo():@ref HappeningManager_HappeningManagerInfo
 manager info.  
 
 -----
-## Abandon {#HappeningManager_Abandon}
+## Abandon() {#HappeningManager_Abandon}
 
 ### Spec
 
@@ -172,7 +172,7 @@ abandon all happens in this instance
 and all child HappeningManager.  
 
 -----
-## CountIssues {#HappeningManager_countIssues}
+## CountIssues() {#HappeningManager_countIssues}
 
 ### Spec
 
@@ -184,7 +184,7 @@ count happens in this instance and all child HappeningManager.
 include dirty resolved happens.  
 
 -----
-## IsCleaned {#HappeningManager_IsCleaned}
+## IsCleaned() {#HappeningManager_IsCleaned}
 
 ### Spec
 
@@ -196,7 +196,7 @@ true means no happens in this instance and all child HappeningManager.
 (same to CountIssues() returns 0)  
 
 -----
-## Cleanup {#HappeningManager_Cleanup}
+## Cleanup() {#HappeningManager_Cleanup}
 
 ### Spec
 
@@ -205,7 +205,7 @@ Cleanup():void
 remove dirty resolved happens in this instance and all child HappeningManager.  
 
 -----
-## Poll {#HappeningManager_poll}
+## Poll() {#HappeningManager_poll}
 
 ### Spec
 
@@ -218,7 +218,7 @@ iterate all unresolved Happening include all child HappeningManager.
 | cb | func<@ref pg_class_happening> | call by each Happening |
 
 -----
-## Happen {#HappeningManager_Happen}
+## Happen() {#HappeningManager_Happen}
 
 ### Spec
 

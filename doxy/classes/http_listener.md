@@ -39,7 +39,7 @@ make a HTTP error response to res
 # Methods
 
 -----
-## GetPort {#HTTPListener_GetPort}
+## GetPort() {#HTTPListener_GetPort}
 
 ### Spec
 

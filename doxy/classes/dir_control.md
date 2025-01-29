@@ -43,7 +43,7 @@
 # Methods
 
 -----
-## Exists {#DirControl_Exists}
+## Exists() {#DirControl_Exists}
 
 ### Spec
 
@@ -62,7 +62,7 @@ check path exists immediately.
 path exists
 
 -----
-## IsDir {#DirControl_IsDir}
+## IsDir() {#DirControl_IsDir}
 
 ### Spec
 
@@ -89,7 +89,7 @@ a Promise of procedure
 | null | not exists |
 
 -----
-## Stat {#DirControl_Stat}
+## Stat() {#DirControl_Stat}
 
 ### Spec
 
@@ -113,7 +113,7 @@ a Promise of procedure
 file stat info wrapped to @ref pg_class_file_stat
 
 -----
-## MkDir {#DirControl_MkDir}
+## MkDir() {#DirControl_MkDir}
 
 ## Spec
 
@@ -131,7 +131,7 @@ MkDir(path,opt={}):Promise
 a Promise of procedure  
 
 -----
-## Target {#DirControl_Target}
+## Target() {#DirControl_Target}
 
 ### Spec
 

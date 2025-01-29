@@ -53,7 +53,7 @@ your procedure in async
 # Methods
 
 -----
-## FromPromise {#Timing_FromPromise}
+## FromPromise() {#Timing_FromPromise}
 
 wait for a Promise.  
 
@@ -74,7 +74,7 @@ FromPromise(promise,cb_ok=null,cb_ng=null):Promise
 socketting Promise
 
 -----
-## ToPromise {#Timing_ToPromise}
+## ToPromise() {#Timing_ToPromise}
 
 convert to a Promise
 
@@ -93,7 +93,7 @@ ToPromise(cb_proc,cb_ok=null,cb_ng=null):Promise
 wrapped Promise
 
 -----
-## Delay {#Timing_Delay}
+## Delay() {#Timing_Delay}
 
 call cb_done after about msec.  
 
@@ -114,7 +114,7 @@ Delay(msec,cb_done,cb_abort=null):func
 aborting function
 
 -----
-## Poll {#Timing_Poll}
+## Poll() {#Timing_Poll}
 
 call cb_poll repeatedly every about msec.  
 
@@ -135,7 +135,7 @@ Poll(msec,cb_poll,cb_abort=null):func
 aborting function
 
 -----
-## Sync {#Timing_Sync}
+## Sync() {#Timing_Sync}
 
 wait for cb_chk returns true.  
 
@@ -157,7 +157,7 @@ Sync(msec,cb_chk,cb_done=null,cb_abort=null):func
 aborting function
 
 -----
-## DelayKit {#Timing_DelayKit}
+## DelayKit() {#Timing_DelayKit}
 
 call cb_done after about msec.  
 
@@ -178,7 +178,7 @@ DelayKit(msec,cb_done=null,cb_abort=null):@ref Timing_AsyncControlKit
 control kit instance
 
 -----
-## SyncKit {#Timing_SyncKit}
+## SyncKit() {#Timing_SyncKit}
 
 wait for cb_chk returns true.  
 

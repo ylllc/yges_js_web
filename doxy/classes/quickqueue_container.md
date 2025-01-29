@@ -24,7 +24,7 @@
 # Methods
 
 -----
-## Create {#QuickQueue_Create}
+## Create() {#QuickQueue_Create}
 
 ### Spec
 

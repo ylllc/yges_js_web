@@ -42,7 +42,7 @@ Error caught in @ref pg_class_happening
 # Methods
 
 -----
-## InitID {#Common_InitID}
+## InitID() {#Common_InitID}
 
 reset params for @ref Common_NextID
 
@@ -63,7 +63,7 @@ InitID(init,delta=null)
 - feeding 2 or nonprime delta affect short to making ID cycle.  
 
 -----
-## NextID {#Common_NextID}
+## NextID() {#Common_NextID}
 
 ### Spec
 
@@ -78,7 +78,7 @@ NextID():int
 - calling over 2147483648 times, returns same to 1st returns repeatedly.  
 
 -----
-## CreateEnum {#Common_CreateEnum}
+## CreateEnum() {#Common_CreateEnum}
 
 ### Spec
 
@@ -95,7 +95,7 @@ CreateEnum(src):dict<string,int>
 reverse lookup table of src.  
 
 -----
-## FromError {#Common_FromError}
+## FromError() {#Common_FromError}
 
 ### Spec
 
@@ -112,7 +112,7 @@ FromError(err):@ref Common_HappenedError
 extract for @ref pg_class_happening
 
 -----
-## JustString {#Common_JustString}
+## JustString() {#Common_JustString}
 
 ### Spec
 
@@ -130,7 +130,7 @@ fix to string.
 uses for logging instead of toString().  
 
 -----
-## Inspect {#Common_Inspect}
+## Inspect() {#Common_Inspect}
 
 ### Spec
 
@@ -148,7 +148,7 @@ fix to inspectable string.
 uses for debugging instead of JSON.stringify().  
 
 -----
-## InitFrontend {#Common_InitFrontend}
+## InitFrontend() {#Common_InitFrontend}
 
 (web only)  
 initialize for frontend.  
@@ -165,7 +165,7 @@ InitFrontend(moduleplace,viewplace=null):void
 | viewplace | @ref pg_class_qht? | show download monitor in (or hidden) |
 
 -----
-## LoadCSS {#Common_LoadCSS}
+## LoadCSS() {#Common_LoadCSS}
 
 (web only)  
 download CSS source and apply.  
@@ -194,7 +194,7 @@ call LoadSync() and wait for it.
 - loaded content put on an Element. required a module place targetted by @ref Common_InitFrontend
 
 -----
-## LoadJS {#Common_LoadJS}
+## LoadJS() {#Common_LoadJS}
 
 (web only)  
 download JS source and apply.  
@@ -225,7 +225,7 @@ call LoadSync() and wait for it.
 - can unload, but loaded structures are not removed.  
 
 -----
-## LoadJSON {#Common_LoadJSON}
+## LoadJSON() {#Common_LoadJSON}
 
 (web only)  
 download JSON source and parse.  
@@ -250,7 +250,7 @@ LoadJSON(url,label=null):void
 call LoadSync() and wait for it.  
 
 -----
-## LoadSync {#Common_LoadSync}
+## LoadSync() {#Common_LoadSync}
 
 (web only)  
 wait for downloads.
@@ -276,7 +276,7 @@ LoadSync(cb_done=null,cb_abort=null,interval=null):@ref Timing_AsyncControlKit
 controller for this procedure.  
 
 -----
-## Peek {#Common_Peek}
+## Peek() {#Common_Peek}
 
 (web only)  
 access to a downloaded content.  
@@ -300,7 +300,7 @@ Peek(label):any
 downloaded content.  
 
 -----
-## Unload {#Common_Unload}
+## Unload() {#Common_Unload}
 
 (web only)  
 remove a downloaded content.  
@@ -320,7 +320,7 @@ Unload(label):void
 | label | string | download label |
 
 -----
-## DisposeMonitor {#Common_DisposeMonitor}
+## DisposeMonitor() {#Common_DisposeMonitor}
 
 (web only)  
 remove the download monitor.  

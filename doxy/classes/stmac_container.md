@@ -60,7 +60,7 @@ user defined object kept in a control
 # Methods
 
 -----
-## Run {#StMac_Run}
+## Run() {#StMac_Run}
 
 ### Spec
 

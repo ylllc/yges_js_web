@@ -63,7 +63,7 @@ loop procedure from @ref PropTree_Each
 # Methods
 
 -----
-## GetType {#PropTree_GetType}
+## GetType() {#PropTree_GetType}
 
 ### Spec
 
@@ -74,7 +74,7 @@ GetType():@ref PropTree_PROPTYPE
 instance type
 
 -----
-## Export {#PropTree_Export}
+## Export() {#PropTree_Export}
 
 ### Spec
 
@@ -85,7 +85,7 @@ Export():any
 all values in this  
 
 -----
-## ToArray {#PropTree_ToArray}
+## ToArray() {#PropTree_ToArray}
 
 target object substructure is converted to an array.
 
@@ -100,7 +100,7 @@ ToArray(...keys)
 | keys | @ref PropTree_PropTreeKeys | substructure location |
 
 -----
-## ToDict {#PropTree_ToDict}
+## ToDict() {#PropTree_ToDict}
 
 target array substructure is converted to an object.
 
@@ -115,7 +115,7 @@ ToDict(...keys)
 | keys | @ref PropTree_PropTreeKeys | substructure location |
 
 -----
-## Exists {#PropTree_Exists}
+## Exists() {#PropTree_Exists}
 
 ### Spec
 
@@ -132,7 +132,7 @@ Exists(...keys):bool
 something stored at target location
 
 -----
-## Ref {#PropTree_Ref}
+## Ref() {#PropTree_Ref}
 
 ### Spec
 
@@ -149,7 +149,7 @@ Ref(...keys):PropTree?
 subinstance at target locateion (or undefined) 
 
 -----
-## Dig {#PropTree_Dig}
+## Dig() {#PropTree_Dig}
 
 ### Spec
 
@@ -167,7 +167,7 @@ subinstance at target
 (create a new instance when not found)  
 
 -----
-## Count {#PropTree_Count}
+## Count() {#PropTree_Count}
 
 ### Spec
 
@@ -186,7 +186,7 @@ MONO type always 1.
 ARRAY,DICT type returns subinstances count.  
 
 -----
-## Get {#PropTree_Get}
+## Get() {#PropTree_Get}
 
 ### Spec
 
@@ -203,7 +203,7 @@ Get(...keys):any
 export from target subinstances (or undefined)
 
 -----
-## Set {#PropTree_Set}
+## Set() {#PropTree_Set}
 
 set a content to target subinstances.  
 and it is converted to ARRAY/DICT by key type.  
@@ -224,7 +224,7 @@ Set(...keys,val):PropTree
 reference of target subinstances
 
 ---
-## Cut {#PropTree_Cut}
+## Cut() {#PropTree_Cut}
 
 in MONO type, erase target value with undefiend.  
 in ARRAY,DICT type, target subinstances is cut out from its node.  
@@ -247,7 +247,7 @@ MONO type returns erased value.
 ARRAY,DICT type returns reference of removed subinstances.  
 
 -----
-## Merge {#PropTree_Merge}
+## Merge() {#PropTree_Merge}
 
 overwrite a structure to target subinstances.  
 and it is converted to ARRAY/DICT by key type.  
@@ -268,7 +268,7 @@ Merge(...keys,val):PropTree
 reference of target subinstances
 
 -----
-## Push {#PropTree_Push}
+## Push() {#PropTree_Push}
 
 add a content to endside of target subinstances.  
 and it is converted to ARRAY.  
@@ -289,7 +289,7 @@ Push(...keys,val):PropTree
 reference of target subinstances
 
 -----
-## Unshift {#PropTree_Unshift}
+## Unshift() {#PropTree_Unshift}
 
 add a content to beginside of target subinstances.  
 and it is converted to ARRAY.  
@@ -310,7 +310,7 @@ Unshift(...keys,val):PropTree
 reference of target subinstances
 
 -----
-## Pop {#PropTree_Pop}
+## Pop() {#PropTree_Pop}
 
 cut out a content from endside of target subinstances.  
 and it is converted to ARRAY.  
@@ -330,7 +330,7 @@ Pop(...keys):any
 cut content
 
 -----
-## Shift {#PropTree_Shift}
+## Shift() {#PropTree_Shift}
 
 cut out a content from beginside of target subinstances.  
 and it is converted to ARRAY.  
@@ -350,7 +350,7 @@ Shift(...keys):any
 cut content
 
 -----
-## Each {#PropTree_Each}
+## Each() {#PropTree_Each}
 
 iterate on target subinstances.  
 

@@ -97,7 +97,7 @@
 # Methods
 
 -----
-## Never {#Test_Never}
+## Never() {#Test_Never}
 
 ### Spec
 
@@ -112,7 +112,7 @@ mark always failed
 | msg | string | message for AssertionError |
 
 -----
-## Chk {#Test_Chk}
+## Chk() {#Test_Chk}
 
 ### Spec
 
@@ -126,7 +126,7 @@ Chk(cond,msg=null)
 | msg | string | message for AssertionError |
 
 -----
-## ChkLoose {#Test_ChkLoose}
+## ChkLoose() {#Test_ChkLoose}
 
 check v1 == v2
 
@@ -143,7 +143,7 @@ ChkLoose(v1,v2,msg=null)
 | msg | string | message for AssertionError |
 
 -----
-## ChkStrict {#Test_ChkStrict}
+## ChkStrict() {#Test_ChkStrict}
 
 check v1 === v2
 
@@ -160,7 +160,7 @@ ChkStrict(v1,v2,msg=null)
 | msg | string | message for AssertionError |
 
 -----
-## ChkLess {#Test_ChkLess}
+## ChkLess() {#Test_ChkLess}
 
 check v1 < v2
 
@@ -177,7 +177,7 @@ ChkLess(v1,v2,msg,msg=null)
 | msg | string | message for AssertionError |
 
 -----
-## ChkLessEq {#Test_ChkLessEq}
+## ChkLessEq() {#Test_ChkLessEq}
 
 check v1 <= v2
 
@@ -194,7 +194,7 @@ ChkLessEq(v1,v2,msg=null)
 | msg | string | message for AssertionError |
 
 -----
-## ChkGreat {#Test_ChkGreat}
+## ChkGreat() {#Test_ChkGreat}
 
 check v1 > v2
 
@@ -211,7 +211,7 @@ ChkGreat(v1,v2,msg=null)
 | msg | string | message for AssertionError |
 
 -----
-## ChkGreatEq {#Test_ChkGreatEq}
+## ChkGreatEq() {#Test_ChkGreatEq}
 
 check v1 >= v2
 
@@ -228,7 +228,7 @@ ChkGreatEq(v1,v2,msg=null)
 | msg | string | message for AssertionError |
 
 -----
-## ChkApprox {#Test_ChkApprox}
+## ChkApprox() {#Test_ChkApprox}
 
 check |v1-v2| <= range
 
@@ -246,7 +246,7 @@ ChkApprox(v1,v2,range,msg=null)
 | msg | string | message for AssertionError |
 
 -----
-## Run {#Test_Run}
+## Run() {#Test_Run}
 
 (for Node,Deno)  
 run test scenaria.  
@@ -265,7 +265,7 @@ Run(scn):void
 | scn | @ref TestScenario[] | test scenaria |
 
 -----
-## SetUp {#Test_SetUp}
+## SetUp() {#Test_SetUp}
 
 setup test runner.  
 (for web only)  

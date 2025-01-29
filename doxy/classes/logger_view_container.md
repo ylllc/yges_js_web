@@ -24,7 +24,7 @@ log viewer of @ref pg_class_logger
 # Methods
 
 -----
-## SetUp {#LogViewContainer_SetUp}
+## SetUp() {#LogViewContainer_SetUp}
 
 create a logger view instance
 

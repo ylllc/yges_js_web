@@ -18,7 +18,7 @@ this class is inherited from @ref pg_class_launcher
 # Methods
 
 -----
-## Start {#Engine_Start}
+## Start() {#Engine_Start}
 
 ### Spec
 
@@ -28,7 +28,7 @@ the Engine is started.
 and cannot exit until call Stop() or ShutDown()  
 
 -----
-## Stop {#Engine_Stop}
+## Stop() {#Engine_Stop}
 
 ### Spec
 
@@ -39,7 +39,7 @@ and all procedures are aborted.
 can Start() again.  
 
 -----
-## ShutDown {#Engine_ShutDown}
+## ShutDown() {#Engine_ShutDown}
 
 ### Spec
 

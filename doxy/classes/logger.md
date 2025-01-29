@@ -119,7 +119,7 @@ usually, put src.Text
 # Methods
 
 -----
-## GetInstanceID {#Log_GetInstanceID}
+## GetInstanceID() {#Log_GetInstanceID}
 
 ### Spec
 
@@ -130,7 +130,7 @@ GetInstanceID():int
 instance ID created by @ref Common_NextID
 
 -----
-## CreateLocal {#Log_CreateLocal}
+## CreateLocal() {#Log_CreateLocal}
 
 create a new local log instance  
 
@@ -151,7 +151,7 @@ local logger instance.
 its settings inherited from this.  
 
 -----
-## GetParent {#Log_GetParent}
+## GetParent() {#Log_GetParent}
 
 ### Spec
 
@@ -162,7 +162,7 @@ GetParent():@ref pg_class_logger?
 parent instance or null.  
 
 -----
-## GetCaption {#Log_GetCaption}
+## GetCaption() {#Log_GetCaption}
 
 ### Spec
 
@@ -174,7 +174,7 @@ caption for this instance.
 it's this Caption when already set or parent setting.   
 
 -----
-## GetShowable {#Log_GetShowable}
+## GetShowable() {#Log_GetShowable}
 
 ### Spec
 
@@ -186,7 +186,7 @@ showable log level for this instance.
 it's this Showable when already set or parent setting.   
 
 -----
-## Put {#Log_Put}
+## Put() {#Log_Put}
 
 log width variable level.  
 suppressed when lower than showable.  
@@ -204,7 +204,7 @@ Put(lev,msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Tick {#Log_Tick}
+## Tick() {#Log_Tick}
 
 put TICK log
 
@@ -220,7 +220,7 @@ Tick(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Trace {#Log_Trace}
+## Trace() {#Log_Trace}
 
 put TRACE log
 
@@ -236,7 +236,7 @@ Trace(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Debug {#Log_Debug}
+## Debug() {#Log_Debug}
 
 put DEBUG log
 
@@ -252,7 +252,7 @@ Debug(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Info {#Log_Info}
+## Info() {#Log_Info}
 
 put INFO log
 
@@ -268,7 +268,7 @@ Info(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Notice {#Log_Notice}
+## Notice() {#Log_Notice}
 
 put NOTICE log
 
@@ -284,7 +284,7 @@ Notice(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Warn {#Log_Warn}
+## Warn() {#Log_Warn}
 
 put WARN log
 
@@ -300,7 +300,7 @@ Warn(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Fatal {#Log_Fatal}
+## Fatal() {#Log_Fatal}
 
 put FATAL log
 
@@ -316,7 +316,7 @@ Fatal(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Crit {#Log_Crit}
+## Crit() {#Log_Crit}
 
 put CRIT log
 
@@ -332,7 +332,7 @@ Crit(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Alert {#Log_Alert}
+## Alert() {#Log_Alert}
 
 put ALERT log
 
@@ -348,7 +348,7 @@ Alert(msg,prop=null):void
 | prop | dict<string,any>? | properties |
 
 -----
-## Emerg {#Log_Emerg}
+## Emerg() {#Log_Emerg}
 
 put EMERG log
 

@@ -43,7 +43,7 @@
 # Methods
 
 -----
-## Create {#PropTree_Create}
+## Create() {#PropTree_Create}
 
 ### Spec
 

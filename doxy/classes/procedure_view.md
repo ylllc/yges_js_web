@@ -19,7 +19,7 @@ this class is inherited from @ref pg_class_qht
 # Methods
 
 -----
-## Update {#ProcedureView_Update}
+## Update() {#ProcedureView_Update}
 
 update info  
 

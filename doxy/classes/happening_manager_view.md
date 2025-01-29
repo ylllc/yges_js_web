@@ -24,7 +24,7 @@ this class is inherited from @ref pg_class_qht
 # Methods
 
 -----
-## Update {#HappeningManagerView_Update}
+## Update() {#HappeningManagerView_Update}
 
 update info  
 

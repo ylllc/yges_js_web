@@ -101,7 +101,7 @@ loop procedure from @ref Util_SafeDictIter
 # Methods
 
 -----
-## IsJustNaN {#Util_IsJustNaN}
+## IsJustNaN() {#Util_IsJustNaN}
 
 ### Spec
 
@@ -118,7 +118,7 @@ IsJustNaN(val):bool
 just NaN.  
 
 -----
-## IsJustInfinity {#Util_IsJustInfinity}
+## IsJustInfinity() {#Util_IsJustInfinity}
 
 ### Spec
 
@@ -135,7 +135,7 @@ IsJustInfinity(val):bool
 just Infinity or -Infinity.  
 
 -----
-## IsEmpty {#Util_IsEmpty}
+## IsEmpty() {#Util_IsEmpty}
 
 ### Spec
 
@@ -153,7 +153,7 @@ null, undefined, empty string returns true.
 otherwise false.  
 
 -----
-## IsValid {#Util_IsValid}
+## IsValid() {#Util_IsValid}
 
 ### Spec
 
@@ -171,7 +171,7 @@ null, undefined, NaN returns false.
 otherwise true.  
 
 -----
-## Booleanize {#Util_Booleanize}
+## Booleanize() {#Util_Booleanize}
 
 ### Spec
 
@@ -198,7 +198,7 @@ other string means not empty.
 empty array and object bcome true.  
 
 -----
-## Trinarize {#Util_Trinarize}
+## Trinarize() {#Util_Trinarize}
 
 ### Spec
 
@@ -218,7 +218,7 @@ null and undefined become null, stringified too.
 otherwize sami to Booleanize()
 
 -----
-## FillZero {#Util_FillZero}
+## FillZero() {#Util_FillZero}
 
 ### Spec
 
@@ -238,7 +238,7 @@ zero filled string.
 can uses for negative numbers.  
 
 -----
-## SafeStepIter {#Util_SafeStepIter}
+## SafeStepIter() {#Util_SafeStepIter}
 
 async-safe step loop,  
 instead of for(var cnt=bgn;(step<0)?(cnt>end):(cnt<end);cnt+=step)  
@@ -261,7 +261,7 @@ SafeStepIter(bgn,end,step,cb_iter):number
 next counter (same to for() counter)
 
 -----
-## SafeArrayIter {#Util_SafeArrayIter}
+## SafeArrayIter() {#Util_SafeArrayIter}
 
 async-safe array iterator,  
 instead of for(var val of array)  
@@ -278,7 +278,7 @@ SafeArrayIter(src,cb_iter):void
 | cb_iter | @ref Util_CB_ArrayIter | loop procedure |
 
 -----
-## SafeDictIter {#Util_SafeDictIter}
+## SafeDictIter() {#Util_SafeDictIter}
 
 async-safe object iterator,  
 instead of for(var key in object)  

@@ -53,7 +53,7 @@ CB_Wait(prop):bool
 # Methods
 
 -----
-## GetState {#Agent_GetState}
+## GetState() {#Agent_GetState}
 
 ### Spec
 
@@ -64,7 +64,7 @@ GetState():string
 current state  
 
 -----
-## GetInfo {#Agent_GetInfo}
+## GetInfo() {#Agent_GetInfo}
 
 ### Spec
 
@@ -75,7 +75,7 @@ GetInfo():@ref Agent_AgentInfo
 agent info.  
 
 -----
-## IsBusy {#Agent_IsBusy}
+## IsBusy() {#Agent_IsBusy}
 
 ### Spec
 
@@ -89,7 +89,7 @@ IsBusy():bool
 | false | not runnning |
 
 -----
-## IsOpen {#Agent_IsOpen}
+## IsOpen() {#Agent_IsOpen}
 
 ### Spec
 
@@ -103,7 +103,7 @@ IsOpen():bool
 | false | closed from all handles |
 
 -----
-## IsReady {#Agent_IsReady}
+## IsReady() {#Agent_IsReady}
 
 ### Spec
 
@@ -117,7 +117,7 @@ IsReady():bool
 | false | in down or not running |
 
 -----
-## IsHalt {#Agent_IsHalt}
+## IsHalt() {#Agent_IsHalt}
 
 ### Spec
 
@@ -131,7 +131,7 @@ IsHalt():bool
 | false | otherwise |
 
 -----
-## GetLauncher {#Agent_GetLauncher}
+## GetLauncher() {#Agent_GetLauncher}
 
 ### Spec
 
@@ -142,7 +142,7 @@ GetLauncher():@ref pg_class_launcher
 procedures running on it  
 
 -----
-## GetHappeningManager {#Agent_GetHappeningManager}
+## GetHappeningManager() {#Agent_GetHappeningManager}
 
 ### Spec
 
@@ -153,7 +153,7 @@ GetHappeningManager():@ref pg_class_happening_manager
 happenings reported in it
 
 -----
-## GetDependencies {#Agent_GetDependencies}
+## GetDependencies() {#Agent_GetDependencies}
 
 ### Spec
 
@@ -164,7 +164,7 @@ GetDependencies():dict<string,@ref pg_class_agent_handle>
 dependencies of this Agent
 
 -----
-## WaitFor {#Agent_WaitFor}
+## WaitFor() {#Agent_WaitFor}
 
 ### Spec
 
@@ -182,7 +182,7 @@ add required condition to complete its phase.
 | prop | dict<string,any> | for info, can access from cb_wait |
 
 -----
-## Restart {#Agent_Restart}
+## Restart() {#Agent_Restart}
 
 ### Spec
 
@@ -191,7 +191,7 @@ Restart():void
 do DOWN and UP in this Agent  
 
 -----
-## Fetch {#Agent_Fetch}
+## Fetch() {#Agent_Fetch}
 
 ### Spec
 
@@ -202,7 +202,7 @@ Fetch():@ref pg_class_agent_handle
 create a new AgentHandle.  
 
 -----
-## Open {#Agent_Open}
+## Open() {#Agent_Open}
 
 ### Spec
 

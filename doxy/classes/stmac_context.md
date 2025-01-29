@@ -30,7 +30,7 @@ created by @ref pg_class_stmac_container
 # Methods
 
 -----
-## GetPrevState {#StMac_GetPrevState}
+## GetPrevState() {#StMac_GetPrevState}
 
 ### Spec
 
@@ -41,7 +41,7 @@ GetPrevState():string?
 previous state
 
 -----
-## GetCurState {#StMac_GetCurState}
+## GetCurState() {#StMac_GetCurState}
 
 ### Spec
 
@@ -52,7 +52,7 @@ GetCurState():string?
 current state
 
 -----
-## GetNextState {#StMac_GetNextState}
+## GetNextState() {#StMac_GetNextState}
 
 ### Spec
 
@@ -63,7 +63,7 @@ GetNextState():string?
 next state
 
 -----
-## GetInfo {#StMac_GetInfo}
+## GetInfo() {#StMac_GetInfo}
 
 ### Spec
 
@@ -74,7 +74,7 @@ GetInfo():@ref StMac_StateMachineInfo
 statemachine info.  
 
 -----
-## GetHappeningManager {#StMac_GetHappeningManager}
+## GetHappeningManager() {#StMac_GetHappeningManager}
 
 ### Spec
 

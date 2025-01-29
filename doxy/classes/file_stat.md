@@ -9,7 +9,7 @@ and [FileControl.Stat()](pg_class_file_control.html#Stat)
 # Methods
 
 -----
-## GetPath {#FileStat_GetPath}
+## GetPath() {#FileStat_GetPath}
 
 ### Spec
 
@@ -20,7 +20,7 @@ GetPath():string
 source path  
 
 -----
-## GetLowLevel {#FileStat_GetLowLevel}
+## GetLowLevel() {#FileStat_GetLowLevel}
 
 ### Spec
 
@@ -31,7 +31,7 @@ GetLowLevel():any
 low level result  
 
 -----
-## IsFile {#FileStat_IsFile}
+## IsFile() {#FileStat_IsFile}
 
 ### Spec
 
@@ -46,7 +46,7 @@ IsFile():bool?
 | null | not exists |
 
 -----
-## IsDir {#FileStat_IsDir}
+## IsDir() {#FileStat_IsDir}
 
 ### Spec
 
@@ -61,7 +61,7 @@ IsDir():bool?
 | null | not exists |
 
 -----
-## IsSymLink {#FileStat_IsSymLink}
+## IsSymLink() {#FileStat_IsSymLink}
 
 ### Spec
 
@@ -76,7 +76,7 @@ IsSymLink():bool?
 | null | not exists |
 
 -----
-## GetDevID {#FileStat_GetDevID}
+## GetDevID() {#FileStat_GetDevID}
 
 ### Spec
 
@@ -87,7 +87,7 @@ GetDevID():int?
 device ID, is exists  
 
 -----
-## GetInode {#FileStat_GetInode}
+## GetInode() {#FileStat_GetInode}
 
 ### Spec
 
@@ -98,7 +98,7 @@ GetInode():int?
 node number, is exists
 
 -----
-## GetMode {#FileStat_GetMode}
+## GetMode() {#FileStat_GetMode}
 
 ### Spec
 
@@ -109,7 +109,7 @@ GetMode():int?
 file mode, is exists
 
 -----
-## GetGID {#FileStat_GetGID}
+## GetGID() {#FileStat_GetGID}
 
 ### Spec
 
@@ -120,7 +120,7 @@ GetGID():int?
 group ID, is exists  
 
 -----
-## GetUID {#FileStat_GetUID}
+## GetUID() {#FileStat_GetUID}
 
 ### Spec
 
@@ -131,7 +131,7 @@ GetUID():int?
 user ID, is exists  
 
 -----
-## GetSize {#FileStat_GetSize}
+## GetSize() {#FileStat_GetSize}
 
 ### Spec
 
@@ -142,7 +142,7 @@ GetSize():int?
 file size, is exists  
 
 -----
-## GetAccessTime {#FileStat_GetAccessTime}
+## GetAccessTime() {#FileStat_GetAccessTime}
 
 ### Spec
 
@@ -153,7 +153,7 @@ GetAccessTime():Date?
 last accessed time, is exists  
 
 -----
-## GetModifyTime {#FileStat_GetModifyTime}
+## GetModifyTime() {#FileStat_GetModifyTime}
 
 ### Spec
 
@@ -164,7 +164,7 @@ GetModifyTime():Date?
 last modified time, is exists  
 
 -----
-## GetChangeTime {#FileStat_GetChangeTime}
+## GetChangeTime() {#FileStat_GetChangeTime}
 
 ### Spec
 
@@ -175,7 +175,7 @@ GetChangeTime():Date?
 last status changed time, is exists  
 
 -----
-## GetBirthTime {#FileStat_GetBirthTime}
+## GetBirthTime() {#FileStat_GetBirthTime}
 
 ### Spec
 

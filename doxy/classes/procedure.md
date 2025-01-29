@@ -30,7 +30,7 @@ created by @pg_class_launcher
 # Methods
 
 -----
-## GetInstanceID {#Log_GetInstanceID}
+## GetInstanceID() {#Log_GetInstanceID}
 
 ### Spec
 
@@ -41,7 +41,7 @@ GetInstanceID():int
 instance ID created by @ref Common_NextID
 
 -----
-## IsStarted {#Procedure_IsStarted}
+## IsStarted() {#Procedure_IsStarted}
 
 ### Spec
 
@@ -52,7 +52,7 @@ IsStarted():bool
 this procedure is started
 
 -----
-## IsFinished {#Procedure_IsFinished}
+## IsFinished() {#Procedure_IsFinished}
 
 ### Spec
 
@@ -63,7 +63,7 @@ IsFinished():bool
 this procedure is finished
 
 -----
-## IsAborted {#Procedure_IsAborted}
+## IsAborted() {#Procedure_IsAborted}
 
 ### Spec
 
@@ -74,7 +74,7 @@ IsAborted():bool
 this procedure is aborted
 
 -----
-## IsEnd {#Procedure_IsEnd}
+## IsEnd() {#Procedure_IsEnd}
 
 ### Spec
 
@@ -85,7 +85,7 @@ IsEnd():bool
 this procedure is ended (fiinshed or aborted)
 
 -----
-## GetStatus {#Procedure_GetStatus}
+## GetStatus() {#Procedure_GetStatus}
 
 ### Spec
 
@@ -103,7 +103,7 @@ status of this instance
 | Finished | completed |
 
 -----
-## GetInfo {#Procedure_GetInfo}
+## GetInfo() {#Procedure_GetInfo}
 
 ### Spec
 
@@ -114,7 +114,7 @@ GetInfo():@ref Procedure_ProcedureInfo
 procedure info.  
 
 -----
-## Abort {#Procedure_IsEnd}
+## Abort() {#Procedure_IsEnd}
 
 ### Spec
 
@@ -123,7 +123,7 @@ Abort()
 abort this procedure
 
 -----
-## Poll {#Procedure_Poll}
+## Poll() {#Procedure_Poll}
 
 ### Spec
 
@@ -134,7 +134,7 @@ usually called from the Engine.
 and not necessary to call manually.  
 
 -----
-## Sync {#Procedure_Sync}
+## Sync() {#Procedure_Sync}
 
 ### Spec
 
@@ -150,7 +150,7 @@ wait for end of procedure and call cb_sync
 | interval | int? | poll interval msec (null=DEFAULT_SYNC_CYCLE) |
 
 -----
-## ToPromise {#Procedure_ToPromise}
+## ToPromise() {#Procedure_ToPromise}
 
 ### Spec
 

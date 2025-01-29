@@ -10,7 +10,7 @@ it inherited from @ref pg_class_agent
 # Methods
 
 -----
-## GetPath {#DirTarget_GetPath}
+## GetPath() {#DirTarget_GetPath}
 
 ### Spec
 
@@ -21,7 +21,7 @@ GetPath():string
 target directory path  
 
 -----
-## Exists {#DirTarget_Exists}
+## Exists() {#DirTarget_Exists}
 
 ### Spec
 
@@ -32,7 +32,7 @@ Exists():bool
 target directry is exist  
 
 -----
-## Relative {#DirTarget_Relative}
+## Relative() {#DirTarget_Relative}
 
 ### Spec
 
@@ -49,7 +49,7 @@ Relative(path):string
 combined path  
 
 -----
-## SubDir {#DirTarget_SubDir}
+## SubDir() {#DirTarget_SubDir}
 
 ### Spec
 
@@ -66,7 +66,7 @@ SubDir(path):@ref pg_class_dir_target
 new instance of a subdirectory  
 
 -----
-## Glob {#DirTarget_Glob}
+## Glob() {#DirTarget_Glob}
 
 ### Spec
 

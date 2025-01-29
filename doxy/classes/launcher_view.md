@@ -24,7 +24,7 @@ this class is inherited from @ref pg_class_qht
 # Methods
 
 -----
-## Update {#LauncherView_Update}
+## Update() {#LauncherView_Update}
 
 update info  
 

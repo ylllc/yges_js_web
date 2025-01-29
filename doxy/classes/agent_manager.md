@@ -45,7 +45,7 @@ user defined object kept in an agent
 # Methods
 
 -----
-## Standby {#Agent_Standby}
+## Standby() {#Agent_Standby}
 
 ### Spec
 
@@ -64,7 +64,7 @@ create a new Agent.
 a new @ref pg_class_agent
 
 -----
-## Launch {#Agent_Launch}
+## Launch() {#Agent_Launch}
 
 ### Spec
 
@@ -83,7 +83,7 @@ create a new handle driven by a new @ref pg_class_agent.
 a new @ref pg_class_agent_handle
 
 -----
-## Run {#Agent_Run}
+## Run() {#Agent_Run}
 
 ### Spec
 

@@ -24,7 +24,7 @@ happening viewer of @ref pg_feat_happening
 # Methods
 
 -----
-## SetUp {#HappeningView_SetUp}
+## SetUp() {#HappeningView_SetUp}
 
 create a happening view instance
 

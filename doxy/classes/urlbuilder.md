@@ -15,7 +15,8 @@
 -----
 # Methods
 
-## Parse {#URLBuilder_Parse}
+-----
+## Parse() {#URLBuilder_Parse}
 
 ### Spec
 
@@ -32,7 +33,7 @@ Parse(url):@ref pg_class_parsedurl
 parse a URL and store it.  
 
 -----
-## ExtractHost {#URLBuilder_ExtractHost}
+## ExtractHost() {#URLBuilder_ExtractHost}
 
 ### Spec
 
@@ -51,7 +52,7 @@ split by .
 extracted host name
 
 -----
-## BakeHost {#URLBuilder_BakeHost}
+## BakeHost() {#URLBuilder_BakeHost}
 
 ### Spec
 
@@ -70,7 +71,7 @@ join with .
 baked host name
 
 -----
-## ExtractPath {#URLBuilder_ExtractPath}
+## ExtractPath() {#URLBuilder_ExtractPath}
 
 ### Spec
 
@@ -89,7 +90,7 @@ split by / and URL decode
 extracted path name
 
 -----
-## BakePath {#URLBuilder_BakePath}
+## BakePath() {#URLBuilder_BakePath}
 
 ### Spec
 
@@ -108,7 +109,7 @@ URL encode and join with /
 baked path name
 
 -----
-## ExtractArgs {#URLBuilder_ExtractArgs}
+## ExtractArgs() {#URLBuilder_ExtractArgs}
 
 ### Spec
 
@@ -127,7 +128,7 @@ split by + and URL decode
 extracted query
 
 -----
-## BakeArgs {#URLBuilder_BakeArgs}
+## BakeArgs() {#URLBuilder_BakeArgs}
 
 ### Spec
 
@@ -146,7 +147,7 @@ URL encode and join with +
 baked query
 
 -----
-## ExtractProp {#URLBuilder_ExtractProp}
+## ExtractProp() {#URLBuilder_ExtractProp}
 
 ### Spec
 
@@ -168,7 +169,7 @@ but JavaScript not.
 extracted query
 
 -----
-## BakeProp {#URLBuilder_BakeProp}
+## BakeProp() {#URLBuilder_BakeProp}
 
 ### Spec
 

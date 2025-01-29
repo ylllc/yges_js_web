@@ -23,7 +23,7 @@ created by @ref pg_class_urlbuilder
 # Methods
 
 -----
-## Bake {#ParsedURL_Bake}
+## Bake() {#ParsedURL_Bake}
 
 ### Spec
 
@@ -34,7 +34,7 @@ Bake():string
 baked URL
 
 -----
-## ExtractHost {#ParsedURL_ExtractHost}
+## ExtractHost() {#ParsedURL_ExtractHost}
 
 ### Spec
 
@@ -45,7 +45,7 @@ ExtractHost():string[]
 extracted host name
 
 -----
-## BakeHost {#ParsedURL_BakeHost}
+## BakeHost() {#ParsedURL_BakeHost}
 
 ### Spec
 
@@ -58,7 +58,7 @@ BakeHost(src)
 | src | string[] | baking source host name |
 
 -----
-## ExtractPath {#ParsedURL_ExtractPath}
+## ExtractPath() {#ParsedURL_ExtractPath}
 
 ### Spec
 
@@ -69,7 +69,7 @@ ExtractPath():string[]
 extracted path name
 
 -----
-## BakePath {#ParsedURL_BakePath}
+## BakePath() {#ParsedURL_BakePath}
 
 ### Spec
 
@@ -82,7 +82,7 @@ BakePath(src)
 | src | string[] | baking source path name |
 
 -----
-## ExtractArgs {#ParsedURL_ExtractArgs}
+## ExtractArgs() {#ParsedURL_ExtractArgs}
 
 ### Spec
 
@@ -95,7 +95,7 @@ extract query as args
 extracted query
 
 -----
-## BakeArgs {#ParsedURL_BakeArgs}
+## BakeArgs() {#ParsedURL_BakeArgs}
 
 ### Spec
 
@@ -108,7 +108,7 @@ BakeArgs(src)
 | src | string[] | baking source query |
 
 -----
-## ExtractProp {#ParsedURL_ExtractProp}
+## ExtractProp() {#ParsedURL_ExtractProp}
 
 ### Spec
 
@@ -121,7 +121,7 @@ extract query as prop
 extracted query
 
 -----
-## BakeProp {#ParsedURL_ExtractProp}
+## BakeProp() {#ParsedURL_ExtractProp}
 
 ### Spec
 

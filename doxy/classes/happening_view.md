@@ -20,7 +20,7 @@ this class is inherited from @ref pg_class_qht
 # Methods
 
 -----
-## Update {#HappeningView_Update}
+## Update() {#HappeningView_Update}
 
 update info  
 

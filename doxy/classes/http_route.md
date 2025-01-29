@@ -17,7 +17,7 @@ implement for @ref pg_class_http_server
 # Methods
 
 -----
-## Walk {#HTTPRoute_Walk}
+## Walk() {#HTTPRoute_Walk}
 
 ### Spec
 

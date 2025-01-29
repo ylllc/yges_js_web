@@ -67,7 +67,7 @@ user definied object kept in a @ref pg_class_procedure instance
 # Methods
 
 -----
-## GetInstanceID {#Launcher_GetInstanceID}
+## GetInstanceID() {#Launcher_GetInstanceID}
 
 ### Spec
 
@@ -78,7 +78,7 @@ GetInstanceID():int
 instance ID created by @ref Common_NextID
 
 -----
-## GetActive {#Launcher_GetActive}
+## GetActive() {#Launcher_GetActive}
 
 access to running procedures
 
@@ -87,7 +87,7 @@ access to running procedures
 GetActive():@ref pg_class_procedure[]
 
 -----
-## GetHeld {#Launcher_GetHeld}
+## GetHeld() {#Launcher_GetHeld}
 
 access to standby procedures
 
@@ -96,7 +96,7 @@ access to standby procedures
 GetHeld():@ref pg_class_procedure[]
 
 -----
-## GetSub {#Launcher_GetSub}
+## GetSub() {#Launcher_GetSub}
 
 access to sublauncheres
 
@@ -105,7 +105,7 @@ access to sublauncheres
 GetSub():@ref pg_class_launcher[]
 
 -----
-## GetStatus {#Launcher_GetStatus}
+## GetStatus() {#Launcher_GetStatus}
 
 ### Spec
 
@@ -122,7 +122,7 @@ status of this instance
 | Abandoned | @ref Launcher_CountActive called |
 
 -----
-## GetInfo {#Launcher_GetInfo}
+## GetInfo() {#Launcher_GetInfo}
 
 ### Spec
 
@@ -133,7 +133,7 @@ GetInfo():@ref Launcher_LauncherInfo
 launcher info.  
 
 -----
-## IsEnd {#Launcher_IsEnd}
+## IsEnd(){#Launcher_IsEnd}
 
 ### Spec
 
@@ -144,7 +144,7 @@ IsEnd():bool
 no procedure in this launcher.
 
 -----
-## IsAbandoned {#Launcher_IsAbandoned}
+## IsAbandoned() {#Launcher_IsAbandoned}
 
 ### Spec
 
@@ -155,7 +155,7 @@ IsAbandoned():bool
 this launcher is abandoned.
 
 -----
-## CountActive {#Launcher_CountActive}
+## CountActive() {#Launcher_CountActive}
 
 ### Spec
 
@@ -166,7 +166,7 @@ CountActive():int
 running procedures in this launcher.
 
 -----
-## CountHeld {#Launcher_CountActive}
+## CountHeld() {#Launcher_CountActive}
 
 ### Spec
 
@@ -177,7 +177,7 @@ CountHeld():int
 unstarted procedures in this launcher.
 
 -----
-## Abandon {#Launcher_CountActive}
+## Abandon() {#Launcher_CountActive}
 
 ### Spec
 
@@ -186,7 +186,7 @@ Abandon():void
 this launcher is no longer launch procedures.
 
 -----
-## CreateLauncher {#Launcher_CreateLauncher}
+## CreateLauncher() {#Launcher_CreateLauncher}
 
 ### Spec
 
@@ -203,7 +203,7 @@ prm | @ref Launcher_LauncherPrm | settings
 sub-launcher
 
 -----
-## Launch {#Launcher_Launch}
+## Launch() {#Launcher_Launch}
 
 ### Spec
 
@@ -220,7 +220,7 @@ prm | @ref Launcher_ProcedurePrm | settings
 procedure instance
 
 -----
-## Abort {#Launcher_Abort}
+## Abort() {#Launcher_Abort}
 
 ### Spec
 
@@ -229,7 +229,7 @@ Abort():void
 abort all procedures in this
 
 -----
-## Poll {#Launcher_Abort}
+## Poll() {#Launcher_Abort}
 
 ### Spec
 
@@ -240,7 +240,7 @@ usually called from the Engine.
 and not necessary to call manually.  
 
 -----
-## Sync {#Launcher_Sync}
+## Sync() {#Launcher_Sync}
 
 ### Spec
 
@@ -256,7 +256,7 @@ wait for end of all procedures in this launcher and call cb_sync
 | interval | int? | poll interval msec (null=DEFAULT_SYNC_CYCLE) |
 
 -----
-## ToPromise {#Launcher_ToPromise}
+## ToPromise() {#Launcher_ToPromise}
 
 ### Spec
 
@@ -274,7 +274,7 @@ ToPromise(breakable,interval=null):Promise
 a Promise include caling Sync()
 
 -----
-## Delay {#Launcher_Delay}
+## Delay() {#Launcher_Delay}
 
 ### Spec
 

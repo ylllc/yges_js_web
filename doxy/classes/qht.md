@@ -19,7 +19,7 @@ created by @ref pg_class_qht_container
 # Methods
 
 -----
-## Remove {#QHT_Remove}
+## Remove() {#QHT_Remove}
 
 remove this Element.  
 
@@ -28,7 +28,7 @@ remove this Element.
 Remove():void
 
 -----
-## Clear {#QHT_Clear}
+## Clear() {#QHT_Clear}
 
 clear inner contents.  
 
@@ -37,7 +37,7 @@ clear inner contents.
 Clear():void
 
 -----
-## Append {#QHT_Append}
+## Append() {#QHT_Append}
 
 append to inner contents.  
 
@@ -52,7 +52,7 @@ Append(src):void
 | src | @ref QHT_QHTContent | source content |
 
 -----
-## Replace {#QHT_Replace}
+## Replace() {#QHT_Replace}
 
 replace to inner contents.  
 

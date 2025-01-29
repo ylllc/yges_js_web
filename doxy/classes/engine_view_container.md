@@ -24,7 +24,7 @@ procedure viewer of @ref pg_feat_engine
 # Methods
 
 -----
-## SetUp {#EngineView_SetUp}
+## SetUp() {#EngineView_SetUp}
 
 create a engine view instance
 
