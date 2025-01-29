@@ -34,7 +34,13 @@ check condition in your procedure
 
 ### Spec
 
-CB_Wait():bool
+CB_Wait(prop):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| prop | dict<string,any> | user properties from @ref Agent_WaitFor |
 
 ### Returns
 
@@ -173,7 +179,7 @@ add required condition to complete its phase.
 |------|------|-------|
 | label | string | for info |
 | cb_wait | @ref Agent_CB_Wait | condition checking |
-| prop | dict<string,any> | for info |
+| prop | dict<string,any> | for info, can access from cb_wait |
 
 -----
 ## Restart {#Agent_Restart}

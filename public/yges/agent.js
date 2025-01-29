@@ -98,7 +98,7 @@ function _standby(prm){
 				let cont=[]
 				for(let d of wait){
 					try{
-						if(d.Chk())continue;
+						if(d.Chk(d.Prop))continue;
 						cont.push(d);
 					}
 					catch(e){
@@ -152,7 +152,7 @@ function _standby(prm){
 				let cont=[]
 				for(let d of wait){
 					try{
-						if(d.Chk())continue;
+						if(d.Chk(d.Prop))continue;
 						cont.push(d);
 					}
 					catch(e){
@@ -201,7 +201,7 @@ function _standby(prm){
 				let cont=[]
 				for(let d of wait){
 					try{
-						if(d.Chk())continue;
+						if(d.Chk(d.Prop))continue;
 						cont.push(d);
 					}
 					catch(e){
