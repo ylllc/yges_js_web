@@ -56,6 +56,7 @@ async function ipl_ready(){
 	YgEs.DisposeMonitor();
 
 	// prepares 
+	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
 	let hapmng=YgEs.HappeningManager.CreateLocal({
 		Name:'TestHaps',
 		HappenTo:(hap)=>{log.Fatal(hap.ToString(),hap.GetProp())},
@@ -65,12 +66,8 @@ async function ipl_ready(){
 		HappenTo:hapmng,
 	});
 
-	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
-
 	let test=YgEs.Test.SetUp(launcher,modules,TestBase,YgEs.Peek('TestInfo'));
 	let view=YgEs.TestView.SetUp(mainboard,test);
-//	test.Reset();
-	test.Load();
 	test.Run();
 }
 //--></script></div></body></html>

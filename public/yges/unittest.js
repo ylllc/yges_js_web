@@ -20,6 +20,7 @@ function _assert(cond,msg){
 function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 
 	let sig_reset=false;
+	let sig_load=false;
 	let sig_run=false;
 	let pickup=false;
 	let running=false;
@@ -220,9 +221,13 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 
 	ctrl.Reset=()=>{
 		sig_reset=true;
+		sig_load=false;
+		sig_run=false;
 	}
 
 	ctrl.Load=()=>{
+		if(sig_load)return;
+		sig_load=true;
 		items=0;
 		YgEs.StateMachine.Run('Download',states,{
 			Name:'YgEs.UnitTest_Proc',
@@ -232,6 +237,8 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 	}
 
 	ctrl.Run=()=>{
+		if(sig_run)return;
+		ctrl.Load();
 		sig_run=true;
 	}
 
