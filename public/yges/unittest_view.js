@@ -6,7 +6,7 @@
 // Unit Test View for web --------------- //
 (()=>{ // local namespace 
 
-function _view_scenaria(src,target){
+function _view_scenaria(target,src){
 
 	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_testrun_layer'}});
 
@@ -51,7 +51,7 @@ function _view_scenaria(src,target){
 	}
 }
 
-function _view_file(src,target,fn){
+function _view_file(target,src,fn){
 
 	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_testrun_layer'}});
 	let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_testrun_file'}});
@@ -84,12 +84,12 @@ function _view_file(src,target,fn){
 			}
 		},
 		SetScenaria:(src)=>{
-			_view_scenaria(src,sub);
+			_view_scenaria(sub,src);
 		},
 	});
 }
 
-function _view_dir(src,target,dn){
+function _view_dir(target,src,dn){
 
 	let ul=YgEs.NewQHT({Target:target,Tag:'ul',Attr:{class:'yges_testrun_layer'}});
 	let li=YgEs.NewQHT({Target:ul,Tag:'li',Attr:{class:'yges_testrun_dir'}});
@@ -102,10 +102,10 @@ function _view_dir(src,target,dn){
 			st.Element.setAttribute('class','yges_testrun_stat_idle');
 			sub.Clear();
 			for(let fn in src.Files){
-				_view_file(src.Files[fn],sub,fn);
+				_view_file(sub,src.Files[fn],fn);
 			}
 			for(let dn in src.Dirs){
-				_view_dir(src.Dirs[dn],sub,dn);
+				_view_dir(sub,src.Dirs[dn],dn);
 			}
 		},
 		UpdateResult:(f)=>{
@@ -128,11 +128,11 @@ function _view_dir(src,target,dn){
 }
 
 YgEs.TestView={
-	name:'YgEs.UnitTestView',
+	name:'YgEs.TestView',
 	User:{},
 
-	SetUp:(src,target)=>{
-		_view_dir(src,target,'(all)');
+	SetUp:(target,src)=>{
+		_view_dir(target,src,'(all)');
 	},
 };
 

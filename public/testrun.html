@@ -68,7 +68,7 @@ async function ipl_ready(){
 	let log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
 
 	let test=YgEs.Test.SetUp(launcher,modules,TestBase,YgEs.Peek('TestInfo'));
-	let view=YgEs.TestView.SetUp(test,mainboard);
+	let view=YgEs.TestView.SetUp(mainboard,test);
 //	test.Reset();
 	test.Load();
 	test.Run();
