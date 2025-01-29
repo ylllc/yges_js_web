@@ -101,7 +101,7 @@ async function ipl_ready(){
 		}),
 		OnOpen:(agent)=>{
 			agent.User.since=Date.now();
-			agent.WaitFor(()=>Date.now()-agent.User.since>3000);
+			agent.WaitFor('Delay',()=>Date.now()-agent.User.since>3000);
 		},
 		OnReady:(agent)=>{
 			throw new Error('Test Happening 5');
