@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset="utf-8">
+	<title>Yggdrasil Essense</title>
+	<link href="main.css" rel="stylesheet">
+	<link href="gamepad.css" rel="stylesheet">
+</head>
+<body onload="ipl_ready()"><div class=screen>
+<header>
+<a href="./">Yggdrasil Essense</a> / 
+GamePad View
+<hr>
+</header>
+<main>
+<h1 class="pagetitle">GamePad View</h1>
+<noscript><div class="warning">(JavaScript required)</div></noscript>
+<div id=mainboard class=main></div>
+</main>
+<footer>
+<hr>
+&copy; 2025 Yggdrasil Leaves, LLC.<br>
+Repositories: 
+<a target="_blank" href="https://github.com/ylllc/yges_js_web">[web]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_node">[Node.js]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_deno">[Deno]</a>
+</footer>
+<div id=modules>
+<script src="yges/ipl.js"></script>
+</div>
+<script><!--
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
+mainboard.Clear();
+let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
+
+async function ipl_ready(){
+
+	ipl_loading.Remove();
+	YgEs.InitFrontend(modules,mainboard);
+
+	// resources 
+	YgEs.LoadJS('yges/gui.js');
+	YgEs.LoadJS('yges/gamepad.js');
+	await YgEs.LoadSync().ToPromise();
+	YgEs.DisposeMonitor();
+
+	// enable gamepad 
+	YgEs.GamePadManager.Enable();
+
+	// max players 
+	mainboard.Append('Players: ');
+	YgEs.GUI.Select(mainboard,[
+		{Value:-1,Label:'Unlimited'},
+		{Value:0,Label:'No One'},
+		1,2,3,4,5,6
+	],{
+		Init:-1,
+		OnChanging:(prev,next)=>{
+			YgEs.GamePadManager.SetPlayerCount(next);
+			return true;
+		},
+	});
+	mainboard.BR();
+	mainboard.Append('Config: ');
+
+	YgEs.GUI.Button(mainboard,'Save',{
+		OnClick:()=>{
+			let cfg=[]
+			let n=YgEs.GamePadManager.GetAvailablePlayerCount();
+			for(let i=0;i<n;++i){
+				let dev=YgEs.GamePadManager.GetPlayerDevice(i);
+				if(!dev)continue;
+				if(!dev.IsConnected())continue;
+				let ll=dev.GetLowLevel();
+				if(!ll)continue;
+				cfg[i]={DeviceName:ll.id}
+			}
+
+			YgEs.LocalSave(JSON.stringify(cfg),'GamePadConfig.json','application/json');
+		},
+	});
+	YgEs.GUI.Button(mainboard,'Load',{
+		OnClick:()=>{
+
+			YgEs.LocalLoad(true,'.json',(data)=>{
+				try{
+					YgEs.GamePadManager.PlayerConfig=JSON.parse(data);
+				}
+				catch(err){
+					console.error(err);
+				}
+			},(err)=>{
+				console.error(err);
+			},()=>{
+				// cancelled 
+			});
+		},
+	});
+
+	mainboard.HR();
+
+	// gamepad view 
+	let devview={}
+
+	const newcome=(pidx)=>{
+
+		let view=YgEs.NewQHT({Target:mainboard,Tag:'dl',Sub:[
+			YgEs.NewQHT({Tag:'dt',Sub:['Player '+pidx]})
+		]});
+		let dd=YgEs.NewQHT({Target:view,Tag:'dd'});
+		let ul=YgEs.NewQHT({Target:dd,Tag:'ul'});
+
+		view.User.Connected=YgEs.NewQHT({Target:ul,Tag:'li'});
+		let li=YgEs.NewQHT({Target:ul,Tag:'li',Sub:['DeviceName: ']});
+		view.User.DeviceName=YgEs.NewQHT({Target:li,Tag:'span'});
+		li=YgEs.NewQHT({Target:ul,Tag:'li',Sub:['TimeStamp: ']});
+		view.User.TimeStamp=YgEs.NewQHT({Target:li,Tag:'span'});
+		li=YgEs.NewQHT({Target:ul,Tag:'li',Sub:['Buttons:']});
+		view.User.Buttons=YgEs.NewQHT({Target:li,Tag:'div'});
+		view.User.Buttons.User.Sub=[]
+		li=YgEs.NewQHT({Target:ul,Tag:'li',Sub:['Axes:']});
+		view.User.Axes=YgEs.NewQHT({Target:li,Tag:'div'});
+		view.User.Axes.User.Sub=[]
+
+		return view;
+	}
+
+	const update=(pidx,max)=>{
+
+		let view=devview[pidx];
+		if(!view)view=devview[pidx]=newcome(pidx);
+
+		let dev=YgEs.GamePadManager.GetPlayerDevice(pidx);
+		if(!dev){
+			view.Element.setAttribute('class','gamepad_none');
+			view.User.Connected.Replace('None');
+			view.User.DeviceName.Clear();
+			view.User.TimeStamp.Clear();
+			return;
+		}
+
+		let ll=dev.GetLowLevel();
+		if(!ll){
+			view.Element.setAttribute('class','gamepad_released');
+			view.User.Connected.Replace('Removed');
+			return;
+		}
+
+		view.User.DeviceName.Replace(ll.id);
+		view.User.TimeStamp.Replace(ll.timestamp);
+		if(pidx>=max){
+			view.User.Connected.Replace('Invalid');
+			view.Element.setAttribute('class','gamepad_invalid');
+		}
+		else{
+			view.User.Connected.Replace('Connected');
+			view.Element.setAttribute('class','gamepad_connected');
+		}
+
+		for(let i=view.User.Buttons.User.Sub.length;i<ll.buttons.length;++i){
+			let back=YgEs.NewQHT({Target:view.User.Buttons,Tag:'span',Attr:{class:'gamepad_button_released'}});
+			let label=YgEs.NewQHT({Target:back,Tag:'span',Attr:{class:'gamepad_meter_label'},Sub:[i]});
+			let meter=YgEs.NewQHT({Target:back,Tag:'meter',Attr:{class:'gamepad_meter_gauge',min:0,max:1}});
+			view.User.Buttons.User.Sub[i]={Back:back,Label:label,Meter:meter}
+		}
+		for(let i=view.User.Axes.User.Sub.length;i<ll.axes.length;++i){
+			let back=YgEs.NewQHT({Target:view.User.Axes,Tag:'span',Attr:{class:'gamepad_axis'}});
+			let label=YgEs.NewQHT({Target:back,Tag:'span',Attr:{class:'gamepad_meter_label'},Sub:[i]});
+			let meter=YgEs.NewQHT({Target:back,Tag:'meter',Attr:{class:'gamepad_meter_gauge',min:-1,max:1}});
+			view.User.Axes.User.Sub[i]={Back:back,Label:label,Meter:meter}
+		}
+
+		for(let i=0;i<ll.buttons.length;++i){
+			let bt=ll.buttons[i];
+			let ct=view.User.Buttons.User.Sub[i];
+			ct.Back.Element.setAttribute('class',bt.pressed?'gamepad_button_pressed':bt.touched?'gamepad_button_touched':'gamepad_button_released');
+			ct.Meter.Element.setAttribute('value',bt.value);
+			ct.Meter.Element.setAttribute('title',bt.value);
+		}
+		for(let i=0;i<ll.axes.length;++i){
+			let at=ll.axes[i];
+			let ct=view.User.Axes.User.Sub[i];
+
+			ct.Meter.Element.style.opacity=(at>1.0 || at<-1.0)?0.3:1;
+			ct.Meter.Element.setAttribute('value',at);
+			ct.Meter.Element.setAttribute('title',at);
+		}
+	}
+
+	YgEs.Timing.Poll(10,()=>{
+
+		YgEs.GamePadManager.Update();
+		let m=YgEs.GamePadManager.GetRecognizedPlayerCount();
+		let n=YgEs.GamePadManager.GetAvailablePlayerCount();
+		for(let i=0;i<m;++i)update(i,n);
+	});
+
+}
+//--></script></div></body></html>
