@@ -7,6 +7,7 @@
 	- @subpage pg_feat_logger
 - for View
 	- @subpage pg_feat_qht
+	- @subpage pg_feat_gui
 - for I/O
 	- @subpage pg_feat_dir
 	- @subpage pg_feat_file

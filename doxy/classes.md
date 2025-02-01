@@ -12,6 +12,7 @@
 - @subpage pg_class_engine_view_container
 - @subpage pg_class_file_control
 - @subpage pg_class_file_stat
+- @subpage pg_class_gui
 - @subpage pg_class_happening
 - @subpage pg_class_happening_manager
 - @subpage pg_class_happening_manager_view

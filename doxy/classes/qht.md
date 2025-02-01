@@ -65,3 +65,21 @@ Replace(src)
 | Name | Type | Means |
 |------|------|-------|
 | src | @ref QHT_QHTContent | source content |
+
+-----
+## BR() {#QHT_BR}
+
+append br tag to inner contents.  
+
+### Spec
+
+BR():void
+
+-----
+## HR() {#QHT_HR}
+
+append hr tag to inner contents.  
+
+### Spec
+
+HR():void

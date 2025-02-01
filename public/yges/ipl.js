@@ -1940,6 +1940,14 @@ YgEs.ToQHT=(el)=>{
 			qht.Element.innerText='';
 			qht.Append(src);
 		},
+		BR:()=>{
+			if(!qht.Element)return;
+			qht.Element.append(document.createElement('br'));
+		},
+		HR:()=>{
+			if(!qht.Element)return;
+			qht.Element.append(document.createElement('hr'));
+		},
 	}
 	return qht;
 }

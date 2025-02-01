@@ -12,7 +12,6 @@ QHT is very simple web view interface.
 
 ```
 <script src="yges/ipl.js"></script>
-<script src="yges/qht.js"></script>
 ```
 use YgEs
 
