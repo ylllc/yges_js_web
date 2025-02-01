@@ -26,12 +26,11 @@ use YgEs
 ## Select Box
 
 ```
-YgEs.GUI.Select(TargetQHT,{
-	Init:2, // initial selection 
-	Items:[
+YgEs.GUI.Select(TargetQHT,[
 		0,1,2,3,4,5, // simple selections 
 		{Value:999999,Label:'mode...'}, // selection with props 
-	],
+	],{
+	Init:2, // initial selection 
 	OnChanging:(prev,next)=>{
 		// call by selection changing 
 		// return true to allow 

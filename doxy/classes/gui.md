@@ -22,13 +22,14 @@ create a select box
 
 ### Spec
 
-Select(target,opt):@ref pg_class_gui_select
+Select(target,items,opt):@ref pg_class_gui_select
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | target | @ref pg_class_qht | created GUI element put on |
+| items | @ref GUI_Select_ItemDefinition[]? | selections |
 | opt | @ref GUI_Select_SelectOption | optional params |
 
 ### Returns

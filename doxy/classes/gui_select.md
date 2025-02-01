@@ -47,7 +47,6 @@ changing is enabled
 |------|------|-------|
 | Class | string? | class name of select tag |
 | Init | string? | initial selectted key |
-| Items | @ref GUI_Select_ItemDefinition[]? | option values of this instance |
 | OnChanging | @ref GUI_Select_CB_Changing | call by selection changing |
 | User | dict<string,any>? | user definition, share on this instance |
 

@@ -10,7 +10,7 @@ YgEs.GUI={
 	User:{},
 }
 
-YgEs.GUI.Select=(target,opt={})=>{
+YgEs.GUI.Select=(target,items,opt={})=>{
 
 	let attr={}
 	if(opt.Class)attr.class=opt.Class;
@@ -19,10 +19,10 @@ YgEs.GUI.Select=(target,opt={})=>{
 	if(opt.User)view.User=opt.User;
 
 	let cur=null;
-	let items=[]
+	let ent=[]
 
-	if(!opt.Items){}
-	else for(let t of opt.Items){
+	if(!items){}
+	else for(let t of items){
 		let a={}
 		let lab='';
 		let u=null;
@@ -43,7 +43,7 @@ YgEs.GUI.Select=(target,opt={})=>{
 		}
 		let v=YgEs.NewQHT({Target:view,Attr:a,Tag:'option',Sub:[lab]});
 		if(u)v.User=u;
-		items.push({Value:a.value,View:v});
+		ent.push({Value:a.value,View:v});
 	}
 
 	if(opt.OnChanging)view.OnChanging=opt.OnChanging;
@@ -52,7 +52,7 @@ YgEs.GUI.Select=(target,opt={})=>{
 		if(changing)return;
 		changing=true;
 		let sel=view.Element.selectedIndex;
-		let next=items[sel];
+		let next=ent[sel];
 		if(cur!==next.Value){
 			let ok=true;
 			let prev=cur;
