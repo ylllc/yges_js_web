@@ -160,6 +160,35 @@ YgEs.InitFrontend=(moduleplace=null,viewplace=null)=>{
 		saver.Element.click();
 		saver.Remove();
 	}
+	YgEs.LocalLoad=(textmode,filter,cb_done,cb_fail=null,cb_cancel=null)=>{
+		var loader=YgEs.NewQHT({
+			Tag:'input',
+			Attr:{type:'file',accept:filter},
+		});
+		loader.Element.addEventListener('cancel',()=>{
+			if(cb_cancel)cb_cancel();
+			loader.Remove();
+		});
+		loader.Element.addEventListener('change',(ev)=>{
+			if(ev.target.files.length<1){
+				if(cb_cancel)cb_cancel();
+				loader.Remove();
+				return;
+			}
+			let fr=new FileReader();
+			fr.onerror=()=>{
+				if(cb_fail)cb_fail(fr.error);
+				loader.Remove();
+			}
+			fr.onload=()=>{
+				if(cb_done)cb_done(fr.result);
+				loader.Remove();
+			}
+			if(textmode)fr.readAsText(ev.target.files[0]);
+			else fr.readAsArrayBuffer(ev.target.files[0]);
+		});
+		loader.Element.click();
+	}
 }
 
 })();

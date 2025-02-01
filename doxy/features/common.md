@@ -85,6 +85,27 @@ YgEs.LocalSave(JSON.stringify(cfg),'config.json','application/json');
 ```
 
 -----
+## Local Loader
+
+(web only)  
+load a content from local file.  
+
+```
+YgEs.LocalLoad(true,'.json',(data)=>{
+	try{
+		console.dir(JSON.parse(data));
+	}
+	catch(err){
+		console.error(err);
+	}
+},(err)=>{
+	console.error(err);
+},()=>{
+	// on canceled 
+});
+```
+
+-----
 ## Quick Downloader
 
 (web only)  

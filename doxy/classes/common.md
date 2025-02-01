@@ -31,6 +31,17 @@ Error caught in @ref pg_class_happening
 | Src | Error? | error instance |
 
 -----
+# Unions
+
+-----
+## LoadedFile {#Common_LoadedFile}
+
+| Type | Means |
+|------|-------|
+| string | loaded as text |
+| ArrayBuffer | loaded binary buffer |
+
+-----
 # Properties
 
 -----
@@ -334,10 +345,10 @@ call @ref Common_InitFrontend
 DisposeMonitor(label):void
 
 -----
-## Save() {#Common_Save}
+## LocalSave() {#Common_LocalSave}
 
 (web only)  
-savea a content to local file.  
+save a content to local file.  
 
 ### Premises
 
@@ -345,7 +356,7 @@ call @ref Common_InitFrontend
 
 ### Spec
 
-Save(data,name='',type='application/octet-stream'):void  
+LocalSave(data,name='',type='application/octet-stream'):void  
 
 ### Args
 
@@ -354,3 +365,25 @@ Save(data,name='',type='application/octet-stream'):void
 | data | binary | saving source |
 | name | string | default file name |
 | type | string | content type |
+
+-----
+## LocalLoad() {#Common_LocalLoad}
+
+(web only)  
+load a content from local file.  
+
+### Premises
+
+call @ref Common_InitFrontend  
+
+### Spec
+
+LocalLoad(textmode,filter,cb_done,cb_fail=null,cb_cancel=null):void
+
+| Name | Type | Means |
+|------|------|-------|
+| textmode | bool | read as string (or ArrayBuffer) |
+| filter | string | file type filter |
+| cb_done | func<Common_LoadedFile> | loading success |
+| cb_fail | func<Error> | loading failure |
+| cb_cancel | func | loading canceled |
