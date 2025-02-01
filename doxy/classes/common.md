@@ -333,3 +333,24 @@ call @ref Common_InitFrontend
 
 DisposeMonitor(label):void
 
+-----
+## Save() {#Common_Save}
+
+(web only)  
+savea a content to local file.  
+
+### Premises
+
+call @ref Common_InitFrontend  
+
+### Spec
+
+Save(data,name='',type='application/octet-stream'):void  
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| data | binary | saving source |
+| name | string | default file name |
+| type | string | content type |
