@@ -152,7 +152,7 @@ YgEs.InitFrontend=(moduleplace=null,viewplace=null)=>{
 		monitor=null;
 	}
 
-	YgEs.Save=(data,name='',type='application/octet-stream')=>{
+	YgEs.LocalSave=(data,name='',type='application/octet-stream')=>{
 		let saver=YgEs.NewQHT({Tag:'a'});
 		var blob=new Blob([data],{type:type});
 		saver.Element.href=URL.createObjectURL(blob);
