@@ -26,7 +26,10 @@ CB_Changing(prev,next):bool
 
 ### Returns
 
-changing is enabled  
+| Value | Means |
+|-------|-------|
+| true | allow changing |
+| false | deny changing |
 
 -----
 # Structures

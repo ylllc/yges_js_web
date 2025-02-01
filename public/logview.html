@@ -26,6 +26,7 @@ Repositories:
 </footer>
 <div id=modules>
 <script src="yges/ipl.js"></script>
+<script src="yges/gui.js"></script>
 </div>
 <script><!--
 let modules=YgEs.ToQHT(document.getElementById('modules'));
@@ -52,32 +53,38 @@ async function ipl_ready(){
 
 	let ctrlpnl=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_logview_ctrlpnl'}});
 
-	let btn_show=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_toggle_'+(log_show?'on':'off')},Sub:['Show']});
-	btn_show.Element.onclick=()=>{
-		log_show=!log_show;
-		btn_show.Element.setAttribute('class','yges_logview_toggle_'+(log_show?'on':'off'));
-		if(log_show)logview.Show();
-		else logview.Hide();
-	}
-
-	let btn_save=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_button'},Sub:['Save']});
-	btn_save.Element.onclick=()=>{
-		YgEs.Save(logview.GetText(),'log.txt','text/plain');
-	}
-
-	let btn_copy=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_button'},Sub:['Copy']});
-	btn_copy.Element.onclick=()=>{
-		if(!Navigator.clipboard){
-			log.Fatal('Clipboard not available');
-			return;
-		}
-		Navigator.clipboard.writeText(logview.GetText());
-	}
-
-	let btn_clear=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_button'},Sub:['Clear']});
-	btn_clear.Element.onclick=()=>{
-		logview.Clear();
-	}
+	YgEs.GUI.Toggle(ctrlpnl,'Show',true,{
+		OffClass:'yges_logview_toggle_off',
+		OnClass:'yges_logview_toggle_on',
+		OnChanging:(side)=>{
+			log_show=side;
+			if(side)logview.Show();
+			else logview.Hide();
+			return true;
+		},
+	});
+	YgEs.GUI.Button(ctrlpnl,'Save',{
+		Class:'yges_logview_button',
+		OnClick:()=>{
+			YgEs.Save(logview.GetText(),'log.txt','text/plain');
+		},
+	});
+	YgEs.GUI.Button(ctrlpnl,'Copy',{
+		Class:'yges_logview_button',
+		OnClick:()=>{
+			if(!Navigator.clipboard){
+				log.Fatal('Clipboard not available');
+				return;
+			}
+			Navigator.clipboard.writeText(logview.GetText());
+		},
+	});
+	YgEs.GUI.Button(ctrlpnl,'Clear',{
+		Class:'yges_logview_button',
+		OnClick:()=>{
+			logview.Clear();
+		},
+	});
 
 	log.Tick('TICK Log');
 	log.Trace('TRACE Log');

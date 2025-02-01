@@ -23,6 +23,33 @@ use YgEs
 # How to Use
 
 -----
+## Button
+
+```
+YgEs.GUI.Button(TargetQHT,'ButtonLabel',{
+	OnClick:()=>{
+		// call by clicked 
+	},
+});
+```
+
+-----
+## Toggle
+
+
+```
+YgEs.GUI.Toggle(ctrlpnl,'ButtonLabel',true,{
+	OffClass:'ButtonClassForToggleOff',
+	OnClass:'ButtonClassForToggleOn',
+	OnChanging:(side)=>{
+		// call by clicked 
+		// return true to allow switching 
+		return true;
+	},
+});
+```
+
+-----
 ## Select Box
 
 ```

@@ -16,6 +16,49 @@
 # Methods
 
 -----
+## Button() {#GUI_Button}
+
+create a button 
+
+### Spec
+
+Button(target,label,opt):@ref pg_class_gui_button
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| target | @ref pg_class_qht | created GUI element put on |
+| label | string | show on button |
+| opt | @ref GUI_Button_Option | optional params |
+
+### Returns
+
+created instance  
+
+-----
+## Toggle() {#GUI_Toggle}
+
+create a toggle button 
+
+### Spec
+
+Toggle(target,label,init,opt):@ref pg_class_gui_toggle
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| target | @ref pg_class_qht | created GUI element put on |
+| label | string | show on button |
+| init | bool | initial side |
+| opt | @ref GUI_Toggle_Option | optional params |
+
+### Returns
+
+created instance  
+
+-----
 ## Select() {#GUI_Select}
 
 create a select box 
