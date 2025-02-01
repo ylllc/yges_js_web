@@ -74,6 +74,17 @@ s = YgEs.Inspect([undefined]); // [undefined]
 ```
 
 -----
+## Quick Saver
+
+(web only)  
+save a content to local file.  
+
+```
+var cfg={Test:-1}
+YgEs.Save(JSON.stringify(cfg),'config.json','application/json');
+```
+
+-----
 ## Quick Downloader
 
 (web only)  

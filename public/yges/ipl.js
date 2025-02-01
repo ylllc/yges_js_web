@@ -151,6 +151,15 @@ YgEs.InitFrontend=(moduleplace=null,viewplace=null)=>{
 		monitor.Dispose();
 		monitor=null;
 	}
+
+	YgEs.Save=(data,name='',type='application/octet-stream')=>{
+		let saver=YgEs.NewQHT({Tag:'a'});
+		var blob=new Blob([data],{type:type});
+		saver.Element.href=URL.createObjectURL(blob);
+		if(name)saver.Element.download=name;
+		saver.Element.click();
+		saver.Remove();
+	}
 }
 
 })();

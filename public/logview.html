@@ -62,9 +62,7 @@ async function ipl_ready(){
 
 	let btn_save=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_button'},Sub:['Save']});
 	btn_save.Element.onclick=()=>{
-		var saver=YgEs.CreateSaver();
-		saver.save(logview.GetText(),'log.txt','text/plain');
-		saver.Remove();
+		YgEs.Save(logview.GetText(),'log.txt','text/plain');
 	}
 
 	let btn_copy=YgEs.NewQHT({Target:ctrlpnl,Tag:'Button',Attr:{class:'yges_logview_button'},Sub:['Copy']});
@@ -72,7 +70,6 @@ async function ipl_ready(){
 		if(!Navigator.clipboard){
 			log.Fatal('Clipboard not available');
 			return;
-
 		}
 		Navigator.clipboard.writeText(logview.GetText());
 	}
