@@ -1975,17 +1975,6 @@ YgEs.NewQHT=(prm)=>{
 	return YgEs.ToQHT(el);
 }
 
-YgEs.CreateSaver=()=>{
-	let saver=YgEs.NewQHT({Tag:'a'});
-	saver.save=(data,name='',type='application/octet-stream')=>{
-		var blob=new Blob([data],{type:type});
-		saver.Element.href=URL.createObjectURL(blob);
-		if(name)saver.Element.download=name;
-		saver.Element.click();
-	}
-	return saver;
-}
-
 })();
 
 // Low Level HTTP for web --------------- //
