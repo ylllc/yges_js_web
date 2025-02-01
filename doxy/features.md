@@ -11,6 +11,7 @@
 - for I/O
 	- @subpage pg_feat_dir
 	- @subpage pg_feat_file
+	- @subpage pg_feat_gamepad
 - Framework
 	- @subpage pg_feat_happening
 	- @subpage pg_feat_timing

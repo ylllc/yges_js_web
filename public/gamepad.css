@@ -1,0 +1,43 @@
+
+.gamepad_none{
+	color:#484;
+}
+.gamepad_connected{
+	color:#fff;
+}
+.gamepad_invalid{
+	color:#844;
+}
+.gamepad_released{
+	color:#484;
+}
+
+.gamepad_button_released{
+	display:inline-block;
+	border-style:dotted;
+	margin:0.2em;
+	padding:0.3em;
+}
+.gamepad_button_touched{
+	display:inline-block;
+	border-style:dashed;
+	margin:0.2em;
+	padding:0.3em;
+}
+.gamepad_button_pressed{
+	display:inline-block;
+	border-style:solid;
+	margin:0.2em;
+	padding:0.3em;
+}
+.gamepad_axis{
+	display:inline-block;
+	border-style:dotted;
+	margin:0.2em;
+	padding:0.3em;
+}
+.gamepad_meter_label{
+	padding-right:0.3em;
+}
+.gamepad_meter_gauge{
+}
