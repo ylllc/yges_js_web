@@ -26,7 +26,6 @@ Repositories:
 </footer>
 <div id=modules>
 <script src="yges/ipl.js"></script>
-<script src="yges/gui.js"></script>
 </div>
 <script><!--
 let modules=YgEs.ToQHT(document.getElementById('modules'));
@@ -42,6 +41,7 @@ async function ipl_ready(){
 
 	// resources 
 	YgEs.LoadCSS('logview.css');
+	YgEs.LoadJS('yges/gui.js');
 	YgEs.LoadJS('yges/logger_view.js');
 	await YgEs.LoadSync().ToPromise();
 	YgEs.DisposeMonitor();
