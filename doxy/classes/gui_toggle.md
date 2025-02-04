@@ -53,3 +53,29 @@ CB_Changing(side):bool
 | OnChanging | @ref GUI_Toggle_CB_Changing | call by click |
 | User | dict<string,any>? | user definition |
 
+-----
+# Methods
+
+-----
+## GetSide() {#GUI_Toggle_GetSide}
+
+### Spec
+
+GetSide():bool
+
+### Returns
+
+current switch condition  
+
+-----
+## SetSide() {#GUI_Toggle_SetSide}
+
+### Spec
+
+SetSide(val):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | bool | switch condition |

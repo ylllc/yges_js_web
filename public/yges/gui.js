@@ -47,6 +47,12 @@ YgEs.GUI.Toggle=(target,label,init,opt={})=>{
 			}
 		},
 	});
+	view.GetSide=()=>cur;
+	view.SetSide=(val)=>{
+		cur=val;
+		setStyle();
+	}
+
 	setStyle();
 	if(opt.OnChanging)view.OnChanging=opt.OnChanging;
 	if(opt.User)view.User=opt.User;
@@ -105,6 +111,16 @@ YgEs.GUI.Select=(target,items,opt={})=>{
 			if(ok)cur=next.Value;
 			else view.Element.value=prev;
 		}
+		changing=false;
+	}
+
+	view.GetItem=(val)=>ent[val];
+	view.GetSelected=()=>cur;
+	view.Select=(val)=>{
+		if(cur===val)return;
+		changing=true;
+		view.Element.value=val;
+		cur=val;
 		changing=false;
 	}
 

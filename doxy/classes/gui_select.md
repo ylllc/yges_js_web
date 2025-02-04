@@ -54,6 +54,14 @@ CB_Changing(prev,next):bool
 | User | dict<string,any>? | user definition, share on this instance |
 
 -----
+## SelectItem {#GUI_Select_SelectItem}
+
+| Name | Type | Means |
+|------|------|-------|
+| Value | string | selection value |
+| View | @ref pg_class_qht | selection view |
+
+-----
 # Unions
 
 -----
@@ -74,3 +82,48 @@ CB_Changing(prev,next):bool
 | OnChanging | @ref GUI_Select_CB_Changing | call by selection changing |
 | User | dict<string,any>? | user definition |
 
+-----
+# Methods
+
+-----
+## GetItem() {#GUI_Select_GetItem}
+
+### Spec
+
+GetItem(val):@ref GUI_Select_SelectItem?
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | string | selectable value |
+
+### Returns
+
+selection item (or null)
+
+-----
+## GetSelected() {#GUI_Select_GetSelected}
+
+### Spec
+
+GetSelected():@ref GUI_Select_SelectItem?
+
+### Returns
+
+curent selecting item (or null)
+
+-----
+## Select() {#GUI_Select_Select}
+
+select an item  
+
+### Spec
+
+Select(val):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | string | selectable value |
