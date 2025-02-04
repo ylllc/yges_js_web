@@ -17,6 +17,8 @@
 - @subpage pg_class_gui
 - @subpage pg_class_gui_button
 - @subpage pg_class_gui_dialog
+- @subpage pg_class_gui_popup
+- @subpage pg_class_gui_popupmenu
 - @subpage pg_class_gui_radio
 - @subpage pg_class_gui_select
 - @subpage pg_class_gui_toggle

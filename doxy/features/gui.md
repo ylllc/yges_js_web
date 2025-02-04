@@ -108,6 +108,45 @@ dialog.Close();
 ```
 
 -----
+## PopUp
+
+```
+const popup=YgEs.GUI.PopUp(TargetQHT,{
+	Sub:[
+			:
+		PopUp Contents
+			:
+	]
+});
+
+	:
+	:
+popup.Show();
+	:
+	:
+popup.Hide();
+
+```
+
+-----
+## PopUp Menu
+
+```
+const popup=YgEs.GUI.PopUpManu(TargetQHT,{
+	{Label:'Item1',OnAction:()=>{ /* call by click Item1 */ }},
+	{Tag:'hr'}, // can insert QHT  
+	{Label:'Item2',OnAction:()=>{ /* call by click Item2 */ }},
+});
+	:
+	:
+popup.Show();
+	:
+	:
+popup.Hide();
+
+```
+
+-----
 # Class Reference
 
 @sa @ref pg_class_gui @n

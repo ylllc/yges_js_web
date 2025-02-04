@@ -116,3 +116,36 @@ Dialog(target,modal,opt={}):@ref pg_class_gui_dialog
 | target | @ref pg_class_qht | created GUI element put on |
 | modal | bool | exclusive controls during opening |
 | opt | @ref GUI_Dialog_Option | optional params |
+
+-----
+## PopUp() {#GUI_PopUp}
+
+create a popup window  
+
+### Spec
+
+PopUp(target,opt={}):@ref pg_class_gui_popup
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| target | @ref pg_class_qht | created GUI element put on |
+| opt | @ref GUI_PopUp_Option | optional params |
+
+-----
+## PopUpMenu() {#GUI_PopUpMenu}
+
+create a popup menu window  
+
+### Spec
+
+PopUpMenu(target,item,opt={}):@ref pg_class_gui_popupmenu
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| target | @ref pg_class_qht | created GUI element put on |
+| items | @ref GUI_PopUpMenu_ItemDefinition[]? | button definitions |
+| opt | @ref GUI_PopUpMenu_Option | optional params |

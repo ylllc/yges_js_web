@@ -129,3 +129,19 @@ Select(val):void
 | Name | Type | Means |
 |------|------|-------|
 | val | string | selectable value |
+
+-----
+## SetEnabled() {#GUI_Radio_SetEnabled}
+
+set enablity to a selection  
+
+### Spec
+
+SetEnabled(val,side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | string | selectable value |
+| side | bool | enablity |

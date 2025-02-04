@@ -129,13 +129,18 @@ YgEs.GUI.Radio=(target,items,opt={})=>{
 
 	if(opt.OnChanging)view.OnChanging=opt.OnChanging;
 
-	view.GetItem=(key)=>ent[key];
+	view.GetItem=(val)=>ent[val];
 	view.GetSelected=()=>cur;
 	view.Select=(val)=>{
 		if(cur===val)return;
 		if(ent[cur])ent[cur].View.SetSide(false);
 		if(ent[val])ent[val].View.SetSide(true);
 		cur=val;
+	}
+	view.SetEnabled=(val,side)=>{
+		let item=ent[val]
+		if(!item)return;
+		item.View.Element.disabled=!side;
 	}
 
 	return view;
@@ -224,5 +229,59 @@ YgEs.GUI.Dialog=(target,modal,opt={})=>{
 	}
 	return view;
 }
+
+YgEs.GUI.PopUp=(target,opt={})=>{
+
+	let a={}
+	if(opt.Class)a.class=opt.Class;
+	let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:a,Style:{display:'none'},Sub:opt.Sub??[]});
+	if(opt.User)view.User=opt.User;
+
+	view.Show=()=>{
+		view.Element.style.display='block';
+	}
+	view.Hide=()=>{
+		view.Element.style.display='none';
+	}
+	return view;
+}
+
+YgEs.GUI.PopUpMenu=(target,items,opt={})=>{
+
+	let baseopt={}
+	if(opt.WindowClass)baseopt.Class=opt.WindowClass;
+	if(opt.User)baseopt.User=opt.User;
+	let view=YgEs.GUI.PopUp(target,baseopt);
+	view.Items=[]
+	let ref={}
+
+	for(let it of items){
+		if(it.Tag){
+			view.Append(YgEs.NewQHT(it));
+			continue;
+		}
+
+		let a={}
+		if(opt.ItemClass)a.class=opt.ItemClass;
+		let onact=it.OnAction;
+		let key=it.Key??it.Label;
+		let view2=YgEs.NewQHT({Target:view,Tag:'button',Attr:a,Sub:[it.Label]});
+		view2.Element.onclick=()=>{
+			if(onact)onact();
+		}
+		view.Items.push(view2);
+		ref[key]=view2;
+	}
+
+	view.GetItem=(key)=>ref[key];
+	view.SetEnabled=(key,side)=>{
+		let item=ref[key]
+		if(!item)return;
+		item.Element.disabled=!side;
+	}
+
+	return view
+}
+
 
 })();
