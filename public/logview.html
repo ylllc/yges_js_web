@@ -72,11 +72,11 @@ async function ipl_ready(){
 	YgEs.GUI.Button(ctrlpnl,'Copy',{
 		Class:'yges_logview_button',
 		OnClick:()=>{
-			if(!Navigator.clipboard){
+			if(!navigator.clipboard){
 				log.Fatal('Clipboard not available');
 				return;
 			}
-			Navigator.clipboard.writeText(logview.GetText());
+			navigator.clipboard.writeText(logview.GetText());
 		},
 	});
 	YgEs.GUI.Button(ctrlpnl,'Clear',{
