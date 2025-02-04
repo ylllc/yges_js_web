@@ -8,11 +8,11 @@
 <body onload="ipl_ready()"><div class=screen>
 <header>
 <a href="./">Yggdrasil Essense</a> / 
-Object Editor Example
+Object Editor
 <hr>
 </header>
 <main>
-<h1 class="pagetitle">Object Editor Example</h1>
+<h1 class="pagetitle">Object Editor</h1>
 <noscript><div class="warning">(JavaScript required)</div></noscript>
 <div id=mainboard class=main></div>
 </main>
@@ -34,6 +34,8 @@ let modules=YgEs.ToQHT(document.getElementById('modules'));
 let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
 mainboard.Clear();
 let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
+
+const Indent4JSON="\t";
 
 async function ipl_ready(){
 
@@ -271,7 +273,7 @@ async function ipl_ready(){
 	YgEs.GUI.Button(mainboard,'Save',{
 		Class:'yges_objview_menu_button',
 		OnClick:()=>{
-			YgEs.LocalSave(JSON.stringify(inspector.GetValue()),'TestObj.json','application/json');
+			YgEs.LocalSave(JSON.stringify(inspector.GetValue(),null,Indent4JSON),'TestObj.json','application/json');
 		},
 	});
 	YgEs.GUI.Button(mainboard,'Load',{
@@ -326,7 +328,7 @@ async function ipl_ready(){
 			console.error('no focus for Extract');
 		}
 		else{
-			YgEs.LocalSave(YgEs.Inspect(focus.GetValue()));
+			YgEs.LocalSave(JSON.stringify(focus.GetValue(),null,Indent4JSON));
 		}
 	}}
 	let act_append={Label:'Append',OnAction:()=>{
