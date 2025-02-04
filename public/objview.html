@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset="utf-8">
+	<title>Yggdrasil Essense</title>
+	<link href="main.css" rel="stylesheet">
+</head>
+<body onload="ipl_ready()"><div class=screen>
+<header>
+<a href="./">Yggdrasil Essense</a> / 
+Object Editor Example
+<hr>
+</header>
+<main>
+<h1 class="pagetitle">Object Editor Example</h1>
+<noscript><div class="warning">(JavaScript required)</div></noscript>
+<div id=mainboard class=main></div>
+</main>
+<footer>
+<hr>
+&copy; 2025 Yggdrasil Leaves, LLC.<br>
+Repositories: 
+<a target="_blank" href="https://github.com/ylllc/yges_js_web">[web]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_node">[Node.js]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_deno">[Deno]</a>
+</footer>
+<div id=modules>
+<script src="yges/ipl.js"></script>
+<script src="yges/gui.js"></script>
+<script src="yges/objview.js"></script>
+</div>
+<script><!--
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
+mainboard.Clear();
+let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
+
+async function ipl_ready(){
+
+	ipl_loading.Remove();
+
+	YgEs.InitFrontend(modules,mainboard);
+
+	// resources 
+	YgEs.LoadCSS('objview.css');
+	await YgEs.LoadSync().ToPromise();
+	YgEs.DisposeMonitor();
+
+	// focused view 
+	let focus=null;
+	// active popup 
+	let popup=null;
+
+	// reset dialog 
+	const RESETTYPE=Object.freeze(YgEs.CreateEnum(['PROP','ARRAY']));
+	let dlg_reset_type=YgEs.GUI.Radio(null,[
+			{Value:RESETTYPE.PROP,Label:'Prop'},
+			{Value:RESETTYPE.ARRAY,Label:'Array'},
+		],{
+		OffClass:'yges_objview_toggle_off',
+		OnClass:'yges_objview_toggle_on',
+	});
+	let dlg_reset=YgEs.GUI.Dialog(mainboard,true,{
+		Class:'yges_objview_dialog',
+		Sub:[
+			YgEs.NewQHT({Tag:'div',Sub:['Choose a Structure Type']}),
+			dlg_reset_type,
+			YgEs.NewQHT({Tag:'div',Style:{'color':'#f64'},Sub:['** All contents are cleared **']}),
+			YgEs.NewQHT({Tag:'div',Sub:['Are you sure?']}),
+			YgEs.NewQHT({Tag:'div',Sub:[
+				YgEs.GUI.Button(null,'Execute',{
+					Class:'yges_objview_menu_button',
+					OnClick:()=>{
+						// reset inspector 
+						setup((dlg_reset_type.GetSelected()==RESETTYPE.ARRAY)?[]:{});
+						dlg_reset.Close();
+					},
+				}),
+				YgEs.NewQHT({Tag:'span',Style:{'padding-left':'5em'}}),
+				YgEs.GUI.Button(null,'Cancel',{
+					Class:'yges_objview_menu_button',
+					OnClick:()=>{
+						dlg_reset.Close();
+					},
+				}),
+			]}),
+		],
+	});
+
+	// edit dialog 
+	const VALTYPE=Object.freeze(YgEs.CreateEnum(['UNDEFINED','NULL','FALSE','TRUE','NAN','INF_P','INF_M','NUMBER','STRING','TEXT','JSON']));
+	const EDITTYPE=Object.freeze(YgEs.CreateEnum(['NONE','STRING','TEXT']));
+	const EDITACT=Object.freeze(YgEs.CreateEnum(['NOP','REPLACE','RENAME','REGISTER','APPEND','INSERT']));
+	let dlg_edit_action=EDITACT.NOP;
+	let dlg_edit_type_selectable=false;
+	let dlg_edit_type=YgEs.GUI.Radio(null,[
+			{Value:VALTYPE.UNDEFINED,Label:'undefined',User:{EditType:EDITTYPE.NONE}},
+			{Value:VALTYPE.NULL,Label:'null',User:{EditType:EDITTYPE.NONE}},
+			{Value:VALTYPE.FALSE,Label:'false',User:{EditType:EDITTYPE.NONE}},
+			{Value:VALTYPE.TRUE,Label:'true',User:{EditType:EDITTYPE.NONE}},
+			{Value:VALTYPE.NAN,Label:'NaN',User:{EditType:EDITTYPE.NONE}},
+			{Tag:'br'},
+			{Value:VALTYPE.INF_P,Label:'+Inf',User:{EditType:EDITTYPE.NONE}},
+			{Value:VALTYPE.INF_M,Label:'-Inf',User:{EditType:EDITTYPE.NONE}},
+			{Value:VALTYPE.NUMBER,Label:'number',User:{EditType:EDITTYPE.STRING}},
+			{Value:VALTYPE.STRING,Label:'string',User:{EditType:EDITTYPE.STRING}},
+			{Value:VALTYPE.TEXT,Label:'text',User:{EditType:EDITTYPE.TEXT}},
+			{Value:VALTYPE.JSON,Label:'JSON',User:{EditType:EDITTYPE.TEXT}},
+		],{
+		OffClass:'yges_objview_toggle_off',
+		OnClass:'yges_objview_toggle_on',
+		OnChanging:(prev,next)=>{
+			let pet=dlg_edit_type.GetItem(prev).View.User.EditType;
+			let net=dlg_edit_type.GetItem(next).View.User.EditType;
+			if(pet==net)return true;
+			switch(net){
+				case EDITTYPE.NONE: // fixed value 
+				dlg_edit_string.Element.style.display='none';
+				dlg_edit_text.Element.style.display='none';
+				break;
+
+				case EDITTYPE.STRING: // from input tag 
+				dlg_edit_string.Element.style.display='inline-block';
+				dlg_edit_text.Element.style.display='none';
+				dlg_edit_string.Element.value=dlg_edit_text.Element.value;
+				break;
+
+				case EDITTYPE.TEXT: // from textarea tag 
+				dlg_edit_string.Element.style.display='none';
+				dlg_edit_text.Element.style.display='inline-block';
+				dlg_edit_text.Element.value=dlg_edit_string.Element.value;
+				break;
+			}
+			return true;
+		},
+	});
+	// for editing EDITTYPE.STRING type 
+	let dlg_edit_string=YgEs.NewQHT({Tag:'input',Attr:{type:'text'},Style:{width:'70%',height:'1.2em','font-size':'100%'}});
+	// for editing EDITTYPE.TEXT type 
+	let dlg_edit_text=YgEs.NewQHT({Tag:'textarea',Style:{width:'70%',height:'4em','font-size':'100%'}});
+	// detecting value type 
+	let dlg_edit_detect=(src)=>{
+		if(src===undefined)return VALTYPE.UNDEFINED;
+		if(src===null)return VALTYPE.NULL;
+		if(src===false)return VALTYPE.FALSE;
+		if(src===true)return VALTYPE.TRUE;
+		if(src===Infinity)return VALTYPE.INF_P;
+		if(src===-Infinity)return VALTYPE.INF_M;
+		if(YgEs.Util.IsJustNaN(src))return VALTYPE.NAN;
+		switch(typeof src){
+			case 'number': return VALTYPE.NUMBER;
+
+			case 'string':
+			// editing short single line string in input tag, otherwize textarea 
+			if(src.length>inspector.GetStringBorder())return VALTYPE.TEXT;
+			if(src.indexOf("\n")>=0)return VALTYPE.TEXT;
+			return VALTYPE.STRING;
+
+			default:
+			// editing poly value as JSON 
+			return VALTYPE.JSON;
+		}
+	}
+	// settings for editing 
+	let dlg_edit_prepare=(selectable,action,src)=>{
+		dlg_edit_action=action;
+
+		let vt=dlg_edit_detect(src);
+		dlg_edit_type.Select(vt);
+
+		// editing key cannot select types 
+		for(let vtk in VALTYPE){
+			let vtv=VALTYPE[vtk];
+			dlg_edit_type.SetEnabled(vtv,selectable || vtv==vt);
+		}
+
+		// initialize editing forms 
+		let et=dlg_edit_type.GetItem(vt).View.User.EditType;
+		switch(et){
+			case EDITTYPE.NONE:
+			dlg_edit_string.Element.style.display='none';
+			dlg_edit_text.Element.style.display='none';
+			dlg_edit_string.Element.value=dlg_edit_text.Element.value='';
+			break;
+
+			case EDITTYPE.STRING:
+			dlg_edit_string.Element.style.display='inline-block';
+			dlg_edit_text.Element.style.display='none';
+			dlg_edit_string.Element.value=dlg_edit_text.Element.value=YgEs.JustString(src);
+			break;
+
+			case EDITTYPE.TEXT:
+			dlg_edit_string.Element.style.display='none';
+			dlg_edit_text.Element.style.display='inline-block';
+			dlg_edit_string.Element.value=dlg_edit_text.Element.value=(vt==VALTYPE.JSON)?JSON.stringify(src):YgEs.JustString(src);
+			break;
+		}
+	}
+	let dlg_edit=YgEs.GUI.Dialog(mainboard,true,{
+		Class:'yges_objview_dialog',
+		Sub:[
+			dlg_edit_type,
+			YgEs.NewQHT({Tag:'div',Style:{height:'0.5em'}}),
+			dlg_edit_string,
+			dlg_edit_text,
+			YgEs.NewQHT({Tag:'div',Style:{height:'2em'}}),
+			YgEs.NewQHT({Tag:'div',Sub:[
+				YgEs.GUI.Button(null,'Apply',{
+					Class:'yges_objview_menu_button',
+					OnClick:()=>{
+						let v=undefined;
+						try{
+							// decode a value 
+							// undecodables make an Error 
+							switch(dlg_edit_type.GetSelected()){
+								case VALTYPE.NULL: v=null; break;
+								case VALTYPE.FALSE: v=false; break;
+								case VALTYPE.TRUE: v=true; break;
+								case VALTYPE.NAN: v=NaN; break;
+								case VALTYPE.INF_P: v=Infinity; break;
+								case VALTYPE.INF_M: v=-Infinity; break;
+								case VALTYPE.NUMBER:
+								v=parseFloat(dlg_edit_string.Element.value);
+								if(YgEs.Util.IsJustNaN(v))throw Error('cannot parse to number: '+dlg_edit_string.Element.value);
+								break;
+								case VALTYPE.STRING:
+								v=dlg_edit_string.Element.value;
+								break;
+								case VALTYPE.TEXT:
+								v=dlg_edit_text.Element.value;
+								break;
+								case VALTYPE.JSON:
+								v=JSON.parse(dlg_edit_text.Element.value);
+								break;
+							}
+
+							// apply by action type 
+							switch(dlg_edit_action){
+								case EDITACT.REPLACE: focus.Replace(v); break;
+								case EDITACT.RENAME: focus.Rename(v); break;
+								case EDITACT.REGISTER: focus.Register(v); break;
+								case EDITACT.APPEND: focus.Push(v); break;
+								case EDITACT.INSERT: focus.Insert(v); break;
+							}
+						}
+						catch(e){
+							console.error(e);
+						}
+						dlg_edit.Close();
+					},
+				}),
+				YgEs.NewQHT({Tag:'span',Style:{'padding-left':'5em'}}),
+				YgEs.GUI.Button(null,'Cancel',{
+					Class:'yges_objview_menu_button',
+					OnClick:()=>{
+						dlg_edit.Close();
+					},
+				}),
+			]}),
+		],
+	});
+
+	// toolbar 
+	let toolbar=YgEs.NewQHT({Target:mainboard,Tag:'div'});
+	YgEs.GUI.Button(mainboard,'Reset',{
+		Class:'yges_objview_menu_button',
+		OnClick:()=>{
+			act_reset.OnAction();
+		},
+	});
+	YgEs.GUI.Button(mainboard,'Save',{
+		Class:'yges_objview_menu_button',
+		OnClick:()=>{
+			YgEs.LocalSave(JSON.stringify(inspector.GetValue()),'TestObj.json','application/json');
+		},
+	});
+	YgEs.GUI.Button(mainboard,'Load',{
+		Class:'yges_objview_menu_button',
+		OnClick:()=>{
+			YgEs.LocalLoad(true,'.json',(data)=>{
+				try{
+					setup(JSON.parse(data));
+				}
+				catch(err){
+					// parse error 
+					console.error(err);
+				}
+			},(err)=>{
+				// load error 
+				console.error(err);
+			});
+		},
+	});
+
+	let closePopUp=()=>{
+		if(!popup)return;
+		popup.Hide();
+		popup=null;
+	}
+
+	// context menu by view type 
+	let opt_popup={
+		WindowClass:'yges_objview_popup',
+		ItemClass:'yges_objview_popupitem',
+	}
+	let act_reset={Label:'Reset',OnAction:()=>{
+		closePopUp();
+		dlg_reset_type.Select(Array.isArray(inspector.GetValue())?RESETTYPE.ARRAY:RESETTYPE.PROP);
+		dlg_reset.Open();
+	}}
+	let act_copy={Label:'Copy',OnAction:()=>{
+		closePopUp();
+		if(!focus){
+			console.error('no focus for Copy');
+		}
+		else if(!navigator.clipboard){
+			console.error('Clipboard not available');
+		}
+		else{
+			navigator.clipboard.writeText(YgEs.Inspect(focus.GetValue()));
+		}
+	}}
+	let act_extract={Label:'Extract',OnAction:()=>{
+		closePopUp();
+		if(!focus){
+			console.error('no focus for Extract');
+		}
+		else{
+			YgEs.LocalSave(YgEs.Inspect(focus.GetValue()));
+		}
+	}}
+	let act_append={Label:'Append',OnAction:()=>{
+		closePopUp();
+		if(!focus){
+			console.error('no focus for Append');
+		}
+		else{
+			dlg_edit_prepare(true,EDITACT.APPEND,undefined);
+			dlg_edit.Open();
+		}
+	}}
+	let act_register={Label:'Register',OnAction:()=>{
+		closePopUp();
+		if(!focus){
+			console.error('no focus for Register');
+		}
+		else{
+			dlg_edit_prepare(false,EDITACT.REGISTER,'');
+			dlg_edit.Open();
+		}
+	}}
+	let act_insert={Label:'Insert',OnAction:()=>{
+		closePopUp();
+		if(!focus){
+			console.error('no focus for Insert');
+		}
+		else{
+			dlg_edit_prepare(true,EDITACT.INSERT,undefined);
+			dlg_edit.Open();
+		}
+	}}
+	let act_editkey={Label:'Edit',OnAction:()=>{
+		closePopUp();
+		if(!focus){
+			console.error('no focus for Edit');
+		}
+		else{
+			dlg_edit_prepare(false,EDITACT.RENAME,focus.GetKey());
+			dlg_edit.Open();
+		}
+	}}
+	let act_editval={Label:'Edit',OnAction:()=>{
+		closePopUp();
+		if(!focus){
+			console.error('no focus for Edit');
+		}
+		else{
+			dlg_edit_prepare(true,EDITACT.REPLACE,focus.GetValue());
+			dlg_edit.Open();
+		}
+	}}
+	let act_remove={Label:'Remove',OnAction:()=>{
+		closePopUp();
+		if(!focus){
+			console.error('no focus for Remove');
+		}
+		else{
+			focus.Remove();
+			focus=null;
+		}
+	}}
+	let ctxmenues=[
+		// for FRAME 
+		YgEs.GUI.PopUpMenu(mainboard,[act_copy,act_extract,act_reset],opt_popup),
+		// for VALUE 
+		YgEs.GUI.PopUpMenu(mainboard,[act_copy,act_extract,act_editval,act_insert,act_remove],opt_popup),
+		// for TEXT 
+		YgEs.GUI.PopUpMenu(mainboard,[act_copy,act_extract,act_editval,act_insert,act_remove],opt_popup),
+		// for PAIR 
+		YgEs.GUI.PopUpMenu(mainboard,[act_copy,act_extract,act_editkey,act_insert,act_remove],opt_popup),
+		// for PROP 
+		YgEs.GUI.PopUpMenu(mainboard,[act_copy,act_extract,act_editval,act_register,act_insert,act_remove],opt_popup),
+		// for ARRAY 
+		YgEs.GUI.PopUpMenu(mainboard,[act_copy,act_extract,act_editval,act_append,act_insert,act_remove],opt_popup),
+	]
+	document.addEventListener('contextmenu',(ev)=>{
+		if(!focus)return;
+
+		closePopUp();
+
+		// dont open default context menu 
+		ev.preventDefault();
+
+		// select menu by focused view type 
+		let vt=focus.GetViewType();
+		popup=ctxmenues[vt]
+		let parent=focus.GetParent();
+
+		if(parent){
+			// don't Remove top level structure 
+			popup.SetEnabled('Remove',parent.GetViewType()!=YgEs.ObjView.TYPE.FRAME);
+			// Insert is for array only 
+			popup.SetEnabled('Insert',parent.GetViewType()==YgEs.ObjView.TYPE.ARRAY);
+		}
+
+		// show menu at cursor position 
+		popup.Element.style.position='absolute';
+		popup.Element.style.left=ev.clientX+'px';
+		popup.Element.style.top=ev.clientY+'px';
+		popup.Show();
+	});
+
+	// optional settings 
+	let opt_inspector={
+		OnActive:(view)=>{
+			closePopUp();
+			focus=view;
+			// indicate focus by background color 
+			view.Element.style['background-color']='#460';
+		},
+		OnDeactive:(view)=>{
+			closePopUp();
+			focus=null;
+			view.Element.style['background-color']='inherit';
+		},
+	}
+
+	// setup proc 
+	let inspector=null;
+	let setup=(src)=>{
+		if(inspector)inspector.Remove();
+		inspector=YgEs.ObjView.SetUp(mainboard,src,opt_inspector);
+	}
+
+	// setup with example source 
+	let src={
+		A:1,
+		B:-1.732050807568877,
+		C:'123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
+		D:[],
+		E:[-1,-2,{o:true,x:false,0:null,'':undefined},+Infinity,-Infinity,NaN],
+		_:"ABC\nXYZ"
+	}
+	for(let i=0;i<1000;++i){
+		src.D.push({id:i,val:'Test'});
+	}
+	setup(src);
+}
+//--></script></div></body></html>
