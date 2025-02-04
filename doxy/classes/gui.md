@@ -59,6 +59,27 @@ Toggle(target,label,init,opt):@ref pg_class_gui_toggle
 created instance  
 
 -----
+## Radio() {#GUI_Radio}
+
+create a radio buttons 
+
+### Spec
+
+Radio(target,items,opt):@ref pg_class_gui_radio
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| target | @ref pg_class_qht | created GUI element put on |
+| items | @ref GUI_Radio_ItemDefinition[]? | selections |
+| opt | @ref GUI_Radio_SelectOption | optional params |
+
+### Returns
+
+created instance  
+
+-----
 ## Select() {#GUI_Select}
 
 create a select box 

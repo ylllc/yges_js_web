@@ -59,6 +59,87 @@ YgEs.GUI.Toggle=(target,label,init,opt={})=>{
 	return view;
 }
 
+YgEs.GUI.Radio=(target,items,opt={})=>{
+
+	let attr={}
+	if(opt.WindowClass)attr.class=opt.WindowClass;
+	let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:attr});
+	if(opt.User)view.User=opt.User;
+
+	let nullable=!!opt.Nullable;
+	let cur=null;
+	let ent={}
+
+	if(!items){}
+	else for(let t of items){
+		let a={}
+		let o={}
+		let lab='';
+		let val=null;
+		let u=null;
+
+		if(t==null){
+			continue;
+		}
+		else if(typeof t!=='object'){
+			val=lab=t;
+		}
+		else if(t.Tag){
+			view.Append(YgEs.NewQHT(t));
+			continue;
+		}
+		else{
+			if(t.Value!=undefined)val=t.Value;
+			lab=t.Label??val;
+			u=t.User;
+		}
+
+		if(opt.Init!=undefined && opt.Init==val){
+			cur=val;
+		}
+		if(opt.OffClass)o.OffClass=opt.OffClass;
+		if(opt.OnClass)o.OnClass=opt.OnClass;
+		o.OnChanging=(side)=>{
+			if(side){
+				if(view.OnChanging){
+					if(!view.OnChanging(cur,val))return false;
+				}
+				if(ent[cur])ent[cur].View.SetSide(false);
+				cur=val;
+				return true;
+			}
+			else{
+				if(cur===val){
+					if(!nullable)return false;
+					if(view.OnChanging){
+						if(!view.OnChanging(cur,null))return false;
+					}
+					cur=null;
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+		let v=YgEs.GUI.Toggle(view,lab,cur===val,o);
+		if(u)v.User=u;
+		ent[val]={Value:val,View:v}
+	}
+
+	if(opt.OnChanging)view.OnChanging=opt.OnChanging;
+
+	view.GetItem=(key)=>ent[key];
+	view.GetSelected=()=>cur;
+	view.Select=(val)=>{
+		if(cur===val)return;
+		if(ent[cur])ent[cur].View.SetSide(false);
+		if(ent[val])ent[val].View.SetSide(true);
+		cur=val;
+	}
+
+	return view;
+}
 
 YgEs.GUI.Select=(target,items,opt={})=>{
 

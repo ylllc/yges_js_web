@@ -16,6 +16,7 @@
 - @subpage pg_class_gamepad_manager
 - @subpage pg_class_gui
 - @subpage pg_class_gui_button
+- @subpage pg_class_gui_radio
 - @subpage pg_class_gui_select
 - @subpage pg_class_gui_toggle
 - @subpage pg_class_happening
