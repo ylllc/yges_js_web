@@ -171,6 +171,24 @@ null, undefined, NaN returns false.
 otherwise true.  
 
 -----
+## IsPoly() {#Util_IsPoly}
+
+### Spec
+
+IsPoly(val):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | any | check source |
+
+### Returns
+
+array, object nut null returns true.  
+otherwise false.  
+
+-----
 ## Booleanize() {#Util_Booleanize}
 
 ### Spec
