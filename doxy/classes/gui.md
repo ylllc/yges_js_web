@@ -99,3 +99,20 @@ Select(target,items,opt):@ref pg_class_gui_select
 ### Returns
 
 created instance  
+
+-----
+## Dialog() {#GUI_Dialog}
+
+create a dialog  
+
+### Spec
+
+Dialog(target,modal,opt={}):@ref pg_class_gui_dialog
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| target | @ref pg_class_qht | created GUI element put on |
+| modal | bool | exclusive controls during opening |
+| opt | @ref GUI_Dialog_Option | optional params |

@@ -87,6 +87,27 @@ YgEs.GUI.Select(TargetQHT,[
 ```
 
 -----
+## Dialog
+
+```
+const dialog=YgEs.GUI.Dialog(TargetQHT,IsModal,{
+	Sub:[
+			:
+		Dialog Contents
+			:
+	]
+});
+
+	:
+	:
+dialog.Open();
+	:
+	:
+dialog.Close();
+
+```
+
+-----
 # Class Reference
 
 @sa @ref pg_class_gui @n

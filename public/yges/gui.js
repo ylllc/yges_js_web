@@ -208,4 +208,21 @@ YgEs.GUI.Select=(target,items,opt={})=>{
 	return view;
 }
 
+YgEs.GUI.Dialog=(target,modal,opt={})=>{
+
+	let a={}
+	if(opt.Class)a.class=opt.Class;
+	let view=YgEs.NewQHT({Target:target,Tag:'dialog',Attr:a,Sub:opt.Sub??[]});
+	if(opt.User)view.User=opt.User;
+
+	view.Open=()=>{
+		if(modal)view.Element.showModal();
+		else view.Element.show();
+	}
+	view.Close=()=>{
+		view.Element.close();
+	}
+	return view;
+}
+
 })();
