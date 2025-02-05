@@ -178,7 +178,7 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 						hap2.Happen(e);
 					}
 					hap2.CleanUp();
-					let err=lnc2.HappenTo.IsCleaned()?null:new Error('Happen in Test: '+t.Title,{cause:lnc2.HappenTo.GetInfo()});
+					let err=lnc2.HappenTo.IsCleaned()?null:new Error('Happen in Test: '+sct.Scenario.Title,{cause:lnc2.HappenTo.GetInfo()});
 					lnc2.Abandon();
 					hap2.Abandon();
 					if(err)ng(err);
