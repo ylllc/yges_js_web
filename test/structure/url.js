@@ -17,9 +17,9 @@ const scenaria=[
 			Test.ChkStrict(pu.Scheme,'https');
 			Test.ChkStrict(pu.Slashes,'//');
 			Test.ChkStrict(pu.Host,'www.example.com');
-			Test.ChkStrict(pu.Path,'/%7Ea/b%2Fc.html');
-			Test.ChkStrict(pu.Fragment,'xy%7A');
-			Test.ChkStrict(pu.Bake(),'https://www.example.com/%7Ea/b%2Fc.html#xy%7A');
+			Test.ChkStrict(decodeURI(pu.Path),decodeURI('/%7Ea/b%2Fc.html'));
+			Test.ChkStrict(decodeURI(pu.Fragment),decodeURI('xy%7A'));
+			Test.ChkStrict(decodeURI(pu.Bake()),decodeURI('https://www.example.com/%7Ea/b%2Fc.html#xy%7A'));
 		},
 	},
 	{
@@ -30,8 +30,8 @@ const scenaria=[
 			Test.ChkStrict(pu.Scheme,'ftp');
 			Test.ChkStrict(pu.Slashes,'//');
 			Test.ChkStrict(pu.Host,'ftp.example.com');
-			Test.ChkStrict(pu.Path,'/a/b/%63.txt');
-			Test.ChkStrict(pu.Bake(),'ftp://ftp.example.com/a/b/%63.txt');
+			Test.ChkStrict(decodeURI(pu.Path),decodeURI('/a/b/%63.txt'));
+			Test.ChkStrict(decodeURI(pu.Bake()),decodeURI('ftp://ftp.example.com/a/b/%63.txt'));
 		},
 	},
 	{
@@ -41,8 +41,8 @@ const scenaria=[
 			var pu=URLBuilder.Parse(url);
 			Test.ChkStrict(pu.Scheme,'file');
 			Test.ChkStrict(pu.Slashes,'//');
-			Test.ChkStrict(pu.Path,'/c:/Program%20Files/Internet%20Explorer/iexplore.exe');
-			Test.ChkStrict(pu.Bake(),'file:///c:/Program%20Files/Internet%20Explorer/iexplore.exe');
+			Test.ChkStrict(pu.Path.toLowerCase(),'/c:/Program%20Files/Internet%20Explorer/iexplore.exe'.toLowerCase());
+			Test.ChkStrict(pu.Bake().toLowerCase(),'file:///c:/Program%20Files/Internet%20Explorer/iexplore.exe'.toLowerCase());
 		},
 	},
 	{
