@@ -54,3 +54,8 @@
 - @subpage pg_class_timing
 - @subpage pg_class_urlbuilder
 - @subpage pg_class_util
+- @subpage pg_class_websock_client_agent
+- @subpage pg_class_websock_client_container
+- @subpage pg_class_websock_server_agent
+- @subpage pg_class_websock_server_connection
+- @subpage pg_class_websock_server_container

@@ -19,6 +19,8 @@
 	- @subpage pg_feat_stmac
 	- @subpage pg_feat_agent
 	- @subpage pg_feat_http_server
+	- @subpage pg_feat_websock_server
+	- @subpage pg_feat_websock_client
 - Structures
 	- @subpage pg_feat_quickqueue
 	- @subpage pg_feat_proptree
