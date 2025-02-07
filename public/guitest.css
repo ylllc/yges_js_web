@@ -1,0 +1,39 @@
+
+.guitest_button{
+	height:2.5em;
+	font-size:125%;
+	font-weight:bold;
+}
+
+.guitest_toggle_off{
+	height:2.5em;
+	font-size:125%;
+	background-color:#444;
+}
+.guitest_toggle_on{
+	height:2.5em;
+	font-size:125%;
+	background-color:#ce4;
+}
+
+.guitest_radio_window{
+}
+
+.guitest_select_box{
+	font-size:125%;
+}
+
+.guitest_dialog{
+	background-color:#000;
+	color:#fff;
+}
+
+.guitest_popup{
+	position:absolute;
+	border-style:double;
+	background-color:#000;
+	color:#fff;
+}
+.guitest_popup_item{
+	font-size:125%;
+}

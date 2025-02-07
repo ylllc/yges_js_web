@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset="utf-8">
+	<title>Yggdrasil Essense</title>
+	<link href="main.css" rel="stylesheet">
+</head>
+<body onload="ipl_ready()"><div class=screen>
+<header>
+<a href="./">Yggdrasil Essense</a> / 
+GUI Test
+<hr>
+</header>
+<main>
+<h1 class="pagetitle">GUI Test</h1>
+<noscript><div class="warning">(JavaScript required)</div></noscript>
+<div id=mainboard class=main></div>
+</main>
+<footer>
+<hr>
+&copy; 2025 Yggdrasil Leaves, LLC.<br>
+Repositories: 
+<a target="_blank" href="https://github.com/ylllc/yges_js_web">[web]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_node">[Node.js]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_deno">[Deno]</a>
+</footer>
+<div id=modules>
+<script src="yges/ipl.js"></script>
+</div>
+<script><!--
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
+mainboard.Clear();
+let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
+
+async function ipl_ready(){
+
+	ipl_loading.Remove();
+	YgEs.InitFrontend(modules,mainboard);
+
+	// resources 
+	YgEs.LoadCSS('guitest.css');
+	YgEs.LoadJS('yges/gui.js');
+	await YgEs.LoadSync().ToPromise();
+	YgEs.DisposeMonitor();
+
+	// Buttons 
+	YgEs.NewQHT({Target:mainboard,Tag:'fieldset',Sub:[
+		YgEs.NewQHT({Tag:'legend',Sub:['Buttons']}),
+		YgEs.GUI.Button(null,'Button',{
+			Class:'guitest_button',
+			User:{TestVal:-123},
+			OnClick:(user)=>{
+				console.log('Button: '+user.TestVal);
+			},
+		}),
+		YgEs.GUI.Toggle(null,'Toggle',true,{
+			OffClass:'guitest_toggle_off',
+			OnClass:'guitest_toggle_on',
+			OnChanging:(prev,next)=>{
+				console.log('Toggle: '+next);
+				return true;
+			},
+		}),
+	]});
+
+	YgEs.NewQHT({Target:mainboard,Tag:'fieldset',Sub:[
+		YgEs.NewQHT({Tag:'legend',Sub:['Radio Buttons']}),
+
+		YgEs.GUI.Radio(null,[
+			{Value:0,Label:'Zero'},
+			1,2,3
+		],{
+			Init:2,
+			WindowClass:'guitest_radio_window',
+			OffClass:'guitest_toggle_off',
+			OnClass:'guitest_toggle_on',
+			OnChanging:(prev,next)=>{
+				console.log('Radio1: '+next);
+				return true;
+			},
+		}),
+	]});
+
+	YgEs.NewQHT({Target:mainboard,Tag:'fieldset',Sub:[
+		YgEs.NewQHT({Tag:'legend',Sub:['Nullable Radio Buttons']}),
+
+		YgEs.GUI.Radio(null,[
+			{Value:0,Label:'Zero'},
+			1,2,3
+		],{
+			Nullable:true,
+			WindowClass:'guitest_radio_window',
+			OffClass:'guitest_toggle_off',
+			OnClass:'guitest_toggle_on',
+			OnChanging:(prev,next)=>{
+				console.log('Radio2: '+next);
+				return true;
+			},
+		}),
+	]});
+
+	// Select Box 
+	YgEs.NewQHT({Target:mainboard,Tag:'fieldset',Sub:[
+		YgEs.NewQHT({Tag:'legend',Sub:['Select Box']}),
+
+		YgEs.GUI.Select(null,[
+			{Value:0,Label:'Zero'},
+			1,2,3
+		],{
+			Class:'guitest_select_box',
+			Init:1,
+			OnChanging:(prev,next)=>{
+				console.log('Select: '+next);
+				return true;
+			},
+		}),
+	]});
+
+	// Dialogs 
+	const dialog0=YgEs.GUI.Dialog(mainboard,false,{
+		Class:'guitest_dialog',
+		Sub:[
+			YgEs.NewQHT({Tag:'div',Sub:['Modeless Dialog']}),
+			YgEs.GUI.Button(null,'Close',{
+				Class:'guitest_button',
+				OnClick:(user)=>{
+					dialog0.Close();
+				},
+			}),
+		],
+	});
+	const dialog1=YgEs.GUI.Dialog(mainboard,true,{
+		Class:'guitest_dialog',
+		Sub:[
+			YgEs.NewQHT({Tag:'div',Sub:['Modal Dialog']}),
+			YgEs.GUI.Button(null,'Close',{
+				Class:'guitest_button',
+				OnClick:(user)=>{
+					dialog1.Close();
+				},
+			}),
+		],
+	});
+	const popup0=YgEs.GUI.PopUp(mainboard,{
+		Class:'guitest_popup',
+		Sub:[
+			YgEs.NewQHT({Tag:'div',Sub:['PopUp']}),
+			YgEs.GUI.Button(null,'Close',{
+				Class:'guitest_button',
+				OnClick:(user)=>{
+					popup0.Hide();
+				},
+			}),
+		],
+	});
+	const popup1=YgEs.GUI.PopUpMenu(mainboard,[
+		{Label:'Dummy'},
+		{Label:'Close',OnAction:()=>{
+			popup1.Hide();
+		}},
+	],{
+		WindowClass:'guitest_popup',
+		ItemClass:'guitest_popup_item',
+	});
+
+	YgEs.NewQHT({Target:mainboard,Tag:'fieldset',Sub:[
+		YgEs.NewQHT({Tag:'legend',Sub:['Dialogs']}),
+
+		YgEs.GUI.Button(null,'Modal',{
+			Class:'guitest_button',
+			OnClick:(user)=>{
+				dialog1.Open();
+			},
+		}),
+		YgEs.GUI.Button(null,'Modeless',{
+			Class:'guitest_button',
+			OnClick:(user)=>{
+				dialog0.Open();
+			},
+		}),
+		YgEs.GUI.Button(null,'PopUp',{
+			Class:'guitest_button',
+			OnClick:(user)=>{
+				popup0.Show();
+			},
+		}),
+		YgEs.GUI.Button(null,'PopUp Menu',{
+			Class:'guitest_button',
+			OnClick:(user)=>{
+				popup1.Show();
+			},
+		}),
+	]});
+}
+//--></script></div></body></html>
