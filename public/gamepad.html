@@ -4,7 +4,6 @@
 	<meta charset="utf-8">
 	<title>Yggdrasil Essense</title>
 	<link href="main.css" rel="stylesheet">
-	<link href="gamepad.css" rel="stylesheet">
 </head>
 <body onload="ipl_ready()"><div class=screen>
 <header>
@@ -40,6 +39,7 @@ async function ipl_ready(){
 	YgEs.InitFrontend(modules,mainboard);
 
 	// resources 
+	YgEs.LoadCSS('gamepad.css');
 	YgEs.LoadJS('yges/gui.js');
 	YgEs.LoadJS('yges/gamepad.js');
 	await YgEs.LoadSync().ToPromise();
