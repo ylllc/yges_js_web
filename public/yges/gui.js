@@ -15,7 +15,7 @@ YgEs.GUI.Button=(target,label,opt={})=>{
 	let a={}
 	if(opt.Class)a.class=opt.Class;
 	let view=YgEs.NewQHT({Target:target,Tag:'button',Attr:a,Sub:[label]});
-	if(opt.OnClick)view.Element.onclick=opt.OnClick;
+	if(opt.OnClick)view.Element.onclick=()=>opt.OnClick(view.User);
 	if(opt.User)view.User=opt.User;
 	return view;
 }
@@ -38,7 +38,7 @@ YgEs.GUI.Toggle=(target,label,init,opt={})=>{
 	}
 
 	let view=YgEs.GUI.Button(target,label,{
-		OnClick:()=>{
+		OnClick:(user)=>{
 			let ok=true;
 			if(view.OnChanging)ok=view.OnChanging(!cur);
 			if(ok){

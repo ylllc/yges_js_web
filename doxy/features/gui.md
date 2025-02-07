@@ -27,7 +27,8 @@ use YgEs
 
 ```
 YgEs.GUI.Button(TargetQHT,'ButtonLabel',{
-	OnClick:()=>{
+	User:{/* user definition, refered by OnClick */},
+	OnClick:(user)=>{
 		// call by clicked 
 	},
 });

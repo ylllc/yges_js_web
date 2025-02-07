@@ -15,6 +15,16 @@ call by clicked
 
 ### Spec
 
+CB_Click(user):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| user | dict<string,any> | user definition |
+
+### Spec
+
 CB_Click():void
 
 -----
