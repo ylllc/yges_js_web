@@ -29,11 +29,11 @@ YgEs.GUI.Toggle=(target,label,init,opt={})=>{
 	const setStyle=()=>{
 		if(cur){
 			if(class_on)view.Element.setAttribute('class',class_on);
-			else view.Element.style['background-color']='#fff';
+			else view.Element.style['background-color']='#ce4';
 		}
 		else{
 			if(class_off)view.Element.setAttribute('class',class_off);
-			else view.Element.style['background-color']='#aaa';
+			else view.Element.style['background-color']='#888';
 		}
 	}
 
