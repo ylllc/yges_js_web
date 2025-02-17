@@ -7,7 +7,9 @@
 (()=>{ // local namespace 
 
 YgEs.GUI={
+	Name:'YgEs.GUI',
 	User:{},
+	_private_:{},
 }
 
 YgEs.GUI.Button=(target,label,opt={})=>{

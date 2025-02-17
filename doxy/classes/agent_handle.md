@@ -1,4 +1,4 @@
-﻿@page pg_class_agent_handle AgentHandle
+﻿@page pg_class_agent_handle Agent.Handle
 
 # What's It?
 

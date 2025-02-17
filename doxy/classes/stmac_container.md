@@ -1,4 +1,4 @@
-﻿@page pg_class_stmac_container StateMachineContainer
+﻿@page pg_class_stmac_container StateMachine.Container
 
 # What's It?
 

@@ -12,7 +12,7 @@ function _view_proc(target,src,tick,active){
 	view._tick=0;
 
 	view.Status=YgEs.NewQHT({Target:view,Tag:'span'});
-	YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_engview_proc_capt'},Sub:[src.name]});
+	YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_engview_proc_capt'},Sub:[src.Name]});
 	YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_engview_proc_rmks'},Sub:['{'+src.GetInstanceID()+'}']});
 
 	view.Info=YgEs.NewQHT({Target:view,Tag:'div',Attr:{class:'yges_engview_proc_info'}});
@@ -93,7 +93,7 @@ function _view_launcher(view,src){
 		let ca=src.CountActive();
 		let ch=src.CountHeld();
 		view.Status.Element.innerText='['+ca+'/'+(ca+ch)+']';
-		view.Capt.Element.innerText=src.name;
+		view.Capt.Element.innerText=src.Name;
 		view.Rmks.Element.innerText='('+src.GetInstanceID()+')';
 
 		for(let src2 of src.GetActive()){
@@ -132,7 +132,7 @@ function _view_launcher(view,src){
 }
 
 YgEs.EngineView={
-	name:'YgEs.EngineView',
+	Name:'YgEs.EngineView',
 	User:{},
 
 	SetUp:(target,src=null)=>{

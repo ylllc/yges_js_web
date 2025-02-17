@@ -1,4 +1,4 @@
-﻿@page pg_class_http_route HTTPRoute
+﻿@page pg_class_http_route HTTPServer.Route
 
 # What's It?
 

@@ -28,7 +28,7 @@ function _yges_downloader_create(launcher){
 			if(procs[label])procs[label].abort();
 
 			let ctx={
-				name:'YgEs_Downloader_Context',
+				Name:'YgEs.Downloader.Context',
 				User:{},
 				label:label,
 				type:type,
@@ -42,7 +42,7 @@ function _yges_downloader_create(launcher){
 			procs[label]=ctx;
 
 			ctx.proc=launcher.launch({
-				name:'YgEs_Downloader_Proc',
+				Name:'YgEs.Downloader.Proc',
 				cb_start:(user)=>{
 					ctx.ll=types[type].cb_setup(ctx,url,(src)=>{
 						let res=ctrl.Ready[label]=types[type].cb_init(ctx.ll,src);

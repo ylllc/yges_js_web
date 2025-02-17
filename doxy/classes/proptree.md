@@ -1,4 +1,4 @@
-﻿@page pg_class_proptree PropTree
+﻿@page pg_class_proptree PropTree.Unit
 
 # What's It?
 

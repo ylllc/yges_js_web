@@ -1,4 +1,4 @@
-﻿@page pg_class_logger_view_container LogViewContainer
+﻿@page pg_class_logger_view_container LogView.Container
 
 # What's It?
 

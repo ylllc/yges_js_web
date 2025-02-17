@@ -183,7 +183,7 @@ function _build(view,key,src,bridge){
 }
 
 YgEs.ObjView={
-	name:'YgEs.ObjView',
+	Name:'YgEs.ObjView',
 	User:{},
 
 	TYPE:_type_lookup,

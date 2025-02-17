@@ -61,7 +61,7 @@ function _setup(target,src,hide=false){
 }
 
 YgEs.LogView={
-	name:'YgEs.LogView',
+	Name:'YgEs.LogView.Container',
 	User:{},
 
 	SetUp:_setup,

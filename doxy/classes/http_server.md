@@ -1,4 +1,4 @@
-﻿@page pg_class_http_server HTTPServer
+﻿@page pg_class_http_server HTTPServer.Container
 
 # What's It?
 

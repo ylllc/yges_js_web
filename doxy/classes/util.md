@@ -1,4 +1,4 @@
-﻿@page pg_class_util Utilities
+﻿@page pg_class_util Util
 
 # What's It?
 

@@ -1,4 +1,4 @@
-﻿@page pg_class_stmac_context StateMachineContext
+﻿@page pg_class_stmac_context StateMachine.Control
 
 # What's It?
 

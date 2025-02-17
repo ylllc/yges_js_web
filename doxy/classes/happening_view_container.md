@@ -1,4 +1,4 @@
-﻿@page pg_class_happening_view_container HappeningViewContainer
+﻿@page pg_class_happening_view_container HappeningView.Container
 
 # What's It?
 

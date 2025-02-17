@@ -16,7 +16,7 @@ const _type_lookup=Object.freeze(YgEs.CreateEnum(_type_names));
 function _prop_internal(){
 
 	let t={
-		name:'YgEs.PropTree',
+		Name:'YgEs.PropTree.Unit',
 		User:{},
 		_private_:{},
 
@@ -393,7 +393,7 @@ function _prop_each(t,q,cb){
 }
 
 let PropTree=YgEs.PropTree={
-	name:'YgEs.PropTreeContainer',
+	Name:'YgEs.PropTree.Container',
 	User:{},
 	_private_:{},
 

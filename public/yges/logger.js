@@ -82,7 +82,7 @@ function _create_local(capt=null,showable=null,parent=null){
 
 	const iid=YgEs.NextID();
 	let t={
-		name:'YgEs.LocalLog',
+		Name:'YgEs.LocalLog',
 		User:{},
 		_private_:{},
 
@@ -140,6 +140,6 @@ function _create_local(capt=null,showable=null,parent=null){
 }
 
 const Log=YgEs.Log=_create_local();
-YgEs.Log.name='YgEs.GlobalLog';
+YgEs.Log.Name='YgEs.GlobalLog';
 
 })();

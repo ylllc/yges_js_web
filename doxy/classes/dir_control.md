@@ -1,4 +1,4 @@
-﻿@page pg_class_dir_control DirControl
+﻿@page pg_class_dir_control Dir.Control
 
 # What's It?
 

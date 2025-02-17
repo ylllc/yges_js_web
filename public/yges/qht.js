@@ -9,7 +9,7 @@
 YgEs.ToQHT=(el)=>{
 
 	let qht={
-		name:'YgEs.QuickHyperText',
+		Name:'YgEs.QHT.Unit',
 		_yges_qht_:true,
 		User:{},
 		Element:el,

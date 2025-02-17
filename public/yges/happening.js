@@ -27,7 +27,7 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 
 	const iid=YgEs.NextID();
 	let hap={
-		name:init.Name??'YgEs.Happening',
+		Name:init.Name??'YgEs.Happening',
 		User:init.User??{},
 		_private_:{},
 
@@ -49,7 +49,7 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 		},
 		GetInfo:()=>{return {
 			InstanceID:iid,
-			Name:hap.name,
+			Name:hap.Name,
 			Status:hap.GetStatus(),
 			Msg:cbstr(),
 			Prop:cbprop(),
@@ -90,7 +90,7 @@ function _create_manager(prm,parent=null){
 
 	const iid=YgEs.NextID();
 	let mng={
-		name:prm.Name??'YgEs.HappeningManager',
+		Name:prm.Name??'YgEs.HappeningManager',
 		User:prm.User??{},
 		_private_:{},
 
@@ -115,7 +115,7 @@ function _create_manager(prm,parent=null){
 		GetInfo:()=>{
 			let r={
 				InstanceID:iid,
-				Name:mng.name,
+				Name:mng.Name,
 				Status:mng.GetStatus(),
 				User:mng.User,
 				Issues:[],
@@ -201,7 +201,7 @@ function _create_manager(prm,parent=null){
 			else if(src instanceof Error){
 				hap=_create_happening(
 					()=>YgEs.FromError(src),
-					()=>'{'+src.name+'} '+src.message,
+					()=>'{'+src.Name+'} '+src.message,
 					()=>src,
 					init
 				);

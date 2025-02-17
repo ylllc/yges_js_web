@@ -316,7 +316,7 @@ function _setupTestDir(launcher,scriptstore,url,src,reportParent){
 }
 
 YgEs.Test={
-	name:'YgEs_UnitTest',
+	Name:'YgEs.Test',
 	User:{},
 	_private:{},
 	

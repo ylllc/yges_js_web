@@ -1,4 +1,4 @@
-﻿@page pg_class_unittest_view_container TestViewContainer
+﻿@page pg_class_unittest_view_container TestView.Container
 
 # What's It?
 
