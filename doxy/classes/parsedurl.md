@@ -11,7 +11,7 @@ created by @ref pg_class_urlbuilder
 |------|------|-------|
 | Scheme | string | scheme name |
 | Slashes | string | additional slashes after scheme separator |
-| User | string | user name |
+| UID | string | user ID |
 | Pass | string | password |
 | Host | string | host name |
 | Port | string | port number |

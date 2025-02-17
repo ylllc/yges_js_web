@@ -43,7 +43,7 @@ var url='https://us%65r:pw%64@www.example.com:8080/%7Ea/b%2Fc.html?q=ijk+lmn&a=1
 var a=URLBuilder.Parse(url);
 log.Info(a.Scheme); // https 
 log.Info(a.Slashes); // // 
-log.Info(a.User); // user 
+log.Info(a.UID); // uid 
 log.Info(a.Pass); // pwd 
 log.Info(a.Host); // www.example.com
 log.Info(a.Port); // 8080 
