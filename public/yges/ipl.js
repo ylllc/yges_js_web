@@ -7,8 +7,9 @@
 
 // export target 
 let YgEs={
-	name:'YgEs',
+	Name:'YgEs',
 	User:{},
+	_private_:{},
 };
 
 (()=>{ // local namespace 
@@ -272,8 +273,9 @@ function _create_local(capt=null,showable=null,parent=null){
 
 	const iid=YgEs.NextID();
 	let t={
-		name:'YgEs.LocalLog',
+		Name:'YgEs.LocalLog',
 		User:{},
+		_private_:{},
 
 		Showable:showable,
 		Caption:capt,
@@ -329,7 +331,7 @@ function _create_local(capt=null,showable=null,parent=null){
 }
 
 const Log=YgEs.Log=_create_local();
-YgEs.Log.name='YgEs.GlobalLog';
+YgEs.Log.Name='YgEs.GlobalLog';
 
 })();
 
@@ -342,8 +344,9 @@ const _rx_false=/^false$/i;
 const _rx_undefined=/^undefined$/i;
 
 let Util=YgEs.Util={
-	name:'YgEs.Util',
+	Name:'YgEs.Util',
 	User:{},
+	_private_:{},
 
 	IsJustNaN:(val)=>{
 		if(typeof val!=='number')return false;
@@ -483,8 +486,9 @@ let Util=YgEs.Util={
 (()=>{ // local namespace 
 
 let Timing=YgEs.Timing={
-	name:'YgEs_Timing',
+	Name:'YgEs.Timing',
 	User:{},
+	_private_:{},
 
 	FromPromise:(promise,cb_ok=null,cb_ng=null)=>{
 		new Promise(async (ok,ng)=>{
@@ -645,8 +649,10 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 
 	const iid=YgEs.NextID();
 	let hap={
-		name:init.Name??'YgEs.Happening',
+		Name:init.Name??'YgEs.Happening',
 		User:init.User??{},
+		_private_:{},
+
 		_yges_happening_:true, // means this is YgEs.Happening 
 
 		GetInstanceID:()=>iid,
@@ -665,7 +671,7 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 		},
 		GetInfo:()=>{return {
 			InstanceID:iid,
-			Name:hap.name,
+			Name:hap.Name,
 			Status:hap.GetStatus(),
 			Msg:cbstr(),
 			Prop:cbprop(),
@@ -706,9 +712,11 @@ function _create_manager(prm,parent=null){
 
 	const iid=YgEs.NextID();
 	let mng={
-		name:prm.Name??'YgEs.HappeningManager',
-		OnHappen:prm.OnHappen??null,
+		Name:prm.Name??'YgEs.HappeningManager',
 		User:prm.User??{},
+		_private_:{},
+
+		OnHappen:prm.OnHappen??null,
 
 		CreateLocal:(prm={})=>{
 			let cm=_create_manager(prm,mng);
@@ -729,7 +737,7 @@ function _create_manager(prm,parent=null){
 		GetInfo:()=>{
 			let r={
 				InstanceID:iid,
-				Name:mng.name,
+				Name:mng.Name,
 				Status:mng.GetStatus(),
 				User:mng.User,
 				Issues:[],
@@ -798,7 +806,7 @@ function _create_manager(prm,parent=null){
 			let hap=null;
 			if(typeof src!='object'){
 				hap=_create_happening(
-				()=>prop,
+					()=>prop,
 					()=>''+src,
 					()=>new Error(''+src,{cause:prop}),
 					init
@@ -815,7 +823,7 @@ function _create_manager(prm,parent=null){
 			else if(src instanceof Error){
 				hap=_create_happening(
 					()=>YgEs.FromError(src),
-					()=>'{'+src.name+'} '+src.message,
+					()=>'{'+src.Name+'} '+src.message,
 					()=>src,
 					init
 				);
@@ -823,9 +831,9 @@ function _create_manager(prm,parent=null){
 			else{
 				hap=_create_happening(
 					()=>Object.assign(src,prop),
-				()=>'Happening',
+					()=>'Happening',
 					()=>new Error('Happening',{cause:Object.assign(src,prop)}),
-				init
+					init
 				);
 			}
 
@@ -870,9 +878,11 @@ function _create_proc(prm,launcher){
 
 	const iid=YgEs.NextID();
 	let proc={
-		name:prm.Name??CLASS_PROC,
-		HappenTo:prm.HappenTo??launcher.HappenTo??HappeningManager,
+		Name:prm.Name??CLASS_PROC,
 		User:prm.User??{},
+		_private_:{},
+
+		HappenTo:prm.HappenTo??launcher.HappenTo??HappeningManager,
 
 		GetInstanceID:()=>iid,
 		IsStarted:()=>started,
@@ -888,7 +898,7 @@ function _create_proc(prm,launcher){
 		},
 		GetInfo:(site='')=>{return {
 			InstanceID:iid,
-			Name:proc.name,
+			Name:proc.Name,
 			CrashSite:site,
 			Status:proc.GetStatus(),
 			User:proc.User,
@@ -1021,11 +1031,13 @@ function _yges_enginge_create_launcher(prm){
 
 	const iid=YgEs.NextID();
 	let lnc={
-		name:prm.Name??CLASS_LAUNCHER,
+		Name:prm.Name??CLASS_LAUNCHER,
+		User:prm.User??{},
+		_private_:{},
+
 		HappenTo:prm.HappenTo??HappeningManager,
 		Limit:prm.Limit??-1,
 		Cycle:prm.Cycle??DEFAULT_LAUNCHER_CYCLE,
-		User:prm.User??{},
 
 		GetInstanceID:()=>iid,
 		GetActive:()=>active,
@@ -1040,7 +1052,7 @@ function _yges_enginge_create_launcher(prm){
 		GetInfo:(site='')=>{
 			let r={
 				InstanceID:iid,
-				Name:lnc.name,
+				Name:lnc.Name,
 				CrashSite:site,
 				Status:lnc.GetStatus(),
 				Limit:lnc.Limit,
@@ -1049,7 +1061,7 @@ function _yges_enginge_create_launcher(prm){
 				Active:[],
 				Held:[],
 				Sub:[],
-			}	
+			}
 			for(let proc of active)r.Active.push(proc.GetInfo());
 			for(let proc of launched)r.Held.push(proc.GetInfo());
 			for(let sub of sublauncher)r.Sub.push(sub.GetInfo());
@@ -1286,8 +1298,10 @@ function _run(start,states={},opt={}){
 	}
 
 	let ctrl={
-		name:name+'_Control',
+		Name:name+'.Control',
 		User:user,
+		_private_:{},
+
 		GetHappeningManager:()=>happen,
 		GetPrevState:()=>state_prev,
 		GetCurState:()=>state_cur,
@@ -1461,10 +1475,9 @@ function _run(start,states={},opt={}){
 	}
 
 	let stmac={
-		Name:name,
+		Name:name+'.Proc',
 		HappenTo:happen,
 		User:user,
-
 		OnStart:(user)=>{
 			call_start(user);
 		},
@@ -1490,8 +1503,9 @@ function _run(start,states={},opt={}){
 }
 
 YgEs.StateMachine={
-	name:'YgEs_StateMachineContainer',
+	Name:'YgEs.StateMachine.Container',
 	User:{},
+	_private_:{},
 
 	Run:_run,
 }
@@ -1675,7 +1689,7 @@ function _standby(prm){
 						Util.SafeDictIter(prm.Dependencies,(k,h)=>{
 							h.Open();
 							wait.push({
-								Label:'Depends '+h.GetAgent().name,
+								Label:'Depends '+h.GetAgent().Name,
 								Chk:()=>h.IsReady(),
 							});
 						});
@@ -1842,8 +1856,9 @@ function _standby(prm){
 	}
 
 	let agent={
-		name:name,
+		Name:name+'.Worker',
 		User:user,
+		_private_:{},
 
 		IsOpen:()=>opencount>0,
 		IsBusy:()=>!!ctrl || opencount>0,
@@ -1872,7 +1887,7 @@ function _standby(prm){
 	}
 
 	let ctrlopt={
-		Name:name+'_Control',
+		Name:name+'.StateMachine',
 		HappenTo:happen,
 		Launcher:launcher,
 		User:user,
@@ -1891,7 +1906,7 @@ function _standby(prm){
 	let handle=(w)=>{
 		let in_open=false;
 		let h={
-			name:name+'_Handle',
+			Name:name+'.Handle',
 
 			GetAgent:()=>{return agent;},
 			GetLauncher:()=>agent.GetLauncher(),
@@ -1931,8 +1946,9 @@ function _standby(prm){
 }
 
 YgEs.AgentManager={
-	name:'YgEs.AgentManager',
+	Name:'YgEs.AgentManager',
 	User:{},
+	_private_:{},
 
 	StandBy:_standby,
 	Launch:(prm)=>{return _standby(prm).Fetch();},
@@ -1947,7 +1963,7 @@ YgEs.AgentManager={
 YgEs.ToQHT=(el)=>{
 
 	let qht={
-		name:'YgEs.QuickHyperText',
+		Name:'YgEs.QHT.Unit',
 		_yges_qht_:true,
 		User:{},
 		Element:el,
@@ -2024,7 +2040,7 @@ YgEs.NewQHT=(prm)=>{
 (()=>{ // local namespace 
 
 YgEs.HTTPClient={
-	name:'YgEs.HTTP',
+	Name:'YgEs.HTTP',
 	User:{},
 }
 
@@ -2037,7 +2053,7 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 
 	var req=new XMLHttpRequest();
 	var ctx={
-		name:'YgEs.HTTP_Request',
+		Name:'YgEs.HTTP.Request',
 		User:{},
 		URL:url,
 		Opt:opt,
@@ -2596,6 +2612,10 @@ function _setup(target,show){
 }
 
 YgEs.DownloadMonitor={
+	Name:'YgEs.DownloadMonitor',
+	User:{},
+	_private_:{},
+
 	SetUp:_setup,
 }
 

@@ -79,6 +79,10 @@ function _setup(target,show){
 }
 
 YgEs.DownloadMonitor={
+	Name:'YgEs.DownloadMonitor',
+	User:{},
+	_private_:{},
+
 	SetUp:_setup,
 }
 

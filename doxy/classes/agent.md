@@ -1,4 +1,4 @@
-﻿@page pg_class_agent Agent
+﻿@page pg_class_agent Agent.Worker
 
 # What's It?
 

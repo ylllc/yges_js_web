@@ -7,7 +7,7 @@
 (()=>{ // local namespace 
 
 YgEs.HTTPClient={
-	name:'YgEs.HTTP',
+	Name:'YgEs.HTTP',
 	User:{},
 }
 
@@ -20,7 +20,7 @@ YgEs.HTTPClient.Request=(method,url,opt,cb_res=null,cb_ok=null,cb_ng=null)=>{
 
 	var req=new XMLHttpRequest();
 	var ctx={
-		name:'YgEs.HTTP_Request',
+		Name:'YgEs.HTTP.Request',
 		User:{},
 		URL:url,
 		Opt:opt,

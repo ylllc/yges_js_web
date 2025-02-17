@@ -128,7 +128,7 @@ function _view_dir(target,src,dn){
 }
 
 YgEs.TestView={
-	name:'YgEs.TestView',
+	Name:'YgEs.TestView.Container',
 	User:{},
 
 	SetUp:(target,src)=>{

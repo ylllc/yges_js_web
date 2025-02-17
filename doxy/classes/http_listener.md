@@ -1,4 +1,4 @@
-﻿@page pg_class_http_listener HTTPListener
+﻿@page pg_class_http_listener HTTPServer.Listener
 
 # What's It?
 

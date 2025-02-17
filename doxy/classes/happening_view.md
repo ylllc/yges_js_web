@@ -1,4 +1,4 @@
-﻿@page pg_class_happening_view HappeningView
+﻿@page pg_class_happening_view HappeningView.Unit
 
 # What's It?
 

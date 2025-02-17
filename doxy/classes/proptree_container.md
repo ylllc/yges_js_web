@@ -1,4 +1,4 @@
-﻿@page pg_class_proptree_container PropTreeContainer
+﻿@page pg_class_proptree_container PropTree.Container
 
 # What's It?
 

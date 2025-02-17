@@ -1,4 +1,4 @@
-﻿@page pg_class_quickqueue_container QuickQueueContainer
+﻿@page pg_class_quickqueue_container QuickQueue.Container
 
 # What's It?
 

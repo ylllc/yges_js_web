@@ -1,4 +1,4 @@
-﻿@page pg_class_file_control FileControl
+﻿@page pg_class_file_control File.Control
 
 # What's It?
 

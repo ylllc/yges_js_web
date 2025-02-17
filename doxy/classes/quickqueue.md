@@ -1,4 +1,4 @@
-﻿@page pg_class_quickqueue QuickQueue
+﻿@page pg_class_quickqueue QuickQueue.Unit
 
 # What's It?
 

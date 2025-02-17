@@ -1,4 +1,4 @@
-﻿@page pg_class_dir_target DirTarget
+﻿@page pg_class_dir_target Dir.Target
 
 # What's It?
 

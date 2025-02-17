@@ -12,7 +12,7 @@ let _players_dev=[]
 function _setupDevice(gp){
 
 	let dev={
-		name:'YgEs.GamePadDevice',
+		Name:'YgEs.GamePadDevice',
 		User:{},
 
 		_timestamp:gp.timestamp,
@@ -86,7 +86,7 @@ function _onDisconnected(ev){
 }
 
 let GamePadManager=YgEs.GamePadManager={
-	name:'YgEs.GamePadManager',
+	Name:'YgEs.GamePadManager',
 	PlayerConfig:[],
 	User:{},
 

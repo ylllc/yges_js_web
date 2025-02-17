@@ -7,7 +7,7 @@
 (()=>{ // local namespace 
 
 let Timing=YgEs.Timing={
-	name:'YgEs_Timing',
+	Name:'YgEs.Timing',
 	User:{},
 	_private_:{},
 

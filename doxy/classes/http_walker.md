@@ -1,4 +1,4 @@
-﻿@page pg_class_http_walker HTTPWalker
+﻿@page pg_class_http_walker HTTPServer.Walker
 
 # What's It?
 

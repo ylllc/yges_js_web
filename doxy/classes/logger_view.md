@@ -1,4 +1,4 @@
-﻿@page pg_class_logger_view LogView
+﻿@page pg_class_logger_view LogView.Unit
 
 # What's It?
 
