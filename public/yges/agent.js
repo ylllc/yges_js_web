@@ -349,6 +349,7 @@ function _standby(prm){
 	let agent={
 		name:name,
 		User:user,
+		_private_:{},
 
 		IsOpen:()=>opencount>0,
 		IsBusy:()=>!!ctrl || opencount>0,
@@ -438,6 +439,7 @@ function _standby(prm){
 YgEs.AgentManager={
 	name:'YgEs.AgentManager',
 	User:{},
+	_private_:{},
 
 	StandBy:_standby,
 	Launch:(prm)=>{return _standby(prm).Fetch();},

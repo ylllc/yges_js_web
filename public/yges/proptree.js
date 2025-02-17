@@ -18,6 +18,7 @@ function _prop_internal(){
 	let t={
 		name:'YgEs.PropTree',
 		User:{},
+		_private_:{},
 
 		_yges_proptree_:true, // means this is YgEs.PropTree 
 		_sub:undefined,
@@ -394,6 +395,7 @@ function _prop_each(t,q,cb){
 let PropTree=YgEs.PropTree={
 	name:'YgEs.PropTreeContainer',
 	User:{},
+	_private_:{},
 
 	PROPTYPE_NAMES:_type_names,
 	PROPTYPE:_type_lookup,

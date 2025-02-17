@@ -318,6 +318,8 @@ function _setupTestDir(launcher,scriptstore,url,src,reportParent){
 YgEs.Test={
 	name:'YgEs_UnitTest',
 	User:{},
+	_private:{},
+	
 	Scenaria:{},
 
 	Never:(msg=null)=>{_assert(false,msg)},

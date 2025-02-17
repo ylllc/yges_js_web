@@ -34,6 +34,7 @@ function _parse(url,opt={}){
 	let pu={
 		name:'YgEs_ParsedURL',
 		User:{},
+		_private_:{},
 
 		Scheme:'',
 		Slashes:'',
@@ -145,6 +146,7 @@ function _parse(url,opt={}){
 let URLBuilder=YgEs.URLBuilder={
 	name:'YgEs_URLBuilder',
 	User:{},
+	_private_:{},
 
 	Parse:_parse,
 

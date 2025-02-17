@@ -29,6 +29,8 @@ function _create_happening(cbprop,cbstr,cberr,init={}){
 	let hap={
 		name:init.Name??'YgEs.Happening',
 		User:init.User??{},
+		_private_:{},
+
 		_yges_happening_:true, // means this is YgEs.Happening 
 
 		GetInstanceID:()=>iid,
@@ -89,8 +91,10 @@ function _create_manager(prm,parent=null){
 	const iid=YgEs.NextID();
 	let mng={
 		name:prm.Name??'YgEs.HappeningManager',
-		OnHappen:prm.OnHappen??null,
 		User:prm.User??{},
+		_private_:{},
+
+		OnHappen:prm.OnHappen??null,
 
 		CreateLocal:(prm={})=>{
 			let cm=_create_manager(prm,mng);
@@ -180,7 +184,7 @@ function _create_manager(prm,parent=null){
 			let hap=null;
 			if(typeof src!='object'){
 				hap=_create_happening(
-				()=>prop,
+					()=>prop,
 					()=>''+src,
 					()=>new Error(''+src,{cause:prop}),
 					init
@@ -205,9 +209,9 @@ function _create_manager(prm,parent=null){
 			else{
 				hap=_create_happening(
 					()=>Object.assign(src,prop),
-				()=>'Happening',
+					()=>'Happening',
 					()=>new Error('Happening',{cause:Object.assign(src,prop)}),
-				init
+					init
 				);
 			}
 
