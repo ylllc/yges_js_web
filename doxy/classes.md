@@ -8,6 +8,8 @@
 - @subpage pg_class_agent_manager
 - @subpage pg_class_dir_control
 - @subpage pg_class_dir_target
+- @subpage pg_class_endpoint_control
+- @subpage pg_class_endpoint_container
 - @subpage pg_class_engine
 - @subpage pg_class_engine_view_container
 - @subpage pg_class_file_control
@@ -52,6 +54,8 @@
 - @subpage pg_class_unittest_file
 - @subpage pg_class_unittest_view_container
 - @subpage pg_class_timing
+- @subpage pg_class_transport_container
+- @subpage pg_class_transport_driver
 - @subpage pg_class_urlbuilder
 - @subpage pg_class_util
 - @subpage pg_class_websock_client_agent
