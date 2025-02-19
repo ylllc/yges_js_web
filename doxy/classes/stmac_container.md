@@ -52,6 +52,7 @@ user defined object kept in a control
 | Name | Type | Means |
 |------|------|-------|
 | Name | string? | user class name |
+| Log | @ref pg_class_logger? | logs to it |
 | HappenTo | @ref pg_class_happening_manager? | user happening handler |
 | Launcher | @ref pg_class_launcher? | procedure runs on it |
 | User | @ref StMac_UserShared | user definitions and kept in created context |

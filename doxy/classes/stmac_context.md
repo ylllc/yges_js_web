@@ -74,6 +74,17 @@ GetInfo():@ref StMac_StateMachineInfo
 statemachine info.  
 
 -----
+## GetLogger() {#StMac_GetLogger}
+
+### Spec
+
+GetLogger():@ref pg_class_logger
+
+### Returns
+
+logs to it
+
+-----
 ## GetHappeningManager() {#StMac_GetHappeningManager}
 
 ### Spec

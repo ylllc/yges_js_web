@@ -23,7 +23,7 @@ created by @pg_class_launcher
 
 | Name | Type | Means |
 |------|------|-------|
-| HappenTo | HappeningManager? | user happening handler |
+| HappenTo | @ref pg_class_happening_manager? | user happening handler |
 | User | dict<string,any> | user definitions |
 
 -----

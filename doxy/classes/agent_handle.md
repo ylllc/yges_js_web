@@ -8,7 +8,7 @@ created by @ref pg_class_agent
 # Methods
 
 -----
-## GetAgent() {#Agent_GetAgent}
+## GetAgent() {#AgentHandle_GetAgent}
 
 ### Spec
 
@@ -19,7 +19,18 @@ GetAgent():@ref pg_class_agent
 target Agent  
 
 -----
-## GetLauncher() {#Agent_GetLauncher}
+## GetLogger() {#AgentHandle_GetLogger}
+
+### Spec
+
+GetLogger():@ref pg_class_logger
+
+### Returns
+
+logs to it
+
+-----
+## GetLauncher() {#AgentHandle_GetLauncher}
 
 ### Spec
 
@@ -30,7 +41,7 @@ GetLauncher():@ref pg_class_launcher
 procedures running on target Agent  
 
 -----
-## GetHappeningManager() {#Agent_GetHappeningManager}
+## GetHappeningManager() {#AgentHandle_GetHappeningManager}
 
 ### Spec
 
@@ -41,7 +52,7 @@ GetHappeningManager():@ref pg_class_happening_manager
 happenings reported in target Agent
 
 -----
-## GetDependencies() {#Agent_GetDependencies}
+## GetDependencies() {#AgentHandle_GetDependencies}
 
 ### Spec
 
@@ -52,7 +63,7 @@ GetDependencies():dict<string,@ref pg_class_agent_handle>
 dependencies of target Agent
 
 -----
-## GetState() {#Agent_GetState}
+## GetState() {#AgentHandle_GetState}
 
 GetState():string
 
@@ -61,7 +72,7 @@ GetState():string
 current state  
 
 -----
-## IsBusy() {#Agent_IsBusy}
+## IsBusy() {#AgentHandle_IsBusy}
 
 ### Spec
 
@@ -75,7 +86,7 @@ IsBusy():bool
 | false | not runnning |
 
 -----
-## IsOpen() {#Agent_IsOpen}
+## IsOpen() {#AgentHandle_IsOpen}
 
 ### Spec
 
@@ -89,7 +100,7 @@ IsOpen():bool
 | false | closed from all handles |
 
 -----
-## IsReady() {#Agent_IsReady}
+## IsReady() {#AgentHandle_IsReady}
 
 ### Spec
 
@@ -103,7 +114,7 @@ IsReady():bool
 | false | in down or not running |
 
 -----
-## IsHalt() {#Agent_IsHalt}
+## IsHalt() {#AgentHandle_IsHalt}
 
 ### Spec
 
@@ -117,7 +128,7 @@ IsHalt():bool
 | false | otherwise |
 
 -----
-## Restart() {#Agent_Restart}
+## Restart() {#AgentHandle_Restart}
 
 ### Spec
 
@@ -126,7 +137,7 @@ Restart():void
 do DOWN and UP in this Agent  
 
 -----
-## Fetch() {#Agent_Fetch}
+## Fetch() {#AgentHandle_Fetch}
 
 ### Spec
 
@@ -137,7 +148,7 @@ Fetch():@ref pg_class_agent_handle
 create a new AgentHandle.  
 
 -----
-## Open() {#Agent_Open}
+## Open() {#AgentHandle_Open}
 
 ### Spec
 
@@ -146,7 +157,7 @@ Open():void
 open this handle.  
 
 -----
-## Close() {#Agent_Close}
+## Close() {#AgentHandle_Close}
 
 ### Spec
 

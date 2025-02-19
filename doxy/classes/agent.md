@@ -131,6 +131,17 @@ IsHalt():bool
 | false | otherwise |
 
 -----
+## GetLogger() {#Agent_GetLogger}
+
+### Spec
+
+GetLogger():@ref pg_class_logger
+
+### Returns
+
+logs to it
+
+-----
 ## GetLauncher() {#Agent_GetLauncher}
 
 ### Spec

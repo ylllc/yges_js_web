@@ -882,6 +882,7 @@ function _create_proc(prm,launcher){
 		User:prm.User??{},
 		_private_:{},
 
+		Log:prm.Log??launcher.Log??Log,
 		HappenTo:prm.HappenTo??launcher.HappenTo??HappeningManager,
 
 		GetInstanceID:()=>iid,
@@ -1035,6 +1036,7 @@ function _yges_enginge_create_launcher(prm){
 		User:prm.User??{},
 		_private_:{},
 
+		Log:prm.Log??undefined,
 		HappenTo:prm.HappenTo??HappeningManager,
 		Limit:prm.Limit??-1,
 		Cycle:prm.Cycle??DEFAULT_LAUNCHER_CYCLE,
@@ -1272,6 +1274,7 @@ YgEs.Engine.ShutDown=()=>{
 
 const Engine=YgEs.Engine;
 const HappeningManager=YgEs.HappeningManager;
+const Log=YgEs.Log;
 
 function _run(start,states={},opt={}){
 
@@ -1279,6 +1282,7 @@ function _run(start,states={},opt={}){
 	let cur=null;
 
 	let name=opt.Name??'YgEs.StateMachine';
+	let log=opt.Log??Log;
 	let happen=opt.HappenTo??HappeningManager;
 	let user=opt.User??{};
 
@@ -1302,6 +1306,7 @@ function _run(start,states={},opt={}){
 		User:user,
 		_private_:{},
 
+		GetLogger:()=>log,
 		GetHappeningManager:()=>happen,
 		GetPrevState:()=>state_prev,
 		GetCurState:()=>state_cur,
@@ -1476,6 +1481,7 @@ function _run(start,states={},opt={}){
 
 	let stmac={
 		Name:name+'.Proc',
+		Log:log,
 		HappenTo:happen,
 		User:user,
 		OnStart:(user)=>{
@@ -1516,6 +1522,7 @@ YgEs.StateMachine={
 (()=>{ // local namespace 
 
 const HappeningManager=YgEs.HappeningManager;
+const Log=YgEs.Log;
 const Engine=YgEs.Engine;
 const StateMachine=YgEs.StateMachine;
 const Util=YgEs.Util;
@@ -1539,6 +1546,7 @@ function _standby(prm){
 	let wait=[]
 
 	let name=prm.Name??'YgEs.Agent';
+	let log=prm.Log??Log;
 	let happen=prm.HappenTo??HappeningManager;
 	let launcher=prm.Launcher??Engine;
 	let user=prm.User??{};
@@ -1867,6 +1875,7 @@ function _standby(prm){
 		GetState:()=>ctrl?ctrl.GetCurState():'NONE',
 		GetInfo:()=>GetInfo(''),
 
+		GetLogger:()=>log,
 		GetLauncher:()=>{return launcher;},
 		GetHappeningManager:()=>{return happen;},
 		GetDependencies:()=>{return prm.Dependencies;},
@@ -1888,6 +1897,7 @@ function _standby(prm){
 
 	let ctrlopt={
 		Name:name+'.StateMachine',
+		Log:log,
 		HappenTo:happen,
 		Launcher:launcher,
 		User:user,
@@ -1909,6 +1919,7 @@ function _standby(prm){
 			Name:name+'.Handle',
 
 			GetAgent:()=>{return agent;},
+			GetLogger:()=>agent.GetLogger(),
 			GetLauncher:()=>agent.GetLauncher(),
 			GetHappeningManager:()=>agent.GetHappeningManager(),
 			GetDependencies:()=>agent.GetDependencies(),

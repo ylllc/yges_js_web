@@ -18,7 +18,8 @@ user definied object kept in a @ref pg_class_procedure instance
 | Name | Type | Means |
 |------|------|-------|
 | Name | string? | user class name |
-| HappenTo | HappeningManager? | user happening handler |
+| Log | @ref pg_class_logger? | logs to it |
+| HappenTo | @ref pg_class_happening_manager? | user happening handler |
 | Limit | int | parallel running capacity |
 | Cycle | int | polling cycle msec |
 | User | @ref Launcher_UserShared | user definitions |
@@ -29,7 +30,8 @@ user definied object kept in a @ref pg_class_procedure instance
 | Name | Type | Means |
 |------|------|-------|
 | Name | string? | class name |
-| HappenTo | HappeningManager? | user happening handler |
+| Log | @ref pg_class_logger? | logs to it |
+| HappenTo | @ref pg_class_happening_manager? | user happening handler |
 | OnStart | func<@ref Launcher_UserShared> | called on beginning of the procedure |
 | OnPoll | func<@ref Launcher_UserShared> | called repetition until end of the procedure |
 | OnDone | func<@ref Launcher_UserShared> | called on finished of the procedure |
@@ -58,7 +60,7 @@ user definied object kept in a @ref pg_class_procedure instance
 -----
 | Name | Type | Means |
 |------|------|-------|
-| HappenTo | HappeningManager | happenings managed on |
+| HappenTo | @ref pg_class_happening_manager | happenings managed on |
 | Limit | int | parallel running capacity |
 | Cycle | int | polling cycle msec |
 | User | dict<string,any> | user definitions |

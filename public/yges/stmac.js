@@ -8,6 +8,7 @@
 
 const Engine=YgEs.Engine;
 const HappeningManager=YgEs.HappeningManager;
+const Log=YgEs.Log;
 
 function _run(start,states={},opt={}){
 
@@ -15,6 +16,7 @@ function _run(start,states={},opt={}){
 	let cur=null;
 
 	let name=opt.Name??'YgEs.StateMachine';
+	let log=opt.Log??Log;
 	let happen=opt.HappenTo??HappeningManager;
 	let user=opt.User??{};
 
@@ -38,6 +40,7 @@ function _run(start,states={},opt={}){
 		User:user,
 		_private_:{},
 
+		GetLogger:()=>log,
 		GetHappeningManager:()=>happen,
 		GetPrevState:()=>state_prev,
 		GetCurState:()=>state_cur,
@@ -212,6 +215,7 @@ function _run(start,states={},opt={}){
 
 	let stmac={
 		Name:name+'.Proc',
+		Log:log,
 		HappenTo:happen,
 		User:user,
 		OnStart:(user)=>{

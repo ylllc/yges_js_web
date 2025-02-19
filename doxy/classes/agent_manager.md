@@ -26,6 +26,7 @@ user defined object kept in an agent
 | Name | Type | Means |
 |------|------|-------|
 | Name | string? | user class name |
+| Log | @ref pg_class_logger? | logs to it |
 | HappenTo | @ref pg_class_happening_manager? | happenings reported in it |
 | Launcher | @ref pg_class_launcher? | procedures running on it |
 | Dependencies | @ref pg_class_agent_handle[] | relaying open and close |

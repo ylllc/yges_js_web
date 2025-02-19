@@ -36,6 +36,7 @@ function _create_proc(prm,launcher){
 		User:prm.User??{},
 		_private_:{},
 
+		Log:prm.Log??launcher.Log??Log,
 		HappenTo:prm.HappenTo??launcher.HappenTo??HappeningManager,
 
 		GetInstanceID:()=>iid,
@@ -189,6 +190,7 @@ function _yges_enginge_create_launcher(prm){
 		User:prm.User??{},
 		_private_:{},
 
+		Log:prm.Log??undefined,
 		HappenTo:prm.HappenTo??HappeningManager,
 		Limit:prm.Limit??-1,
 		Cycle:prm.Cycle??DEFAULT_LAUNCHER_CYCLE,
