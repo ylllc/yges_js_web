@@ -121,16 +121,16 @@ function _build_array(view,key,src,bridge){
 		view3.Element.remove();
 	}
 	view2._insert=(key,val)=>{
+		if(key>=ref.length){
+			view2.Push(val);
+			return;
+		}
+
 		src.splice(key,0,val);
 		let view3=_build(view2,ref.length,val,bridge);
-		ref.push(view3);
-		let back=view3.Element.innerHTML;
-		for(let i=ref.length-1;i>key;--i){
-			ref[i]._change(src[i]);
-			ref[i].Element.innerHTML=ref[i-1].Element.innerHTML;
-		}
-		ref[key]._change(src[key]);
-		ref[key].Element.innerHTML=back;
+		view3.Element.remove();
+		view2.Element.insertBefore(view3.Element,ref[key].Element);
+		ref.splice(key,0,view3);
 	}
 	view2.Update=(src2)=>{
 
@@ -220,7 +220,6 @@ function _build_prop(view,key,src,bridge){
 		for(let k in src2){
 			if(!ref[k])view2.Register(k);
 			ref[k].ValView.Update(src2[k]);
-//			view2._replace(k,src2[k]);
 		}
 	}
 
