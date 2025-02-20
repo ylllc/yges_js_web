@@ -28,14 +28,14 @@ function _setControl(view,key,src,bridge,type,parent){
 		remove_view();
 		if(key1!=null)parent._cutoff(key1);
 	}
-	view.Replace=(src)=>{
-		if(parent)parent._replace(key1,src);
+	view.SetValue=(src2)=>{
+		if(parent)parent._replace(key1,src2);
 	}
 	view.Rename=(key2)=>{
 		if(parent)parent._rename(key1,key2);
 	}
-	view.Insert=(src)=>{
-		if(parent)parent._insert(key1,src);
+	view.Insert=(src2)=>{
+		if(parent)parent._insert(key1,src2);
 	}
 
 	view.Activate=()=>{
@@ -63,6 +63,16 @@ function _setControl(view,key,src,bridge,type,parent){
 function _build_value(view,key,src,bridge){
 
 	let view2=YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:bridge.StylePrefix+'_value'},Sub:[YgEs.Inspect(src)]});
+
+	view2.Update=(src2)=>{
+		if(Object.is(src2,view2.GetValue()))return;
+		if(typeof src2==='string' || YgEs.Util.IsPoly()){
+			view._replace(view2.GetKey(),src2);
+			return;
+		}
+		view2.Replace(YgEs.Inspect(src2));
+	}
+
 	return _setControl(view2,key,src,bridge,_type_lookup.VALUE,view);
 }
 
@@ -70,6 +80,16 @@ function _build_text(view,key,src,bridge){
 
 	let large=src.length>bridge.StringBorder;
 	let view2=YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:bridge.StylePrefix+(large?'_text':'_value')},Sub:[YgEs.Inspect(src)]});
+
+	view2.Update=(src2)=>{
+		if(Object.is(src2,view2.GetValue()))return;
+		if(typeof src2!=='string' || large!=(src2.length>bridge.StringBorder)){
+			view._replace(view2.GetKey(),src2);
+			return;
+		}
+		view2.Replace(YgEs.Inspect(src2));
+	}
+
 	return _setControl(view2,key,src,bridge,_type_lookup.TEXT,view);
 }
 
@@ -112,6 +132,19 @@ function _build_array(view,key,src,bridge){
 		ref[key]._change(src[key]);
 		ref[key].Element.innerHTML=back;
 	}
+	view2.Update=(src2)=>{
+
+		if(!Array.isArray(src2)){
+			view._replace(view2.GetKey(),src2);
+			return;
+		}
+
+		let l1=ref.length;
+		let l2=src2.length;
+		for(;l1>l2;view2._cutoff(--l1)){}
+		for(let i=0;i<l1;++i)ref[i].Update(src2[i]);
+		for(let i=l1;i<l2;++i)view2.Push(src2[i]);
+	}
 
 	return _setControl(view2,key,src,bridge,_type_lookup.ARRAY,view);
 }
@@ -137,6 +170,9 @@ function _build_prop(view,key,src,bridge){
 		setChild(k,v);
 	}
 
+	view2.Exists=(key)=>!!ref[key];
+	view2.GetChild=(key)=>ref[key];
+	view2.GetKeys=()=>Object.keys(ref);
 	view2.Register=(key)=>{
 		if(ref[key])return;
 		setChild(key,undefined);
@@ -166,6 +202,26 @@ function _build_prop(view,key,src,bridge){
 		view3.ValView=_build(view3,key,val,bridge);
 		_setControl(view3,key,val,bridge,_type_lookup.PAIR,view2);
 		src[key]=val;
+	}
+	view2.Update=(src2)=>{
+		if(src2==null || typeof src2!='object'){
+			view._replace(view2.GetKey(),src2);
+			return;
+		}
+
+		view._replace(view2.GetKey(),src2);
+
+		let k1=Object.keys(ref);
+		let k2=Object.keys(src2);
+		for(let k of k1){
+			if(k2.includes(k))continue;
+			view2._cutoff(k);
+		}
+		for(let k in src2){
+			if(!ref[k])view2.Register(k);
+			ref[k].ValView.Update(src2[k]);
+//			view2._replace(k,src2[k]);
+		}
 	}
 
 	return _setControl(view2,key,src,bridge,_type_lookup.PROP,view);
@@ -199,12 +255,15 @@ YgEs.ObjView={
 		}
 
 		let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:{class:bridge.StylePrefix+'_frame'}});
-		_build(view,null,src,bridge);
+		let view2=_build(view,null,src,bridge);
 		_setControl(view,null,src,bridge,_type_lookup.FRAME,null);
 		view._replace=(key,val)=>{
 			view.Clear();
-			_build(view,null,val,bridge);
+			view2=_build(view,null,val,bridge);
 			_setControl(view,null,val,bridge,_type_lookup.FRAME,null);
+		}
+		view.Update=(src2)=>{
+			view2.Update(src2);
 		}
 
 		view.GetStringBorder=()=>bridge.StringBorder;

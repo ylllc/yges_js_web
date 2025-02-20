@@ -26,6 +26,7 @@ Repositories:
 </footer>
 <div id=modules>
 <script src="yges/ipl.js"></script>
+<script src="yges/objview.js"></script>
 </div>
 <script><!--
 let modules=YgEs.ToQHT(document.getElementById('modules'));
@@ -44,7 +45,7 @@ async function ipl_ready(){
 	// resources 
 	YgEs.LoadCSS('objview.css');
 	YgEs.LoadJS('yges/gui.js');
-	YgEs.LoadJS('yges/objview.js');
+//	YgEs.LoadJS('yges/objview.js');
 	await YgEs.LoadSync().ToPromise();
 	YgEs.DisposeMonitor();
 
@@ -238,7 +239,7 @@ async function ipl_ready(){
 
 							// apply by action type 
 							switch(dlg_edit_action){
-								case EDITACT.REPLACE: focus.Replace(v); break;
+								case EDITACT.REPLACE: focus.SetValue(v); break;
 								case EDITACT.RENAME: focus.Rename(v); break;
 								case EDITACT.REGISTER: focus.Register(v); break;
 								case EDITACT.APPEND: focus.Push(v); break;
@@ -458,14 +459,25 @@ async function ipl_ready(){
 	let src={
 		A:1,
 		B:-1.732050807568877,
-		C:'123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
+		C:'1234567890',
 		D:[],
 		E:[-1,-2,{o:true,x:false,0:null,'':undefined},+Infinity,-Infinity,NaN],
 		_:"ABC\nXYZ"
 	}
-	for(let i=0;i<1000;++i){
-		src.D.push({id:i,val:'Test'});
+	for(let i=0;i<100;++i){
+		src.D.push({id:i,val:'Test'+i});
 	}
 	setup(src);
+
+	// update test 
+	src.A=123;
+	src.B2=src.B;
+	delete src.B;
+	src.C=Array(15).join('1234567890');
+	for(let i=100;i<1000;++i){
+		src.D.push({id:i,val:'Test'+i});
+	}
+	src.E.splice(1,1);
+	inspector.Update(src);
 }
 //--></script></div></body></html>

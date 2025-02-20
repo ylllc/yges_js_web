@@ -26,6 +26,9 @@ Repositories:
 </footer>
 <div id=modules>
 <script src="yges/ipl.js"></script>
+<script src="yges/objview.js"></script>
+<script src="yges/happening_view.js"></script>
+<script src="yges/engine_view.js"></script>
 </div>
 <script><!--
 let modules=YgEs.ToQHT(document.getElementById('modules'));
@@ -41,8 +44,9 @@ async function ipl_ready(){
 
 	// resources 
 	YgEs.LoadCSS('engmon.css');
-	YgEs.LoadJS('yges/happening_view.js');
-	YgEs.LoadJS('yges/engine_view.js');
+//	YgEs.LoadJS('yges/objview.js');
+//	YgEs.LoadJS('yges/happening_view.js');
+//	YgEs.LoadJS('yges/engine_view.js');
 	await YgEs.LoadSync().ToPromise();
 	YgEs.DisposeMonitor();
 

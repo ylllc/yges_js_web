@@ -1,3 +1,52 @@
+.yges_objview_frame{
+	border-style:double;
+	box-sizing:border-box;
+	padding:0.3em;
+}
+.yges_objview_prop{
+	display:inline-block;
+	box-sizing:border-box;
+	border-style:ridge;
+	padding:0.2em;
+	max-height:75vh;
+	overflow:auto;
+	resize:both;
+}
+.yges_objview_array{
+	display:inline-block;
+	box-sizing:border-box;
+	border-style:groove;
+	padding:0.2em;
+	max-height:75vh;
+	overflow:auto;
+	resize:both;
+}
+.yges_objview_pair{
+	display:inline-block;
+	border-style:outset;
+	margin:0.2em;
+}
+.yges_objview_key{
+	display:inline-block;
+	padding:0.2em;
+	height:100%;
+	line-height:100%;
+	
+}
+.yges_objview_value{
+	display:inline-block;
+	border-style:inset;
+	padding:0.2em;
+}
+.yges_objview_text{
+	display:inline-block;
+	border-style:inset;
+	padding:0.2em;
+	max-height:5em;
+	overflow-wrap:anywhere;
+	overflow:auto;
+	resize:both;
+}
 
 .yges_hapview_window{
 	border:groove;
@@ -40,8 +89,6 @@
 }
 .yges_hapview_happen_rmks{
 	margin-left:0.5em;
-}
-.yges_hapview_happen_prop{
 }
 
 .yges_engview_window{
@@ -88,8 +135,6 @@
 }
 .yges_engview_proc_rmks{
 	margin-left:0.5em;
-}
-.yges_engview_proc_info{
 }
 .yges_engview_proc_haps{
 }

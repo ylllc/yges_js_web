@@ -15,7 +15,7 @@ function _view_proc(target,src,tick,active){
 	YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_engview_proc_capt'},Sub:[src.Name]});
 	YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_engview_proc_rmks'},Sub:['{'+src.GetInstanceID()+'}']});
 
-	view.Info=YgEs.NewQHT({Target:view,Tag:'div',Attr:{class:'yges_engview_proc_info'}});
+	view.Info=YgEs.ObjView.SetUp(view,src.GetInfo());
 	view.Haps=YgEs.NewQHT({Target:target,Tag:'div',Attr:{class:'yges_engview_proc_haps'}});
 
 	let hapview=null;
@@ -65,8 +65,7 @@ function _view_proc(target,src,tick,active){
 			view.Status.Element.innerText='(Running)';
 		}
 
-		let info=YgEs.Inspect(src.GetInfo());
-		view.Info.Element.innerText=(info=='{}')?'':info;
+		view.Info.Update(src.GetInfo());
 	}
 
 	view.Update(tick);

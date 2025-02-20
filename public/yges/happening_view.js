@@ -12,7 +12,7 @@ function _view_hap(target,hap,tick){
 	view.Status=YgEs.NewQHT({Target:view,Tag:'span'});
 	view.Capt=YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_hapview_happen_capt'}});
 	view.Rmks=YgEs.NewQHT({Target:view,Tag:'span',Attr:{class:'yges_hapview_happen_rmks'}});
-	view.Prop=YgEs.NewQHT({Target:view,Tag:'div',Attr:{class:'yges_hapview_happen_prop'}});
+	view.Prop=YgEs.ObjView.SetUp(view,hap.GetProp());
 
 	view.Update=(tick=null)=>{
 		if(!view.Element)return;
@@ -34,8 +34,7 @@ function _view_hap(target,hap,tick){
 		view.Capt.Element.innerText=hap.ToString();
 		view.Rmks.Element.innerText='{'+hap.GetInstanceID()+'}';
 
-		let pv=YgEs.Inspect(hap.GetProp());
-		view.Prop.Element.innerText=(pv=='{}')?'':pv;
+		view.Prop.Update(hap.GetProp());
 	}
 
 	view.Update(tick);
