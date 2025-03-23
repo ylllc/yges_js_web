@@ -39,7 +39,7 @@ create as an Agent.
 ```
 let transport=Transport.CreateDriver({
 
-	OnSend:(epid_from,epid_to,pack)=>{
+	OnSend:(ep_from,epid_to,pack)=>{
 		// imprement sending procedure 
 	},
 });
@@ -54,7 +54,7 @@ can redefine the way in your wish.
 ````
 let transport=Transport.CreateDriver({
 
-	OnPack:(data)=>{
+	OnPack:(ep_from,epid_to,payload)=>{
 		return /* encoded from data array */
 	},	
 
@@ -62,7 +62,7 @@ let transport=Transport.CreateDriver({
 		return /* decoded data array from a pack */
 	},	
 
-	OnSend:(epid_from,epid_to,pack)=>{
+	OnSend:(ep_from,epid_to,pack)=>{
 		// imprement sending procedure 
 	},
 });
@@ -76,7 +76,7 @@ for test, simulating bad network.
 ```
 let transport=Transport.CreateDriver({
 
-	OnSend:(endpoint_from,epid_to,pack)=>{
+	OnSend:(ep_from,epid_to,pack)=>{
 		// imprement sending procedure 
 	},
 
@@ -120,24 +120,24 @@ let endpoint=EndPoint.Create(transport,{
 ## Sending
 
 ```
-endopint.Send(/* opponent endpoint ID */,/* sending content */);
+endpoint.Send(/* opponent endpoint ID */,/* sending content */);
 ```
 
 -----
 ### Batch Senging 
 
 ```
-endopint.Launch(/* opponent endpoint ID */,/* sending content */);
+endpoint.Launch(/* opponent endpoint ID */,/* sending content */);
 	:
-endopint.Send(/* opponent endpoint ID */,/* sending content */);
+endpoint.Send(/* opponent endpoint ID */,/* sending content */);
 
 	or
 
-endopint.Kick(/* opponent endpoint ID */);
+endpoint.Kick(/* opponent endpoint ID */);
 
 	or 
 
-endopint.Kick(); // for all endpoints 
+endpoint.Kick(); // for all endpoints 
 
 ```
 
