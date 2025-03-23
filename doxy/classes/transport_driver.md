@@ -166,6 +166,12 @@ CB_Received(epid_from,payload):void
 # Structures
 
 -----
+## PayloadSpec {#TransportDriver_PayloadSpec}
+
+(todo)  
+spec by payload type  
+
+-----
 ## TransportDriverOption {#TransportDriver_TransportDriverOption}
 
 it inherited from @ref Agent_AgentParam 
@@ -183,6 +189,7 @@ it inherited from @ref Agent_AgentParam
 | OnExtractPayloadArray | @ref TransportDriver_CB_ExtractPayloadArray | imprementation of extracting payload array |
 | OnExtractPayloadType | @ref TransportDriver_CB_ExtractPayloadType | imprementation of extracting payload type from a payload |
 | OnSend | @ref TransportDriver_CB_Send | call by sending |
+| PayloadSpec | dict<string,@ref TransportDriver_PayloadSpec> | specifies by payload typ |
 | PayloadReceivers | dict<string,@ref TransportDriver_CB_Received> | call by received payload |
 
 -----
