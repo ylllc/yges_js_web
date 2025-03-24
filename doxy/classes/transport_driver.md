@@ -212,6 +212,28 @@ any type for sending by this TransportDriver
 # Methods
 
 -----
+## IsUnorderable() {#TransportDriver_IsUnorderable}
+
+### Spec
+
+IsUnorderable():bool
+
+### Returns
+
+indicate received packets may break ordering 
+
+-----
+## MakeDelay() {#TransportDriver_MakeDelay}
+
+### Spec
+
+MakeDelay():number
+
+### Returns
+
+delay msec
+
+-----
 ## Receive() {#TransportDriver_Receive}
 
 call with a pack received from your low level transport  
