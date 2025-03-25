@@ -164,3 +164,13 @@ open this handle.
 Close():void
 
 close this handle.  
+
+-----
+## other methods
+
+auto imprementation named by AgentBypasses[] and UserBypasses[] on @ref Agent_AgentParam  
+each method processes  
+
+- check target @ref pg_class_agent is ready 
+	- skip process when not ready
+- call target method

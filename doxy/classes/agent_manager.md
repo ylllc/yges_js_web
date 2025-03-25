@@ -30,6 +30,8 @@ user defined object kept in an agent
 | HappenTo | @ref pg_class_happening_manager? | happenings reported in it |
 | Launcher | @ref pg_class_launcher? | procedures running on it |
 | Dependencies | @ref pg_class_agent_handle[] | relaying open and close |
+| AgentBypasses | string[] | auto imprement calling Agent function on Handle |
+| UserBypasses | string[] | auto imprement calling User function on Handle |
 | OnRepair | func<@ref pg_class_agent> | on open when broken, try cleaning up |
 | OnOpen | func<@ref pg_class_agent> | on open from cleaned up |
 | OnReady | func<@ref pg_class_agent> | on opening completed |
