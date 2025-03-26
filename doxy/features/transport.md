@@ -116,6 +116,14 @@ let endpoint=EndPoint.Create(transport,{
 });
 ```
 
+### Host Endpoint
+
+Transport include internal EndPoint when HasHost enabled.  
+
+- can Send from Transport directly
+- can Receive without share EndPoint ID
+  - null EndPoint ID means the host of the Transport
+
 -----
 ## Sending
 
@@ -124,7 +132,7 @@ endpoint.Send(/* opponent endpoint ID */,/* sending content */);
 ```
 
 -----
-### Batch Senging 
+### Batch Sending 
 
 ```
 endpoint.Launch(/* opponent endpoint ID */,/* sending content */);

@@ -178,6 +178,7 @@ it inherited from @ref Agent_AgentParam
 
 | Name | Type | Means |
 |------|------|-------|
+| HasHost | bool | include host @ref pg_class_endpoint_control |
 | DelayMin | number | minimum sending delay msec for test |
 | DelayMax | number | minimum sending delay msec for test |
 | Unorderable | bool | can break ordering by delay test |
@@ -232,6 +233,66 @@ MakeDelay():number
 ### Returns
 
 delay msec
+
+-----
+## Launch() {#TransportDriver_Launch}
+
+prepare sending but postpone  
+call @ref TransportDriver_Kick to send  
+
+### Premises
+
+HasHost required on @ref TransportDriver_TransportDriverOption  
+
+### Spec
+
+Launch(epid_to,data):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| epid_to | string | receiver's EndPoint ID |
+| data | any | sending data |
+
+-----
+## Kick() {#TransportDriver_Kick}
+
+send prepared data  
+
+### Premises
+
+HasHost required on @ref TransportDriver_TransportDriverOption  
+
+### Spec
+
+Kick(epid_to):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| epid_to | string? | receiver's EndPoint ID (or all receivers) |
+
+-----
+## Send() {#TransportDriver_Send}
+
+send prepared and this data  
+
+### Premises
+
+HasHost required on @ref TransportDriver_TransportDriverOption  
+
+### Spec
+
+Send(epid_to,data):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| epid_to | string | receiver's EndPoint ID |
+| data | any | sending data |
 
 -----
 ## Receive() {#TransportDriver_Receive}
