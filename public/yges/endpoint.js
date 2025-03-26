@@ -45,6 +45,7 @@ function _endpoint_new(tdrv,opt={}){
 	const onReceived=opt.OnReceived;
 
 	let prm=Object.assign({},opt,{
+		AgentBypasses:['GetInstanceID','Launch','Kick','Send'],
 		OnClose:(ep)=>{
 			ep.GetLogger().Trace(()=>'EndPoint '+epid+' ('+ep.Name+') is closing');
 			if(onClose)onClose(ep);
@@ -95,7 +96,7 @@ function _endpoint_new(tdrv,opt={}){
 
 		let delay=tdrv.MakeDelay();
 		if(delay<1){
-			tdrv.Send(ep,epid_to,sq);
+			tdrv._private_.send(ep,epid_to,sq);
 			return;
 		}
 
@@ -103,7 +104,7 @@ function _endpoint_new(tdrv,opt={}){
 			// simple delay test  
 			// may swap ordered packets by this delay 
 			tdrv.GetLauncher().Delay(delay,()=>{
-				tdrv.Send(ep,epid_to,sq);
+				tdrv._private_.send(ep,epid_to,sq);
 			},()=>{});
 			return;
 		}
@@ -120,7 +121,7 @@ function _endpoint_new(tdrv,opt={}){
 			if(dq.length<1)return;
 			// send first packet 
 			sq=dq.shift();
-			tdrv.Send(ep,epid_to,sq);
+			tdrv._private_.send(ep,epid_to,sq);
 			if(dq.length<1)return;
 			// delay again 
 			delay=tdrv.MakeDelay();
