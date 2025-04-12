@@ -39,7 +39,7 @@ create as an Agent.
 ```
 let transport=Transport.CreateDriver({
 
-	OnSend:(epid_from,epid_to,pack)=>{
+	OnSend:(ep_from,epid_to,pack)=>{
 		// imprement sending procedure 
 	},
 });
@@ -54,7 +54,7 @@ can redefine the way in your wish.
 ````
 let transport=Transport.CreateDriver({
 
-	OnPack:(data)=>{
+	OnPack:(ep_from,epid_to,payload)=>{
 		return /* encoded from data array */
 	},	
 
@@ -62,7 +62,7 @@ let transport=Transport.CreateDriver({
 		return /* decoded data array from a pack */
 	},	
 
-	OnSend:(epid_from,epid_to,pack)=>{
+	OnSend:(ep_from,epid_to,pack)=>{
 		// imprement sending procedure 
 	},
 });
@@ -76,7 +76,7 @@ for test, simulating bad network.
 ```
 let transport=Transport.CreateDriver({
 
-	OnSend:(endpoint_from,epid_to,pack)=>{
+	OnSend:(ep_from,epid_to,pack)=>{
 		// imprement sending procedure 
 	},
 
@@ -116,28 +116,97 @@ let endpoint=EndPoint.Create(transport,{
 });
 ```
 
+### Host Endpoint
+
+Transport include internal EndPoint when HasHost enabled.  
+
+- can Send from Transport directly
+- can Receive without share EndPoint ID
+  - null EndPoint ID means the host of the Transport
+
 -----
 ## Sending
 
 ```
-endopint.Send(/* opponent endpoint ID */,/* sending content */);
+endpoint.Send(/* opponent endpoint ID */,/* sending content */);
 ```
 
 -----
-### Batch Senging 
+### Batch Sending 
 
 ```
-endopint.Launch(/* opponent endpoint ID */,/* sending content */);
+endpoint.Launch(/* opponent endpoint ID */,/* sending content */);
 	:
-endopint.Send(/* opponent endpoint ID */,/* sending content */);
+endpoint.Send(/* opponent endpoint ID */,/* sending content */);
 
 	or
 
-endopint.Kick(/* opponent endpoint ID */);
+endpoint.Kick(/* opponent endpoint ID */);
 
 	or 
 
-endopint.Kick(); // for all endpoints 
+endpoint.Kick(); // for all endpoints 
+
+```
+
+-----
+## API definition
+
+```
+// payload definition (shared between server and client) 
+const PAYLOAD_NAMES=['JOIN','WELCOME','SYNC_REQ','SYNC_RES']
+const PAYLOAD=YgEs.CreateEnum(PAYLOAD_NAMES);
+
+const pld_specs={}
+pld_specs[PAYLOAD.JOIN]={}
+pld_specs[PAYLOAD.WELCOME]={}
+pld_specs[PAYLOAD.SYNC_REQ]={
+	QuickCall:true, // call on just received 
+}
+pld_specs[PAYLOAD.SYNC_RES]={
+	QuickCall:true, // call on just received 
+}
+
+// extract a payload type from received structure 
+const pld_extract_type=(payload)=>payload.Type;
+
+// server side Transport Listening definition
+let server_tp_opt={
+		:
+	OnExtractPayloadType:pld_extract_type,
+	PayloadSpecs:pld_specs,
+	PayloadReceivers:{},
+}
+server_tp_opt.PayloadReceivers[PAYLOAD.JOIN]=(ep_to,epid_from,data)=>{
+	// called on receive a join request 
+		:
+
+	// respond to sender 
+	ep_to.Send(epid_from,{Type:PAYLOAD.WELCOME,...});
+}
+server_tp_opt.PayloadReceivers[PAYLOAD.SYNC_REQ]=(ep_to,epid_from,data)=>{
+	// called on receive a sync request 
+		:
+
+	// respond to sender 
+	ep_to.Send(epid_from,{Type:PAYLOAD.SYNC_RES,...});
+}
+
+// client side Transport Listening definition
+let client_tp_opt={
+		:
+	OnExtractPayloadType:pld_extract_type,
+	PayloadSpecs:pld_specs,
+	PayloadReceivers:{},
+}
+client_tp_opt.PayloadReceivers[PAYLOAD.WELCOME]=(ep_to,epid_from,data)=>{
+	// called on receive a response for joining 
+		:
+}
+client_tp_opt.PayloadReceivers[PAYLOAD.SYNC_RES]=(ep_to,epid_from,data)=>{
+	// called on receive a response for syncing 
+		:
+}
 
 ```
 

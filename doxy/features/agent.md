@@ -163,6 +163,8 @@ var agent=AgentManager.StandBy({
 	HappenTo:YourHappeningManager,
 	User:{YourStructure},
 	Dependencles:[AutoOpenHandles],
+	AgentBypasses:[FunctionNamesOnAgent],
+	UserBypasses:[FunctionNamesOnUser],
 
 	OnOpen:(agent)=>{/* startup and */ return true;},
 	OnRepair:(agent)=>{/* start repairing and */return true;},
@@ -193,6 +195,28 @@ h1.Close();
 // still work by h2 
 h2.Close();
 // truly closed 
+
+```
+
+-----
+## Bypasses
+
+AgentBypasses and UserBypasses imprement bypass functions on created Handle  
+these are check target Agent is ready and run target function  
+
+```
+var agent=AgentManager.StandBy({
+	User:{
+		UserFunc1:()=>{},
+		UserFunc2:()=>{},
+	},
+	UserBypasses:['UserFunc1','UserFunc2'],
+});
+
+var h=agent.Open();
+h.UserFunc1(); // call agent.User.UserFunc1()  
+h.Close();
+h.UserFunc2(); // not ready and don't call agent.User.UserFunc2()  
 
 ```
 

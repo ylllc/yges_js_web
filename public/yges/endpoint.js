@@ -45,6 +45,7 @@ function _endpoint_new(tdrv,opt={}){
 	const onReceived=opt.OnReceived;
 
 	let prm=Object.assign({},opt,{
+		AgentBypasses:['GetInstanceID','Launch','Kick','Send'],
 		OnClose:(ep)=>{
 			ep.GetLogger().Trace(()=>'EndPoint '+epid+' ('+ep.Name+') is closing');
 			if(onClose)onClose(ep);
@@ -55,11 +56,21 @@ function _endpoint_new(tdrv,opt={}){
 			tdrv._private_.connect(ep);
 			if(onReady)onReady(ep);
 		},
+		OnPollInHealthy:(agent)=>{
+
+			let rq=ep._private_.recvq;
+			ep._private_.recvq=[]
+			for(let recv of rq){
+				ep.GetLogger().Trace(()=>'EndPoint '+epid+' call with received from '+recv.From,recv.Payload);
+				recv.Call(ep,recv.From,recv.Payload);
+			}
+		},
 	});
 	if(!prm.Name)prm.Name='YgEs.EndPoint.Control';
 
 	let ep=Agent.StandBy(prm);
 	ep._private_.epid=epid;
+	ep._private_.recvq=[]
 	ep._private_.sendq=_qset_new();
 	ep._private_.delaying=_qset_new(); // for delay test 
 
@@ -92,7 +103,47 @@ function _endpoint_new(tdrv,opt={}){
 		if(!checkReady())return;
 		let sq=ep._private_.sendq.Flush(epid_to);
 		if(!sq)return;
-		tdrv.Send(ep,epid_to,sq);
+
+		let delay=tdrv.MakeDelay();
+		if(delay<1){
+			tdrv._private_.send(ep,epid_to,sq);
+			return;
+		}
+
+		if(tdrv.IsUnorderable()){
+			// simple delay test  
+			// may swap ordered packets by this delay 
+			tdrv.GetLauncher().Delay(delay,()=>{
+				tdrv._private_.send(ep,epid_to,sq);
+			},()=>{});
+			return;
+		}
+
+		// keep packets ordering 
+		let dq=ep._private_.delaying.Ref(epid_to);
+		dq.push(sq);
+		const launch=()=>{
+			tdrv.GetLauncher().Delay(delay,()=>{
+				fire();
+			},()=>{});
+		}
+		const fire=()=>{
+			if(dq.length<1)return;
+			// send first packet 
+			sq=dq.shift();
+			tdrv._private_.send(ep,epid_to,sq);
+			if(dq.length<1)return;
+			// delay again 
+			delay=tdrv.MakeDelay();
+			launch();
+		}
+		if(dq.length>1){
+			// delaying already started 
+		}
+		else{
+			// start delaying now 
+			launch();
+		}
 	}
 	ep.Send=(epid_to,data)=>{
 		ep.Launch(epid_to,data);

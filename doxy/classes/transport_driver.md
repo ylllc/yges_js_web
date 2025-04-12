@@ -166,12 +166,22 @@ CB_Received(epid_from,payload):void
 # Structures
 
 -----
+## PayloadSpec {#TransportDriver_PayloadSpec}
+
+spec by payload type  
+
+| Name | Type | Means |
+|------|------|-------|
+| QuickCall | bool | @ref TransportDriver_CB_Received calls on received directly |
+
+-----
 ## TransportDriverOption {#TransportDriver_TransportDriverOption}
 
 it inherited from @ref Agent_AgentParam 
 
 | Name | Type | Means |
 |------|------|-------|
+| HasHost | bool | include host @ref pg_class_endpoint_control |
 | DelayMin | number | minimum sending delay msec for test |
 | DelayMax | number | minimum sending delay msec for test |
 | Unorderable | bool | can break ordering by delay test |
@@ -183,6 +193,7 @@ it inherited from @ref Agent_AgentParam
 | OnExtractPayloadArray | @ref TransportDriver_CB_ExtractPayloadArray | imprementation of extracting payload array |
 | OnExtractPayloadType | @ref TransportDriver_CB_ExtractPayloadType | imprementation of extracting payload type from a payload |
 | OnSend | @ref TransportDriver_CB_Send | call by sending |
+| PayloadSpec | dict<string,@ref TransportDriver_PayloadSpec> | specifies by payload typ |
 | PayloadReceivers | dict<string,@ref TransportDriver_CB_Received> | call by received payload |
 
 -----
@@ -203,6 +214,88 @@ any type for sending by this TransportDriver
 
 -----
 # Methods
+
+-----
+## IsUnorderable() {#TransportDriver_IsUnorderable}
+
+### Spec
+
+IsUnorderable():bool
+
+### Returns
+
+indicate received packets may break ordering 
+
+-----
+## MakeDelay() {#TransportDriver_MakeDelay}
+
+### Spec
+
+MakeDelay():number
+
+### Returns
+
+delay msec
+
+-----
+## Launch() {#TransportDriver_Launch}
+
+prepare sending but postpone  
+call @ref TransportDriver_Kick to send  
+
+### Premises
+
+HasHost required on @ref TransportDriver_TransportDriverOption  
+
+### Spec
+
+Launch(epid_to,data):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| epid_to | string | receiver's EndPoint ID |
+| data | any | sending data |
+
+-----
+## Kick() {#TransportDriver_Kick}
+
+send prepared data  
+
+### Premises
+
+HasHost required on @ref TransportDriver_TransportDriverOption  
+
+### Spec
+
+Kick(epid_to):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| epid_to | string? | receiver's EndPoint ID (or all receivers) |
+
+-----
+## Send() {#TransportDriver_Send}
+
+send prepared and this data  
+
+### Premises
+
+HasHost required on @ref TransportDriver_TransportDriverOption  
+
+### Spec
+
+Send(epid_to,data):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| epid_to | string | receiver's EndPoint ID |
+| data | any | sending data |
 
 -----
 ## Receive() {#TransportDriver_Receive}
