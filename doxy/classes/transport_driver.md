@@ -168,8 +168,11 @@ CB_Received(epid_from,payload):void
 -----
 ## PayloadSpec {#TransportDriver_PayloadSpec}
 
-(todo)  
 spec by payload type  
+
+| Name | Type | Means |
+|------|------|-------|
+| QuickCall | bool | @ref TransportDriver_CB_Received calls on received directly |
 
 -----
 ## TransportDriverOption {#TransportDriver_TransportDriverOption}
