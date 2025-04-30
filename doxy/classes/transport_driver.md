@@ -113,11 +113,11 @@ payload array
 -----
 ## CB_ExtractPayloadType {#TransportDriver_CB_ExtractPayloadType}
 
-extract payload type a payload
+extract payload type from a payload
 
 ### Spec
 
-CB_ExtractPayloadType(payload):string
+CB_ExtractPayloadType(payload):string?
 
 ### Args
 
@@ -128,6 +128,25 @@ CB_ExtractPayloadType(payload):string
 ### Returns
 
 payload type
+
+-----
+## CB_ExtractSessionID {#TransportDriver_CB_ExtractSessionID}
+
+extract session ID from a payload
+
+### Spec
+
+CB_ExtractSessionID(payload):string?
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| payload | any | unpacked payload |
+
+### Returns
+
+session ID
 
 -----
 ## CB_Send {#TransportDriver_CB_Send}
@@ -192,7 +211,9 @@ it inherited from @ref Agent_AgentParam
 | OnExtractEPIDTo | @ref TransportDriver_CB_ExtractEPIDTo | imprementation of extracting receiver's EndPoint ID |
 | OnExtractPayloadArray | @ref TransportDriver_CB_ExtractPayloadArray | imprementation of extracting payload array |
 | OnExtractPayloadType | @ref TransportDriver_CB_ExtractPayloadType | imprementation of extracting payload type from a payload |
+| OnExtractSessionID | @ref TransportDriver_CB_ExtractSessionID | imprementation of extracting session ID from a payload |
 | OnSend | @ref TransportDriver_CB_Send | call by sending |
+| OnReceived | @ref EndPointControl_CB_Received | call by received on the Host |
 | PayloadSpec | dict<string,@ref TransportDriver_PayloadSpec> | specifies by payload typ |
 | PayloadReceivers | dict<string,@ref TransportDriver_CB_Received> | call by received payload |
 
@@ -203,14 +224,6 @@ it inherited from @ref Agent_AgentParam
 ## PackedData {#TransportDriver_PackedData}
 
 any type for sending by this TransportDriver  
-
------
-# Properties
-
------
-| Name | Type | Means |
-|------|------|-------|
-| User | dict<string,any> | user definitions |
 
 -----
 # Methods
@@ -363,3 +376,38 @@ Receive(from,pack):void
 |------|------|-------|
 | from | any | sender's transport info |
 | pack | @ref TransportDriver_PackedData | received pack |
+
+-----
+## AttachSession() {#TransportDriver_AttachSession}
+
+add a session on this Transport  
+
+### Spec
+
+AttachSession(sess):@ref pg_class_session_driver
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| sess | @ref pg_class_session_driver | source session |
+
+### Returns
+
+same to sess  
+
+-----
+## DetachSession() {#TransportDriver_DetachSession}
+
+remove a session on this Transport  
+
+### Spec
+
+DetachSession(sess):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| sess | @ref pg_class_session_driver | source session |
+
