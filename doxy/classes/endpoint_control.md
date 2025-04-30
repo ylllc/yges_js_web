@@ -36,9 +36,7 @@ it inherited from @ref Agent_AgentParam
 | Name | Type | Means |
 |------|------|-------|
 | EPID | string? | EndPoint ID (or null for the Host) |
-| OnClose | func<@ref pg_class_endpoint_control> | call on close this EndPoint |
-| OnReady | func<@ref pg_class_endpoint_control> | call on ready this EndPoint |
-| OnReceived | @ref EndPointControl_CB_Received | call by receive3d |
+| OnReceived | @ref EndPointControl_CB_Received | call by received |
 
 -----
 # Properties
