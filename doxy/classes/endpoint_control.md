@@ -35,6 +35,7 @@ it inherited from @ref Agent_AgentParam
 
 | Name | Type | Means |
 |------|------|-------|
+| EPID | string? | EndPoint ID (or null for the Host) |
 | OnReceived | @ref EndPointControl_CB_Received | call by receive3d |
 
 -----
