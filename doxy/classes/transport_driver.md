@@ -216,6 +216,57 @@ any type for sending by this TransportDriver
 # Methods
 
 -----
+## GetPayloadSpec() {#TransportDriver_GetPayloadSpec}
+
+### Spec
+
+GetPayloadSpec(plt):@ref TransportDriver_PayloadSpec?
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| plt | string | payload type |
+
+### Returns
+
+payload spec (or null)
+
+-----
+## GetEndPoint() {#TransportDriver_GetEndPoint}
+
+### Spec
+
+GetEndPoint(epid):@ref pg_class_endpoint_control?
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| epid | string? | EndPoint ID |
+
+### Returns
+
+EndPoint instance (or null)
+
+-----
+## ExtractPayloadType() {#TransportDriver_ExtractPayloadType}
+
+### Spec
+
+ExtractPayloadType(payload):string?
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| payload | any | sending data |
+
+### Returns
+
+payload type (or null)
+
+-----
 ## IsUnorderable() {#TransportDriver_IsUnorderable}
 
 ### Spec
@@ -249,14 +300,14 @@ HasHost required on @ref TransportDriver_TransportDriverOption
 
 ### Spec
 
-Launch(epid_to,data):void
+Launch(epid_to,payload):void
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | epid_to | string | receiver's EndPoint ID |
-| data | any | sending data |
+| payload | any | sending data |
 
 -----
 ## Kick() {#TransportDriver_Kick}
@@ -288,14 +339,14 @@ HasHost required on @ref TransportDriver_TransportDriverOption
 
 ### Spec
 
-Send(epid_to,data):void
+Send(epid_to,payload):void
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | epid_to | string | receiver's EndPoint ID |
-| data | any | sending data |
+| payload | any | sending data |
 
 -----
 ## Receive() {#TransportDriver_Receive}

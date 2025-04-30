@@ -70,14 +70,14 @@ call @ref EndPointControl_Kick to send
 
 ### Spec
 
-Launch(epid_to,data):void
+Launch(epid_to,payload):void
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | epid_to | string | receiver's EndPoint ID |
-| data | any | sending data |
+| payload | any | sending data |
 
 -----
 ## Kick() {#EndPointControl_Kick}
@@ -101,12 +101,27 @@ send prepared and this data
 
 ### Spec
 
-Send(epid_to,data):void
+Send(epid_to,payload):void
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
-| epid_to | string | receiver's EndPoint ID |
-| data | any | sending data |
+| epid_to | string? | receiver's EndPoint ID |
+| payload | any | sending data |
 
+-----
+## UnlockOnce() {#EndPointControl_UnlockOnce}
+
+remove a blocker from CallOnce  
+
+### Spec
+
+UnlockOnce(epid_to,plt):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| epid_to | string? | receiver's EndPoint ID |
+| plt | string | payload type |
