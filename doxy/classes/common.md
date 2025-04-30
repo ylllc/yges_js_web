@@ -106,6 +106,27 @@ CreateEnum(src):dict<string,int>
 reverse lookup table of src.  
 
 -----
+## SetDefault() {#Common_SetDefault}
+
+complement default values.  
+undefined members set with default.  
+
+### Spec
+
+SetDefault(dst,def):dict
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| dst | dict | complement target |
+| def | dict | default values |
+
+### Returns
+
+complemented structure  
+
+-----
 ## FromError() {#Common_FromError}
 
 ### Spec
