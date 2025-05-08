@@ -1,0 +1,28 @@
+
+.yges_testview_caption{
+	font-size:125%;
+	font-weight:bold;
+	text-align:center;
+}
+.yges_testview_window{
+	margin-top:0.5em;
+	padding:0.5em;
+	border:double;
+	height:10em;
+	overflow:auto;
+}
+
+.yges_testview_button{
+	font-size:125%;
+}
+
+.yges_testview_toggle_off{
+	font-size:125%;
+	background-color:#666;
+	font-color:#444;
+}
+.yges_testview_toggle_on{
+	font-size:125%;
+	background-color:#cc4;
+	font-color:#000;
+}

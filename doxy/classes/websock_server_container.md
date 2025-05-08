@@ -94,6 +94,8 @@ CB_Error(cnx,err):void
 | Name | Type | Means |
 |------|------|-------|
 | ConnectionLimit? | int | max connectable clients (or unlimited) |
+| OnReady | func | call on this server ready |
+| OnClose | func | call on this server close |
 | OnConnect? | @ref WebSockServer_Container_CB_Connect | call by connection from client |
 | OnDisconnect? | @ref WebSockServer_Container_CB_Disconnect | call by disconnection from client |
 | OnReceived? | @ref WebSockServer_Container_CB_Received | call by received from client |

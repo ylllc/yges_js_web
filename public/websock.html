@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset="utf-8">
+	<title>Yggdrasil Essense</title>
+	<link href="main.css" rel="stylesheet">
+</head>
+<body onload="ipl_ready()"><div class=screen>
+<header>
+<a href="./index.html">Yggdrasil Essense</a> / 
+WebSocket Example
+<hr>
+</header>
+<main>
+<h1 class="pagetitle">WebSocket Example</h1>
+<noscript><div class="warning">(JavaScript required)</div></noscript>
+<div id=mainboard class=main></div>
+</main>
+<footer>
+<hr>
+&copy; 2025 Yggdrasil Leaves, LLC.<br>
+Repositories: 
+<a target="_blank" href="https://github.com/ylllc/yges_js_web">[web]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_node">[Node.js]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_deno">[Deno]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_electron_builder">[Electron Bulider]</a>
+<a target="_blank" href="https://github.com/ylllc/yges_js_electron_forge">[Electron Forge]</a>
+</footer>
+<div id=modules>
+<script src="yges/ipl.js"></script>
+</div>
+<script><!--
+let modules=YgEs.ToQHT(document.getElementById('modules'));
+let mainboard=YgEs.ToQHT(document.getElementById('mainboard'));
+mainboard.Clear();
+let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
+let log=null; // Logger 
+let ws_cli=null; // WebSock 
+let tp_cli=null; // Transport 
+
+let gui_echo_content_recv=null;
+
+// payload definition (shared between server and client) 
+const PAYLOAD_NAMES=['ECHO_REQ','ECHO_REP']
+const PAYLOAD=YgEs.CreateEnum(PAYLOAD_NAMES);
+const pld_specs={}
+pld_specs[PAYLOAD.ECHO_REQ]={
+	CallOnce:{
+		// only 1 call until replied 
+		Limit:true,
+		// can next request after replied 
+		Reply:PAYLOAD.ECHO_REP,
+		// can call again after msec 
+		Timeout:10000,
+	},
+}
+pld_specs[PAYLOAD.ECHO_REP]={
+//	QuickCall:true, // call on just received 
+}
+
+// extract a payload type from received structure 
+const pld_extract_type=(payload)=>payload.Type;
+
+// client Transport driver
+const tp_cli_opt={
+	HasHost:true,
+	PayloadSpecs:pld_specs,
+	PayloadReceivers:{}, // client's receive functions by available payload type 
+	OnExtractPayloadType:pld_extract_type,
+	OnSend:(ep,epid_to,pack)=>{
+
+		log.Trace('ECHO_REQ sent to '+epid_to,pack);
+
+		// send to the server 
+		ws_cli.Send(pack);
+	},
+}
+tp_cli_opt.PayloadReceivers[PAYLOAD.ECHO_REP]=(ep_to,epid_from,data)=>{
+
+	log.Debug('ECHO_REP received from '+epid_from,data);
+
+	gui_echo_content_recv.Element.value=data.Content;
+}
+
+function ws_client_new(name,url,interval){
+
+	let opt={
+		// wait ms and auto reconnect when disconnected 
+		AutoReconnectWait:5000, 
+
+		OnConnected:()=>{
+			log.Info('WebSock client '+name+' is ready');
+		},
+		OnDisconnected:(normal)=>{
+
+			log.Info('WebSock client '+name+' is disconnected');
+		},
+		OnReceived:(msg)=>{
+
+			// (tentative) fix broken ClientTo 
+			// [ToDo] ClientTo should always null 
+			let j=JSON.parse(msg);
+			j.ClientTo=null;
+			msg=JSON.stringify(j);
+
+			// send to the server Transport 
+			tp_cli.Receive(null,msg);
+		},
+		OnError:(err)=>{
+			log.Fatal(err.message,err);
+		},
+	}
+	let client=YgEs.WebSockClient.SetUp(url,opt);
+	return client.Fetch();
+}
+
+function gui_test_form(caption){
+
+	YgEs.NewQHT({Target:mainboard,Tag:'h3',Attr:{class:'yges_testview_caption'},Sub:[caption]});
+	return YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_testview_window'}});
+}
+
+function gui_test_echo(){
+
+	const gui=gui_test_form('Echo');
+	const gui_send=YgEs.NewQHT({Target:gui,Tag:'div'});
+	const gui_recv=YgEs.NewQHT({Target:gui,Tag:'div'});
+
+	gui_send.Append('SEND');
+	gui_recv.Append('RECV');
+
+	const content_send=YgEs.NewQHT({Target:gui_send,Tag:'input',Attr:{type:'text'},Style:{width:'70%',height:'1.2em','font-size':'100%'}});
+	gui_echo_content_recv=YgEs.NewQHT({Target:gui_recv,Tag:'input',Attr:{type:'text',readonly:'readonly'},Style:{width:'70%',height:'1.2em','font-size':'100%'}});
+
+	YgEs.GUI.Button(gui_send,'Send',{
+		Class:'yges_testview_button',
+		OnClick:()=>{
+			log.Trace('try sending: '+content_send.Element.value);
+
+			tp_cli.Send(null,{Type:PAYLOAD.ECHO_REQ,Content:content_send.Element.value});
+		},
+	});
+}
+
+async function ipl_ready(){
+
+	ipl_loading.Remove();
+
+	YgEs.InitFrontend(modules,mainboard);
+
+	// resources 
+	YgEs.LoadCSS('testview.css');
+	YgEs.LoadCSS('logview.css');
+	YgEs.LoadJS('yges/gui.js');
+	YgEs.LoadJS('yges/logger_view.js');
+	YgEs.LoadJS('yges/websock_client.js');
+	YgEs.LoadJS('yges/endpoint.js');
+	YgEs.LoadJS('yges/transport.js');
+	await YgEs.LoadSync().ToPromise();
+	YgEs.DisposeMonitor();
+
+	// log view 
+	log=YgEs.Log.CreateLocal('YgEsTest',YgEs.Log.LEVEL.TICK);
+	let logviewarea=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_logview_area'}});
+	let logview=YgEs.LogView.SetUp(logviewarea,log,false);
+
+	// client Transport 
+	tp_cli=YgEs.Transport.CreateDriver(tp_cli_opt).Open();
+
+	// connect via WebSocket 
+	ws_cli=ws_client_new('WebSockTestClient','ws://localhost:8801',100);
+	ws_cli.Open();
+
+	gui_test_echo();
+}
+
+//--></script></div></body></html>
