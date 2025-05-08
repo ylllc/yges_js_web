@@ -151,6 +151,27 @@ local logger instance.
 its settings inherited from this.  
 
 -----
+## CreateSplitter() {#Log_CreateSplitter}
+
+create a new local log instance within splitting feature  
+
+### Spec
+
+CreateSplitter(capt=null,showable=null):@ref pg_class_log_splitter
+
+### Args
+
+| Name | Type | Means |
+| -----|------|------ |
+| capt | string? | caption (null means same to parent instance) |
+| showable | int? | showablility (null means same to parent instance) |
+
+### Returns
+
+log splitter instance.  
+its settings inherited from this.  
+
+-----
 ## GetParent() {#Log_GetParent}
 
 ### Spec
