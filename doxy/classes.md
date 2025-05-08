@@ -35,6 +35,7 @@
 - @subpage pg_class_http_walker
 - @subpage pg_class_launcher
 - @subpage pg_class_launcher_view
+- @subpage pg_class_log_splitter
 - @subpage pg_class_logger
 - @subpage pg_class_logger_view
 - @subpage pg_class_logger_view_container

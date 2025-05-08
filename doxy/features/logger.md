@@ -73,6 +73,18 @@ ll1.Put(Log.LEVEL.DEBUG,'Local DEBUG Log');
 ```
 
 -----
+## Change Log Filtering
+
+```
+// logs are suppressed by parent setting 
+ll1.Showable=Log.LEVEL.DEBUG;
+ll2.Trace('TRACE Log should suppress');
+// but enabled by local setting 
+ll2.Showable=Log.LEVEL.TRACE;
+ll2.Trace('TRACE Log should show');
+```
+
+-----
 ## Caption
 
 can name fora each log instances.
@@ -145,6 +157,25 @@ ll2.Info('super-overridden local log');
 ```
 
 -----
+## Log Splitter
+
+can logging to multiple logger instances  
+
+```
+// log splitter (is inheritance of local log) 
+let lsp=Log.CreateSplitter('TestLogSplitter',Log.LEVEL.DEBUG);
+lsp.Attach('log1',ll1);
+lsp.Attach('log2',ll2);
+
+// logs are splitted to all attached local log 
+lsp.Debug('split DEBUG test');
+// logs are suppressed by both settings 
+lsp.Trace('split TRACE test (is suppressed)');
+lsp.Showable=Log.LEVEL.TRACE;
+lsp.Trace('split TRACE test (is shown on LL2)');
+```
+
+-----
 ## Log Viewer
 
 (web only)
@@ -157,5 +188,6 @@ let logview=YgEs.LogView.SetUp(board,YgEs.Log);
 # Class Reference
 
 @sa @ref pg_class_logger @n
+	@ref pg_class_log_splitter @n
 	@ref pg_class_logger_view @n
 	@ref pg_class_logger_view_container @n

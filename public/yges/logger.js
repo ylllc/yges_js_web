@@ -58,27 +58,30 @@ function _default_way(src){
 	if(src.Prop)console.dir(src.Prop);
 }
 
+function _do_format(t,src){
+
+	for(let inst=t;inst;inst=inst.GetParent()){
+		if(inst.Format!==null){
+			inst.Format(src);
+			return;
+		}
+	}
+	_default_format(src);
+}
+
+function _do_write(t,src){
+
+	for(let inst=t;inst;inst=inst.GetParent()){
+		if(inst.Way!==null){
+			inst.Way(src);
+			return;
+		}
+	}
+	_default_way(src);
+}
+
 // create local instance 
 function _create_local(capt=null,showable=null,parent=null){
-
-	const format=(src)=>{
-		for(let inst=t;inst;inst=inst.GetParent()){
-			if(inst.Format!==null){
-				inst.Format(src);
-				return;
-			}
-		}
-		_default_format(src);
-	}
-	const write=(src)=>{
-		for(let inst=t;inst;inst=inst.GetParent()){
-			if(inst.Way!==null){
-				inst.Way(src);
-				return;
-			}
-		}
-		_default_way(src);
-	}
 
 	const iid=YgEs.NextID();
 	let t={
@@ -95,6 +98,7 @@ function _create_local(capt=null,showable=null,parent=null){
 		LEVEL:_level_lookup,
 
 		CreateLocal:(capt=null,showable=null)=>_create_local(capt,showable,t),
+		CreateSplitter:(capt=null,showable=null)=>_create_splitter(capt,showable,t),
 
 		GetInstanceID:()=>iid,
 		GetParent:()=>parent,
@@ -121,8 +125,8 @@ function _create_local(capt=null,showable=null,parent=null){
 				Msg:msg
 			}
 			if(prop)src.Prop=prop;
-			format(src);
-			write(src);
+			_do_format(t,src);
+			_do_write(t,src);
 		},
 
 		Tick:(msg,prop=null)=>{t.Put(t.LEVEL.TICK,msg,prop);},
@@ -136,6 +140,40 @@ function _create_local(capt=null,showable=null,parent=null){
 		Alert:(msg,prop=null)=>{t.Put(t.LEVEL.ALERT,msg,prop);},
 		Emerg:(msg,prop=null)=>{t.Put(t.LEVEL.EMERG,msg,prop);},
 	}
+	return t;
+}
+
+function _create_splitter(capt=null,showable=null,parent=null){
+
+	let t=_create_local(capt,showable,parent);
+	t._private_.slot={}
+	t.Format=(src)=>{
+		for(let sub of Object.values(t._private_.slot)){
+			if(src.Lev<sub.GetShowable())continue;
+			_do_format(sub,src);
+		}
+	}
+	t.Way=(src)=>{
+		for(let sub of Object.values(t._private_.slot)){
+			if(src.Lev<sub.GetShowable())continue;
+			_do_write(sub,src);
+		}
+	}
+	t.Ref=(id)=>{
+		return t._private_.slot[id];
+	}
+	t.Attach=(id,logger)=>{
+		if(!logger){
+			t.Detach(id);
+			return;
+		}
+		t._private_.slot[id]=logger;
+	}
+	t.Detach=(id)=>{
+		if(!t._private_.slot[id])return;
+		delete t._private_.slot[id];
+	}
+
 	return t;
 }
 
