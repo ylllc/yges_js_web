@@ -144,31 +144,31 @@ and can use YgEs.StateMachine too.
 ```
 var states={
 	'StateName':{
-		OnStart:(ctx,user)=>{
+		OnStart:(ctx,proc)=>{
 			// call on begin of this state
 		},
-		OnPollInUp:(ctx,user)=>{
+		OnPollInUp:(ctx,proc)=>{
 			// polling and return by result 
 			// normally returns true 
 			return true;
 		},
-		OnReady:(ctx,user)=>{
+		OnReady:(ctx,proc)=>{
 			// call on end of up phase
 		},
-		OnPollInKeep:(ctx,user)=>{
+		OnPollInKeep:(ctx,proc)=>{
 			// polling and return by result 
 			// normally returns next state 
 			return 'NextStateName';
 		},
-		OnStop:(ctx,user)=>{
+		OnStop:(ctx,proc)=>{
 			// call on begin of down phase
 		},
-		OnPollInDown:(ctx,user)=>{
+		OnPollInDown:(ctx,proc)=>{
 			// polling and return by result 
 			// normally returns true 
 			return true;
 		},
-		OnEnd:(ctx,user)=>{
+		OnEnd:(ctx,proc)=>{
 			// call on end of this state
 		},
 	},

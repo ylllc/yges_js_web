@@ -60,7 +60,7 @@ function _standby(prm){
 
 	let states={
 		'IDLE':{
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1)return true;
 				restart=false;
 
@@ -69,7 +69,7 @@ function _standby(prm){
 			},
 		},
 		'BROKEN':{
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1)return true;
 				restart=false;
 
@@ -77,7 +77,7 @@ function _standby(prm){
 			},
 		},
 		'REPAIR':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 
 				try{
 					//start repairing 
@@ -92,7 +92,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1){
 					happen.CleanUp();
 					return happen.IsCleaned()?'IDLE':'BROKEN';
@@ -122,7 +122,7 @@ function _standby(prm){
 			},
 		},
 		'DOWN':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				let back=false;
 				try{
 					wait=[]
@@ -150,7 +150,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 
 				// wait for delendencies 
 				let cont=[]
@@ -174,7 +174,7 @@ function _standby(prm){
 			},
 		},
 		'UP':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				try{
 					wait=[]
 					if(prm.OnOpen)prm.OnOpen(agent);
@@ -198,7 +198,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1 || restart)return 'DOWN';
 
 				// wait for delendencies 
@@ -220,7 +220,7 @@ function _standby(prm){
 				if(!happen.IsCleaned())return 'DOWN';
 				if(wait.length<1)return 'HEALTHY';
 			},
-			OnEnd:(ctrl,user)=>{
+			OnEnd:(ctrl,proc)=>{
 				if(ctrl.GetNextState()=='HEALTHY'){
 					try{
 						// mark ready before callback 
@@ -238,7 +238,7 @@ function _standby(prm){
 			},
 		},
 		'HEALTHY':{
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
@@ -259,7 +259,7 @@ function _standby(prm){
 			},
 		},
 		'TROUBLE':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				try{
 					if(prm.OnTrouble)prm.OnTrouble(agent);
 				}
@@ -271,7 +271,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
@@ -293,7 +293,7 @@ function _standby(prm){
 					return 'HALT';
 				}
 			},
-			OnEnd:(ctrl,user)=>{
+			OnEnd:(ctrl,proc)=>{
 				if(ctrl.GetNextState()=='HEALTHY'){
 					try{
 						if(prm.OnRecover)prm.OnRecover(agent);
@@ -309,7 +309,7 @@ function _standby(prm){
 			},
 		},
 		'HALT':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				halt=true;
 
 				try{
@@ -323,7 +323,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
@@ -331,7 +331,7 @@ function _standby(prm){
 				happen.CleanUp();
 				if(happen.IsCleaned())return 'HEALTHY';
 			},
-			OnEnd:(ctrl,user)=>{
+			OnEnd:(ctrl,proc)=>{
 				halt=false;
 
 				if(ctrl.GetNextState()=='HEALTHY'){
@@ -388,12 +388,12 @@ function _standby(prm){
 		HappenTo:happen,
 		Launcher:launcher,
 		User:user,
-		OnDone:(user)=>{
+		OnDone:(proc)=>{
 			ctrl=null;
 			aborted=false;
 			if(prm.OnFinish)prm.OnFinish(agent,happen.IsCleaned());
 		},
-		OnAbort:(user)=>{
+		OnAbort:(proc)=>{
 			ctrl=null;
 			aborted=true;
 			if(prm.OnAbort)prm.OnAbort(agent);

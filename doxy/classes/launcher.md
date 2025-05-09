@@ -5,6 +5,22 @@
 created by @ref pg_class_engine
 
 -----
+# Callbacks
+
+-----
+## CB_Event {#Launcher_CB_Event}
+
+### Spec
+
+CB_Event(launcher):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| launcher | @ref pg_class_launcher | caller instance |
+
+-----
 # Structures
 
 -----
@@ -22,20 +38,7 @@ user definied object kept in a @ref pg_class_procedure instance
 | HappenTo | @ref pg_class_happening_manager? | user happening handler |
 | Limit | int | parallel running capacity |
 | Cycle | int | polling cycle msec |
-| User | @ref Launcher_UserShared | user definitions |
-
------
-## ProcedurePrm {#Launcher_ProcedurePrm}
-
-| Name | Type | Means |
-|------|------|-------|
-| Name | string? | class name |
-| Log | @ref pg_class_logger? | logs to it |
-| HappenTo | @ref pg_class_happening_manager? | user happening handler |
-| OnStart | func<@ref Launcher_UserShared> | called on beginning of the procedure |
-| OnPoll | func<@ref Launcher_UserShared> | called repetition until end of the procedure |
-| OnDone | func<@ref Launcher_UserShared> | called on finished of the procedure |
-| OnAbort | func<@ref Launcher_UserShared> | called on aborted of the procedure |
+| OnAbort | @ref Launcher_CB_Event | call on Launcher aborted |
 | User | @ref Launcher_UserShared | user definitions |
 
 -----
@@ -215,7 +218,7 @@ Launch(prm={}):@ref pg_class_procedure
 
 Name | Type | Means
 -----|------|------
-prm | @ref Launcher_ProcedurePrm | settings
+prm | @ref Procedure_ProcedurePrm | settings
 
 ### Returns
 

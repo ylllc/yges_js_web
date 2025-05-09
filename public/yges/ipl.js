@@ -681,7 +681,7 @@ let Timing=YgEs.Timing={
 
 const Log=YgEs.Log;
 
-function _default_happened(hap){
+function _default_happened(mng,hap){
 	Log.Fatal(hap.ToString(),hap.GetProp());	
 }
 function _default_abandoned(hap){
@@ -755,10 +755,10 @@ function _create_manager(prm,parent=null){
 	const onHappen=(hap)=>{
 		for(let hm=mng;hm;hm=hm.GetParent()){
 			if(!hm.OnHappen)continue;
-			hm.OnHappen(hm,hap);
+			hm.OnHappen(mng,hap);
 			return;
 		}
-		_default_happened(hap);
+		_default_happened(mng,hap);
 	}
 
 	const iid=YgEs.NextID();
@@ -918,10 +918,17 @@ const CLASS_ROOT='YgEs.RootLauncher';
 
 function _create_proc(prm,launcher){
 
-	let onStart=prm.OnStart??null;
-	let onPoll=prm.OnPoll;
-	let onDone=prm.OnDone??null;
-	let onAbort=prm.OnAbort??null;
+	const onStart=prm.OnStart??((proc)=>{});
+	const onPoll=prm.OnPoll??((proc)=>{});
+	const onDone=prm.OnDone??((proc)=>{});
+	const onAbort=prm.OnAbort??((proc)=>{
+		proc.HappenTo.Happen(
+			'Aborted',{
+			Class:CLASS_PROC,
+			Cause:'Aborted',
+			Info:proc.GetInfo('Aborted'),
+		});
+	});
 
 	let started=false;
 	let finished=false;
@@ -960,48 +967,36 @@ function _create_proc(prm,launcher){
 			if(started)return;
 			if(proc.IsEnd())return;
 			started=true;
-			if(onStart){
-				try{
-					onStart(proc.User);
-				}
-				catch(e){
-					proc.HappenTo.Happen(e,{
-						Class:CLASS_PROC,
-						Cause:'ThrownFromCallback',
-						Info:proc.GetInfo('OnStart'),
-					});
-					proc.Abort();
-				}
+			try{
+				onStart(proc);
+			}
+			catch(e){
+				proc.HappenTo.Happen(e,{
+					Class:CLASS_PROC,
+					Cause:'ThrownFromCallback',
+					Info:proc.GetInfo('OnStart'),
+				});
+				proc.Abort();
 			}
 		},
 		Abort:()=>{
 			if(proc.IsEnd())return;
 			aborted=true;
-			if(onAbort){
-				try{
-					onAbort(proc.User);
-				}
-				catch(e){
-					proc.HappenTo.Happen(e,{
-						Class:CLASS_PROC,
-						Cause:'ThrownFromCallback',
-						Info:proc.GetInfo('OnAbort'),
-					});
-				}
+			try{
+				onAbort(proc);
 			}
-			else{
-				proc.HappenTo.Happen(
-					'Aborted',{
+			catch(e){
+				proc.HappenTo.Happen(e,{
 					Class:CLASS_PROC,
-					Cause:'Aborted',
-					Info:proc.GetInfo('Aborted'),
+					Cause:'ThrownFromCallback',
+					Info:proc.GetInfo('OnAbort'),
 				});
 			}
 		},
 		Poll:()=>{
 			if(proc.IsEnd())return false;
 			try{
-				if(onPoll(proc.User))return true;
+				if(onPoll(proc))return true;
 			}
 			catch(e){
 				proc.HappenTo.Happen(e,{
@@ -1012,23 +1007,18 @@ function _create_proc(prm,launcher){
 				proc.Abort();
 				return false;
 			}
-			if(onDone){
-				try{
-					onDone(proc.User);
-					finished=true;
-				}
-				catch(e){
-					proc.HappenTo.Happen(e,{
-						Class:CLASS_PROC,
-						Cause:'ThrownFromCallback',
-						Info:proc.GetInfo('OnDone'),
-					});
-					proc.Abort();
-					return false;
-				}
-			}
-			else{
+			try{
+				onDone(proc);
 				finished=true;
+			}
+			catch(e){
+				proc.HappenTo.Happen(e,{
+					Class:CLASS_PROC,
+					Cause:'ThrownFromCallback',
+					Info:proc.GetInfo('OnDone'),
+				});
+				proc.Abort();
+				return false;
 			}
 			return false;
 		},
@@ -1073,6 +1063,8 @@ function _create_proc(prm,launcher){
 }
 
 function _yges_enginge_create_launcher(prm){
+
+	const onAbort=prm.OnAbort??((lnc)=>{});
 
 	let abandoned=false;
 	let aborted=false;
@@ -1161,7 +1153,7 @@ function _yges_enginge_create_launcher(prm){
 				Log.Notice('the Engine not started. call Start() to run.');
 			}
 			if(abandoned){
-				if(prm.OnAbort)prm.OnAbort();
+				onAbort(lnc);
 				return;
 			}
 			if(!prm.OnPoll){
@@ -1260,7 +1252,7 @@ function _yges_enginge_create_launcher(prm){
 			let until=new Date(Date.now()+time);
 			return lnc.Launch({
 					Name:CLASS_DELAYPROC,
-					OnPoll:(user)=>{
+					OnPoll:(proc)=>{
 						return Date.now()<until;
 					},
 					OnDone:cb_done,
@@ -1365,10 +1357,10 @@ function _run(start,states={},opt={}){
 		GetInfo:()=>GetInfo(),
 	}
 
-	let poll_nop=(user)=>{}
+	let poll_nop=(proc)=>{}
 	let poll_cur=poll_nop;
 
-	let call_start=(user)=>{
+	let call_start=(proc)=>{
 		if(state_next==null){
 			// normal end 
 			cur=null;
@@ -1392,7 +1384,7 @@ function _run(start,states={},opt={}){
 		state_cur=state_next;
 		state_next=null;
 		try{
-			if(cur.OnStart)cur.OnStart(ctrl,user);
+			if(cur.OnStart)cur.OnStart(ctrl,proc);
 			poll_cur=poll_up;
 		}
 		catch(e){
@@ -1405,11 +1397,11 @@ function _run(start,states={},opt={}){
 			return;
 		}
 		// can try extra polling 
-		poll_cur(user);
+		poll_cur(proc);
 	}
-	let poll_up=(user)=>{
+	let poll_up=(proc)=>{
 		try{
-			var r=cur.OnPollInUp?cur.OnPollInUp(ctrl,user):true;
+			var r=cur.OnPollInUp?cur.OnPollInUp(ctrl,proc):true;
 		}
 		catch(e){
 			happen.Happen(e,{
@@ -1425,7 +1417,7 @@ function _run(start,states={},opt={}){
 		else if(r===true){
 			try{
 				// normal transition 
-				if(cur.OnReady)cur.OnReady(ctrl,user);
+				if(cur.OnReady)cur.OnReady(ctrl,proc);
 				poll_cur=poll_keep;
 			}
 			catch(e){
@@ -1438,17 +1430,17 @@ function _run(start,states={},opt={}){
 				return;
 			}
 			// can try extra polling 
-			poll_cur(user);
+			poll_cur(proc);
 		}
 		else{
 			// interruption 
 			state_next=r.toString();
-			call_end(user);
+			call_end(proc);
 		}
 	}
-	let poll_keep=(user)=>{
+	let poll_keep=(proc)=>{
 		try{
-			var r=cur.OnPollInKeep?cur.OnPollInKeep(ctrl,user):true;
+			var r=cur.OnPollInKeep?cur.OnPollInKeep(ctrl,proc):true;
 		}
 		catch(e){
 			happen.Happen(e,{
@@ -1464,17 +1456,17 @@ function _run(start,states={},opt={}){
 		else if(r===true){
 			// normal end 
 			state_next=null;
-			call_stop(user);
+			call_stop(proc);
 		}
 		else{
 			// normal transition 
 			state_next=r.toString();
-			call_stop(user);
+			call_stop(proc);
 		}
 	}
-	let call_stop=(user)=>{
+	let call_stop=(proc)=>{
 		try{
-			if(cur.OnStop)cur.OnStop(ctrl,user);
+			if(cur.OnStop)cur.OnStop(ctrl,proc);
 			poll_cur=poll_down;
 		}
 		catch(e){
@@ -1487,11 +1479,11 @@ function _run(start,states={},opt={}){
 			return;
 		}
 		// can try extra polling 
-		poll_cur(user);
+		poll_cur(proc);
 	}
-	let poll_down=(user)=>{
+	let poll_down=(proc)=>{
 		try{
-			var r=cur.OnPollInDown?cur.OnPollInDown(ctrl,user):true;
+			var r=cur.OnPollInDown?cur.OnPollInDown(ctrl,proc):true;
 		}
 		catch(e){
 			happen.Happen(e,{
@@ -1506,18 +1498,18 @@ function _run(start,states={},opt={}){
 		else if(r===false)proc.Abort();
 		else if(r===true){
 			// normal transition 
-			call_end(user);
+			call_end(proc);
 		}
 		else{
 			// interruption 
 			state_next=r.toString();
-			call_end(user);
+			call_end(proc);
 		}
 	}
-	let call_end=(user)=>{
+	let call_end=(proc)=>{
 		try{
-			if(cur.OnEnd)cur.OnEnd(ctrl,user);
-			call_start(user);
+			if(cur.OnEnd)cur.OnEnd(ctrl,proc);
+			call_start(proc);
 		}
 		catch(e){
 			happen.Happen(e,{
@@ -1535,15 +1527,15 @@ function _run(start,states={},opt={}){
 		Log:log,
 		HappenTo:happen,
 		User:user,
-		OnStart:(user)=>{
-			call_start(user);
+		OnStart:(proc)=>{
+			call_start(proc);
 		},
-		OnPoll:(user)=>{
-			poll_cur(user);
+		OnPoll:(proc)=>{
+			poll_cur(proc);
 			return !!cur;
 		},
-		OnDone:opt.OnDone??'',
-		OnAbort:opt.OnAbort??'',
+		OnDone:opt.OnDone??null,
+		OnAbort:opt.OnAbort??null,
 	}
 
 	let proc=launcher.Launch(stmac);
@@ -1626,7 +1618,7 @@ function _standby(prm){
 
 	let states={
 		'IDLE':{
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1)return true;
 				restart=false;
 
@@ -1635,7 +1627,7 @@ function _standby(prm){
 			},
 		},
 		'BROKEN':{
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1)return true;
 				restart=false;
 
@@ -1643,7 +1635,7 @@ function _standby(prm){
 			},
 		},
 		'REPAIR':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 
 				try{
 					//start repairing 
@@ -1658,7 +1650,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1){
 					happen.CleanUp();
 					return happen.IsCleaned()?'IDLE':'BROKEN';
@@ -1688,7 +1680,7 @@ function _standby(prm){
 			},
 		},
 		'DOWN':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				let back=false;
 				try{
 					wait=[]
@@ -1716,7 +1708,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 
 				// wait for delendencies 
 				let cont=[]
@@ -1740,7 +1732,7 @@ function _standby(prm){
 			},
 		},
 		'UP':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				try{
 					wait=[]
 					if(prm.OnOpen)prm.OnOpen(agent);
@@ -1764,7 +1756,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1 || restart)return 'DOWN';
 
 				// wait for delendencies 
@@ -1786,7 +1778,7 @@ function _standby(prm){
 				if(!happen.IsCleaned())return 'DOWN';
 				if(wait.length<1)return 'HEALTHY';
 			},
-			OnEnd:(ctrl,user)=>{
+			OnEnd:(ctrl,proc)=>{
 				if(ctrl.GetNextState()=='HEALTHY'){
 					try{
 						// mark ready before callback 
@@ -1804,7 +1796,7 @@ function _standby(prm){
 			},
 		},
 		'HEALTHY':{
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
@@ -1825,7 +1817,7 @@ function _standby(prm){
 			},
 		},
 		'TROUBLE':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				try{
 					if(prm.OnTrouble)prm.OnTrouble(agent);
 				}
@@ -1837,7 +1829,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
@@ -1859,7 +1851,7 @@ function _standby(prm){
 					return 'HALT';
 				}
 			},
-			OnEnd:(ctrl,user)=>{
+			OnEnd:(ctrl,proc)=>{
 				if(ctrl.GetNextState()=='HEALTHY'){
 					try{
 						if(prm.OnRecover)prm.OnRecover(agent);
@@ -1875,7 +1867,7 @@ function _standby(prm){
 			},
 		},
 		'HALT':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				halt=true;
 
 				try{
@@ -1889,7 +1881,7 @@ function _standby(prm){
 					});
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1 || restart){
 					ready=false;
 					return 'DOWN';
@@ -1897,7 +1889,7 @@ function _standby(prm){
 				happen.CleanUp();
 				if(happen.IsCleaned())return 'HEALTHY';
 			},
-			OnEnd:(ctrl,user)=>{
+			OnEnd:(ctrl,proc)=>{
 				halt=false;
 
 				if(ctrl.GetNextState()=='HEALTHY'){
@@ -1954,12 +1946,12 @@ function _standby(prm){
 		HappenTo:happen,
 		Launcher:launcher,
 		User:user,
-		OnDone:(user)=>{
+		OnDone:(proc)=>{
 			ctrl=null;
 			aborted=false;
 			if(prm.OnFinish)prm.OnFinish(agent,happen.IsCleaned());
 		},
-		OnAbort:(user)=>{
+		OnAbort:(proc)=>{
 			ctrl=null;
 			aborted=true;
 			if(prm.OnAbort)prm.OnAbort(agent);
