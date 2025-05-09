@@ -111,7 +111,7 @@ and can use YgEs.HappeningManager too.
 
 ```
 // can override common happening management procedure 
-HappeningManager.OnHappen=(h)=>{
+HappeningManager.OnHappen=(hm,h)=>{
 	//		: 
 	// instant recovery when possible
 	// and call h.Resolve()

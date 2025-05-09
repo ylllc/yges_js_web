@@ -13,6 +13,17 @@
 | YgEs.HappeningManager | global HappeningManager |
 
 -----
+# Callbacks
+
+-----
+## CB_Happen {#HappeningManager_CB_Happen}
+
+| Name | Type | Means |
+|------|------|-------|
+| hm | @ref pg_class_happening_manager | caller instance |
+| hap | @ref pg_class_happening | happening |
+
+-----
 # Structures
 
 -----
@@ -21,7 +32,7 @@
 | Name | Type | Means |
 |------|------|-------|
 | Name | string? | user class name |
-| OnHappen | func<@ref pg_class_happening> | call on happened |
+| OnHappen | @ref HappeningManager_CB_Happen | call on happened |
 | User | dict<string,any> | user difinition |
 
 -----
@@ -64,7 +75,7 @@
 
 | Name | Type | Means |
 |------|------|-------|
-| OnHappen | func<@ref pg_class_happening> | call on happened |
+| OnHappen | @ref HappeningManager_CB_Happen | call on happened |
 | User | dict<string,any> | user definitions |
 
 -----
