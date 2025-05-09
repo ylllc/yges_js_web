@@ -21,6 +21,7 @@ CB_Changing(side):bool
 
 | Name | Type | Means |
 |------|------|-------|
+| view | @ref pg_class_gui_toggle | caller instance |
 | side | bool | new side |
 
 ### Returns

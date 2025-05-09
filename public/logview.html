@@ -58,7 +58,7 @@ async function ipl_ready(){
 	YgEs.GUI.Toggle(ctrlpnl,'Show',true,{
 		OffClass:'yges_logview_toggle_off',
 		OnClass:'yges_logview_toggle_on',
-		OnChanging:(side)=>{
+		OnChanging:(view,side)=>{
 			log_show=side;
 			if(side)logview.Show();
 			else logview.Hide();
@@ -67,13 +67,13 @@ async function ipl_ready(){
 	});
 	YgEs.GUI.Button(ctrlpnl,'Save',{
 		Class:'yges_logview_button',
-		OnClick:()=>{
+		OnClick:(view)=>{
 			YgEs.LocalSave(logview.GetText(),'log.txt','text/plain');
 		},
 	});
 	YgEs.GUI.Button(ctrlpnl,'Copy',{
 		Class:'yges_logview_button',
-		OnClick:()=>{
+		OnClick:(view)=>{
 			if(!navigator.clipboard){
 				log.Fatal('Clipboard not available');
 				return;
@@ -83,7 +83,7 @@ async function ipl_ready(){
 	});
 	YgEs.GUI.Button(ctrlpnl,'Clear',{
 		Class:'yges_logview_button',
-		OnClick:()=>{
+		OnClick:(view)=>{
 			logview.Clear();
 		},
 	});

@@ -28,7 +28,7 @@ use YgEs
 ```
 YgEs.GUI.Button(TargetQHT,'ButtonLabel',{
 	User:{/* user definition, refered by OnClick */},
-	OnClick:(user)=>{
+	OnClick:(view)=>{
 		// call by clicked 
 	},
 });
@@ -42,7 +42,7 @@ YgEs.GUI.Button(TargetQHT,'ButtonLabel',{
 YgEs.GUI.Toggle(ctrlpnl,'ButtonLabel',true,{
 	OffClass:'ButtonClassForToggleOff',
 	OnClass:'ButtonClassForToggleOn',
-	OnChanging:(side)=>{
+	OnChanging:(view,side)=>{
 		// call by clicked 
 		// return true to allow switching 
 		return true;
@@ -60,7 +60,7 @@ YgEs.GUI.Radio(TargetQHT,[
 		{Value:999999,Label:'mode...'}, // selection with props 
 	],{
 	Init:2, // initial selection 
-	OnChanging:(prev,next)=>{
+	OnChanging:(view,prev,next)=>{
 		// call by selection changing 
 		// return true to allow 
 		return true;
@@ -78,7 +78,7 @@ YgEs.GUI.Select(TargetQHT,[
 		{Value:999999,Label:'mode...'}, // selection with props 
 	],{
 	Init:2, // initial selection 
-	OnChanging:(prev,next)=>{
+	OnChanging:(view,prev,next)=>{
 		// call by selection changing 
 		// return true to allow 
 		return true;
@@ -134,9 +134,9 @@ popup.Hide();
 
 ```
 const popup=YgEs.GUI.PopUpManu(TargetQHT,{
-	{Label:'Item1',OnAction:()=>{ /* call by click Item1 */ }},
+	{Label:'Item1',OnAction:(view,key)=>{ /* call by click Item1 */ }},
 	{Tag:'hr'}, // can insert QHT  
-	{Label:'Item2',OnAction:()=>{ /* call by click Item2 */ }},
+	{Label:'Item2',OnAction:(view,key)=>{ /* call by click Item2 */ }},
 });
 	:
 	:

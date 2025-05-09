@@ -17,7 +17,7 @@ YgEs.GUI.Button=(target,label,opt={})=>{
 	let a={}
 	if(opt.Class)a.class=opt.Class;
 	let view=YgEs.NewQHT({Target:target,Tag:'button',Attr:a,Sub:[label]});
-	if(opt.OnClick)view.Element.onclick=()=>opt.OnClick(view.User);
+	if(opt.OnClick)view.Element.onclick=()=>opt.OnClick(view);
 	if(opt.User)view.User=opt.User;
 	return view;
 }
@@ -40,9 +40,9 @@ YgEs.GUI.Toggle=(target,label,init,opt={})=>{
 	}
 
 	let view=YgEs.GUI.Button(target,label,{
-		OnClick:(user)=>{
+		OnClick:(view)=>{
 			let ok=true;
-			if(view.OnChanging)ok=view.OnChanging(!cur);
+			if(view.OnChanging)ok=view.OnChanging(view,!cur);
 			if(ok){
 				cur=!cur;
 				setStyle();
@@ -101,10 +101,10 @@ YgEs.GUI.Radio=(target,items,opt={})=>{
 		}
 		if(opt.OffClass)o.OffClass=opt.OffClass;
 		if(opt.OnClass)o.OnClass=opt.OnClass;
-		o.OnChanging=(side)=>{
+		o.OnChanging=(view,side)=>{
 			if(side){
 				if(view.OnChanging){
-					if(!view.OnChanging(cur,val))return false;
+					if(!view.OnChanging(view,cur,val))return false;
 				}
 				if(ent[cur])ent[cur].View.SetSide(false);
 				cur=val;
@@ -114,7 +114,7 @@ YgEs.GUI.Radio=(target,items,opt={})=>{
 				if(cur===val){
 					if(!nullable)return false;
 					if(view.OnChanging){
-						if(!view.OnChanging(cur,null))return false;
+						if(!view.OnChanging(view,cur,null))return false;
 					}
 					cur=null;
 					return true;
@@ -194,7 +194,7 @@ YgEs.GUI.Select=(target,items,opt={})=>{
 			let ok=true;
 			let prev=cur;
 			if(opt.OnChanging){
-				if(!opt.OnChanging(prev,next.Value))ok=false;
+				if(!opt.OnChanging(view,prev,next.Value))ok=false;
 			}
 			if(ok)cur=next.Value;
 			else view.Element.value=prev;
@@ -269,7 +269,7 @@ YgEs.GUI.PopUpMenu=(target,items,opt={})=>{
 		let key=it.Key??it.Label;
 		let view2=YgEs.NewQHT({Target:view,Tag:'button',Attr:a,Sub:[it.Label]});
 		view2.Element.onclick=()=>{
-			if(onact)onact();
+			if(onact)onact(view,key);
 		}
 		view.Items.push(view2);
 		ref[key]=view2;

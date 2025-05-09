@@ -75,7 +75,7 @@ async function ipl_ready(){
 			YgEs.NewQHT({Tag:'div',Sub:[
 				YgEs.GUI.Button(null,'Execute',{
 					Class:'yges_objview_menu_button',
-					OnClick:()=>{
+					OnClick:(view)=>{
 						// reset inspector 
 						setup((dlg_reset_type.GetSelected()==RESETTYPE.ARRAY)?[]:{});
 						dlg_reset.Close();
@@ -84,7 +84,7 @@ async function ipl_ready(){
 				YgEs.NewQHT({Tag:'span',Style:{'padding-left':'5em'}}),
 				YgEs.GUI.Button(null,'Cancel',{
 					Class:'yges_objview_menu_button',
-					OnClick:()=>{
+					OnClick:(view)=>{
 						dlg_reset.Close();
 					},
 				}),
@@ -114,7 +114,7 @@ async function ipl_ready(){
 		],{
 		OffClass:'yges_objview_toggle_off',
 		OnClass:'yges_objview_toggle_on',
-		OnChanging:(prev,next)=>{
+		OnChanging:(view,prev,next)=>{
 			let pet=dlg_edit_type.GetItem(prev).View.User.EditType;
 			let net=dlg_edit_type.GetItem(next).View.User.EditType;
 			if(pet==net)return true;
@@ -212,7 +212,7 @@ async function ipl_ready(){
 			YgEs.NewQHT({Tag:'div',Sub:[
 				YgEs.GUI.Button(null,'Apply',{
 					Class:'yges_objview_menu_button',
-					OnClick:()=>{
+					OnClick:(view)=>{
 						let v=undefined;
 						try{
 							// decode a value 
@@ -257,7 +257,7 @@ async function ipl_ready(){
 				YgEs.NewQHT({Tag:'span',Style:{'padding-left':'5em'}}),
 				YgEs.GUI.Button(null,'Cancel',{
 					Class:'yges_objview_menu_button',
-					OnClick:()=>{
+					OnClick:(view)=>{
 						dlg_edit.Close();
 					},
 				}),
@@ -269,19 +269,20 @@ async function ipl_ready(){
 	let toolbar=YgEs.NewQHT({Target:mainboard,Tag:'div'});
 	YgEs.GUI.Button(mainboard,'Reset',{
 		Class:'yges_objview_menu_button',
-		OnClick:()=>{
-			act_reset.OnAction();
+		OnClick:(view)=>{
+			// [ToDo] should fix illegal calling 
+			act_reset.OnAction(/*view,key*/);
 		},
 	});
 	YgEs.GUI.Button(mainboard,'Save',{
 		Class:'yges_objview_menu_button',
-		OnClick:()=>{
+		OnClick:(view)=>{
 			YgEs.LocalSave(JSON.stringify(inspector.GetValue(),null,Indent4JSON),'TestObj.json','application/json');
 		},
 	});
 	YgEs.GUI.Button(mainboard,'Load',{
 		Class:'yges_objview_menu_button',
-		OnClick:()=>{
+		OnClick:(view)=>{
 			YgEs.LocalLoad(true,'.json',(data)=>{
 				try{
 					setup(JSON.parse(data));
@@ -308,12 +309,12 @@ async function ipl_ready(){
 		WindowClass:'yges_objview_popup',
 		ItemClass:'yges_objview_popupitem',
 	}
-	let act_reset={Label:'Reset',OnAction:()=>{
+	let act_reset={Label:'Reset',OnAction:(view,key)=>{
 		closePopUp();
 		dlg_reset_type.Select(Array.isArray(inspector.GetValue())?RESETTYPE.ARRAY:RESETTYPE.PROP);
 		dlg_reset.Open();
 	}}
-	let act_copy={Label:'Copy',OnAction:()=>{
+	let act_copy={Label:'Copy',OnAction:(view,key)=>{
 		closePopUp();
 		if(!focus){
 			console.error('no focus for Copy');
@@ -325,7 +326,7 @@ async function ipl_ready(){
 			navigator.clipboard.writeText(YgEs.Inspect(focus.GetValue()));
 		}
 	}}
-	let act_extract={Label:'Extract',OnAction:()=>{
+	let act_extract={Label:'Extract',OnAction:(view,key)=>{
 		closePopUp();
 		if(!focus){
 			console.error('no focus for Extract');
@@ -334,7 +335,7 @@ async function ipl_ready(){
 			YgEs.LocalSave(JSON.stringify(focus.GetValue(),null,Indent4JSON));
 		}
 	}}
-	let act_append={Label:'Append',OnAction:()=>{
+	let act_append={Label:'Append',OnAction:(view,key)=>{
 		closePopUp();
 		if(!focus){
 			console.error('no focus for Append');
@@ -344,7 +345,7 @@ async function ipl_ready(){
 			dlg_edit.Open();
 		}
 	}}
-	let act_register={Label:'Register',OnAction:()=>{
+	let act_register={Label:'Register',OnAction:(view,key)=>{
 		closePopUp();
 		if(!focus){
 			console.error('no focus for Register');
@@ -354,7 +355,7 @@ async function ipl_ready(){
 			dlg_edit.Open();
 		}
 	}}
-	let act_insert={Label:'Insert',OnAction:()=>{
+	let act_insert={Label:'Insert',OnAction:(view,key)=>{
 		closePopUp();
 		if(!focus){
 			console.error('no focus for Insert');
@@ -364,7 +365,7 @@ async function ipl_ready(){
 			dlg_edit.Open();
 		}
 	}}
-	let act_editkey={Label:'Edit',OnAction:()=>{
+	let act_editkey={Label:'Edit',OnAction:(view,key)=>{
 		closePopUp();
 		if(!focus){
 			console.error('no focus for Edit');
@@ -374,7 +375,7 @@ async function ipl_ready(){
 			dlg_edit.Open();
 		}
 	}}
-	let act_editval={Label:'Edit',OnAction:()=>{
+	let act_editval={Label:'Edit',OnAction:(view,key)=>{
 		closePopUp();
 		if(!focus){
 			console.error('no focus for Edit');
@@ -384,7 +385,7 @@ async function ipl_ready(){
 			dlg_edit.Open();
 		}
 	}}
-	let act_remove={Label:'Remove',OnAction:()=>{
+	let act_remove={Label:'Remove',OnAction:(view,key)=>{
 		closePopUp();
 		if(!focus){
 			console.error('no focus for Remove');

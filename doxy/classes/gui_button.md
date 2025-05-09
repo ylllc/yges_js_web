@@ -21,6 +21,7 @@ CB_Click(user):void
 
 | Name | Type | Means |
 |------|------|-------|
+| view | @ref pg_class_gui_button | caller instance |
 | user | dict<string,any> | user definition |
 
 ### Spec
