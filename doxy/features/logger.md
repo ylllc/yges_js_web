@@ -137,10 +137,10 @@ log.Debug(()=>'deferred message creation: '+Math.pow(1.234,5.678));
 
 ```
 // can override output 
-Log.Format=(src)=>{
+Log.Format=(logger,src)=>{
 	src.Msg=JSON.stringify(src);
 }
-Log.Way=(src)=>{
+Log.Way=(logger,src)=>{
 	console.dir(src);
 }
 Log.Debug('Global override log');
@@ -149,8 +149,8 @@ ll1.Debug('Local override log');
 
 // local overridings are selected first 
 var ll2=ll1.CreateLocal('Local2');
-ll2.Format=(src)=>{};
-ll2.Way=(src)=>{
+ll2.Format=(logger,src)=>{};
+ll2.Way=(logger,src)=>{
 	console.log(src.Msg);
 }
 ll2.Info('super-overridden local log');

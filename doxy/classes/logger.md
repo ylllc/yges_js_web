@@ -91,6 +91,7 @@ CB_LogFormat(src):void
 
 | Name | Type | Means |
 |------|------|-------|
+| logger | @ref pg_class_logger | caller instance |
 | src | @ref Log_LogEntry | target log entry |
 
 ### Implements
@@ -108,6 +109,7 @@ CB_LogWay(src):void
 
 | Name | Type | Means |
 |------|------|-------|
+| logger | @ref pg_class_logger | caller instance |
 | src | @ref Log_LogEntry | target log entry |
 
 ### Implements
