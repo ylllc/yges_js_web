@@ -71,21 +71,21 @@ var proc=Engine.Launch({
 		// initial variables 
 		name:'async sample',
 	},
-	OnInit:(user)=>{
+	OnInit:(proc)=>{
 		// called first at works
-		user.lock=true;
+		proc.User.lock=true;
 	},
-	OnPoll:(user)=>{
+	OnPoll:(proc)=>{
 		// polling while returns true
-		return user.lock;
+		return proc.User.lock;
 	},
-	OnDone:(user)=>{
+	OnDone:(proc)=>{
 		// called on done 
-		log.Info(user.name+' is done');
+		log.Info(proc.User.name+' is done');
 	},
-	OnAbort:(user)=>{
+	OnAbort:(proc)=>{
 		// called on abort 
-		log.Warn(user.name+' is aborted');
+		log.Warn(proc.User.name+' is aborted');
 	}
 });
 		:

@@ -74,19 +74,19 @@ async function ipl_ready(){
 	// test StateMachine error
 	const states={
 		'State1':{
-			OnReady:(ctx,user)=>{
-				user.since=Date.now();
+			OnReady:(ctx,proc)=>{
+				proc.User.since=Date.now();
 			},
-			OnPollInKeep:(ctx,user)=>{
-				if(Date.now()-user.since>5000)return 'State2';
+			OnPollInKeep:(ctx,proc)=>{
+				if(Date.now()-proc.User.since>5000)return 'State2';
 			},
 		},
 		'State2':{
-			OnReady:(ctx,user)=>{
-				user.since=Date.now();
+			OnReady:(ctx,proc)=>{
+				proc.User.since=Date.now();
 			},
-			OnPollInKeep:(ctx,user)=>{
-				if(Date.now()-user.since>5000){
+			OnPollInKeep:(ctx,proc)=>{
+				if(Date.now()-proc.User.since>5000){
 					throw new Error('Test Happening 4');
 				}
 			},

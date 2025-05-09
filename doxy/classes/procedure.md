@@ -5,7 +5,42 @@
 created by @pg_class_launcher
 
 -----
+# Callbacks
+
+-----
+## CB_Event {#Procedure_CB_Event}
+
+### Spec
+
+CB_Event(proc):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| proc | @ref pg_class_procedure | caller instance |
+
+-----
 # Structures
+
+-----
+## UserShared {#Procedure_UserShared}
+
+user definied object kept in a @ref pg_class_procedure instance  
+
+-----
+## ProcedurePrm {#Procedure_ProcedurePrm}
+
+| Name | Type | Means |
+|------|------|-------|
+| Name | string? | class name |
+| Log | @ref pg_class_logger? | logs to it |
+| HappenTo | @ref pg_class_happening_manager? | user happening handler |
+| OnStart | func<@ref Procedure_CB_Event> | called on beginning of the procedure |
+| OnPoll | func<@ref Procedure_CB_Event> | called repetition until end of the procedure |
+| OnDone | func<@ref Procedure_CB_Event> | called on finished of the procedure |
+| OnAbort | func<@ref Procedure_CB_Event> | called on aborted of the procedure |
+| User | @ref Procedure_UserShared | user definitions |
 
 -----
 ## ProcedureInfo {#Procedure_ProcedureInfo}

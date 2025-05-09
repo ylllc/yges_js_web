@@ -7,7 +7,7 @@ it provides statable async procs.
 -----
 ## Handle
 
-a Agent controlled by Handle.  
+an Agent controlled by Handle.  
 
 -----
 ### Open/Close
