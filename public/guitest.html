@@ -52,14 +52,14 @@ async function ipl_ready(){
 		YgEs.GUI.Button(null,'Button',{
 			Class:'guitest_button',
 			User:{TestVal:-123},
-			OnClick:(user)=>{
-				console.log('Button: '+user.TestVal);
+			OnClick:(view)=>{
+				console.log('Button: '+view.User.TestVal);
 			},
 		}),
 		YgEs.GUI.Toggle(null,'Toggle',true,{
 			OffClass:'guitest_toggle_off',
 			OnClass:'guitest_toggle_on',
-			OnChanging:(prev,next)=>{
+			OnChanging:(view,prev,next)=>{
 				console.log('Toggle: '+next);
 				return true;
 			},
@@ -77,7 +77,7 @@ async function ipl_ready(){
 			WindowClass:'guitest_radio_window',
 			OffClass:'guitest_toggle_off',
 			OnClass:'guitest_toggle_on',
-			OnChanging:(prev,next)=>{
+			OnChanging:(view,prev,next)=>{
 				console.log('Radio1: '+next);
 				return true;
 			},
@@ -95,7 +95,7 @@ async function ipl_ready(){
 			WindowClass:'guitest_radio_window',
 			OffClass:'guitest_toggle_off',
 			OnClass:'guitest_toggle_on',
-			OnChanging:(prev,next)=>{
+			OnChanging:(view,prev,next)=>{
 				console.log('Radio2: '+next);
 				return true;
 			},
@@ -112,7 +112,7 @@ async function ipl_ready(){
 		],{
 			Class:'guitest_select_box',
 			Init:1,
-			OnChanging:(prev,next)=>{
+			OnChanging:(view,prev,next)=>{
 				console.log('Select: '+next);
 				return true;
 			},
@@ -126,7 +126,7 @@ async function ipl_ready(){
 			YgEs.NewQHT({Tag:'div',Sub:['Modeless Dialog']}),
 			YgEs.GUI.Button(null,'Close',{
 				Class:'guitest_button',
-				OnClick:(user)=>{
+				OnClick:(view)=>{
 					dialog0.Close();
 				},
 			}),
@@ -138,7 +138,7 @@ async function ipl_ready(){
 			YgEs.NewQHT({Tag:'div',Sub:['Modal Dialog']}),
 			YgEs.GUI.Button(null,'Close',{
 				Class:'guitest_button',
-				OnClick:(user)=>{
+				OnClick:(view)=>{
 					dialog1.Close();
 				},
 			}),
@@ -150,7 +150,7 @@ async function ipl_ready(){
 			YgEs.NewQHT({Tag:'div',Sub:['PopUp']}),
 			YgEs.GUI.Button(null,'Close',{
 				Class:'guitest_button',
-				OnClick:(user)=>{
+				OnClick:(view)=>{
 					popup0.Hide();
 				},
 			}),
@@ -171,25 +171,25 @@ async function ipl_ready(){
 
 		YgEs.GUI.Button(null,'Modal',{
 			Class:'guitest_button',
-			OnClick:(user)=>{
+			OnClick:(view)=>{
 				dialog1.Open();
 			},
 		}),
 		YgEs.GUI.Button(null,'Modeless',{
 			Class:'guitest_button',
-			OnClick:(user)=>{
+			OnClick:(view)=>{
 				dialog0.Open();
 			},
 		}),
 		YgEs.GUI.Button(null,'PopUp',{
 			Class:'guitest_button',
-			OnClick:(user)=>{
+			OnClick:(view)=>{
 				popup0.Show();
 			},
 		}),
 		YgEs.GUI.Button(null,'PopUp Menu',{
 			Class:'guitest_button',
-			OnClick:(user)=>{
+			OnClick:(view)=>{
 				popup1.Show();
 			},
 		}),

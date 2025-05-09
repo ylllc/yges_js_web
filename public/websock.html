@@ -134,7 +134,7 @@ function gui_test_echo(){
 
 	YgEs.GUI.Button(gui_send,'Send',{
 		Class:'yges_testview_button',
-		OnClick:()=>{
+		OnClick:(view)=>{
 			log.Trace('try sending: '+content_send.Element.value);
 
 			tp_cli.Send(null,{Type:PAYLOAD.ECHO_REQ,Content:content_send.Element.value});

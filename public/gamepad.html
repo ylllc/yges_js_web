@@ -58,7 +58,7 @@ async function ipl_ready(){
 		1,2,3,4,5,6
 	],{
 		Init:-1,
-		OnChanging:(prev,next)=>{
+		OnChanging:(view,prev,next)=>{
 			YgEs.GamePadManager.SetPlayerCount(next);
 			return true;
 		},
@@ -67,7 +67,7 @@ async function ipl_ready(){
 	mainboard.Append('Config: ');
 
 	YgEs.GUI.Button(mainboard,'Save',{
-		OnClick:()=>{
+		OnClick:(view)=>{
 			let cfg=[]
 			let n=YgEs.GamePadManager.GetAvailablePlayerCount();
 			for(let i=0;i<n;++i){
@@ -83,7 +83,7 @@ async function ipl_ready(){
 		},
 	});
 	YgEs.GUI.Button(mainboard,'Load',{
-		OnClick:()=>{
+		OnClick:(view)=>{
 
 			YgEs.LocalLoad(true,'.json',(data)=>{
 				try{
