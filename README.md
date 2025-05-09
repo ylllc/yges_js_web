@@ -39,3 +39,23 @@ see docs/html/index.html
 
 Run on Server Sample of [Node.js](https://github.com/ylllc/yges_js_node) or [Deno](https://github.com/ylllc/yges_js_deno) version.   
 Start the Server and access http://localhost:8888/test.html  
+
+
+## For Your Project
+
+### Fork this Repository
+
+should not clone from this repository directly.  
+this repository often changes reconstructive
+and may break your project.  
+
+### Create a Branch for Your Project
+
+should not use main. 
+main should keep clean to update from the upstream.  
+
+### Update Yggdrasil Essence
+
+sync main in your repository.  
+and merge to your branch as needed.  
+BE CAREFUL.  
