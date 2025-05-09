@@ -53,31 +53,31 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 
 	let states={
 		'Download':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				setMsg('(download)');
 				if(view)view.UpdateResult(result);
 				YgEs.HTTPClient.GetText(url,(src)=>{
 					loaded='YgEs.Test.Scenaria["'+url+'"]=(()=>{'+src+'return scenaria;})();';
-					user.Loaded=true;
+					proc.User.Loaded=true;
 				},(hap)=>{
-					user.Hap=hap;
+					proc.User.Hap=hap;
 				});
 			},
-			OnPollInKeep:(ctrl,user)=>{
-				if(user.Hap){
-					setMsg('(error) '+user.Hap.ToString());
+			OnPollInKeep:(ctrl,proc)=>{
+				if(proc.User.Hap){
+					setMsg('(error) '+proc.User.Hap.ToString());
 					return false;
 				}
-				if(!user.Loaded)return;
+				if(!proc.User.Loaded)return;
 				return 'Install';
 			},
 		},
 		'Install':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				setMsg('(install)');
 				installed=YgEs.NewQHT({Target:scriptstore,Tag:'script',Sub:[loaded]});
 				if(!YgEs.Test.Scenaria[url]){
-					user.Hap=launcher.HappenTo.Happen('Syntex Error');
+					proc.User.Hap=launcher.HappenTo.Happen('Syntex Error');
 				}
 				else{
 					for(let scn of YgEs.Test.Scenaria[url]){
@@ -90,26 +90,26 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 								if(v)v.UpdateResult(result);
 							},
 						}
-						user.Scenaria.push(sct);
+						proc.User.Scenaria.push(sct);
 					}
-					user.Installed=true;
+					proc.User.Installed=true;
 					setMsg('(standby)');
-					if(view)view.SetScenaria(user.Scenaria);
+					if(view)view.SetScenaria(proc.User.Scenaria);
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
-				if(user.Hap){
-					setMsg('(error) '+user.Hap.ToString());
+			OnPollInKeep:(ctrl,proc)=>{
+				if(proc.User.Hap){
+					setMsg('(error) '+proc.User.Hap.ToString());
 					return false;
 				}
-				if(!user.Installed)return;
+				if(!proc.User.Installed)return;
 				if(!sig_run)return;
 				sig_run=false;
 				runs=items;
 				runloc=0;
 				pickup=false;
-				for(let i=0;i<user.Scenaria.length;++i){
-					let sct=user.Scenaria[i];
+				for(let i=0;i<proc.User.Scenaria.length;++i){
+					let sct=proc.User.Scenaria[i];
 					if(!sct.Scenario.Pickup)continue;
 					pickup=true;
 					break;
@@ -119,10 +119,10 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 			},
 		},
 		'Select':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 
-				for(;runloc<user.Scenaria.length;++runloc){
-					let sct=user.Scenaria[runloc];
+				for(;runloc<proc.User.Scenaria.length;++runloc){
+					let sct=proc.User.Scenaria[runloc];
 					if(sct.Scenario.Filter===false || (pickup && !sct.Scenario.Pickup)){
 						--runs;
 						if(sct.View){
@@ -134,15 +134,15 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 					break;
 				}
 			},
-			OnPollInKeep:(ctrl,user)=>{
-				if(runloc>=user.Scenaria.length)return 'Unload';
+			OnPollInKeep:(ctrl,proc)=>{
+				if(runloc>=proc.User.Scenaria.length)return 'Unload';
 				else return 'Run';
 			},
 		},
 		'Run':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				running=true;
-				let sct=user.Scenaria[runloc];
+				let sct=proc.User.Scenaria[runloc];
 				YgEs.Timing.ToPromise(async (ok,ng)=>{
 
 					let abend=false;
@@ -193,19 +193,19 @@ function _setupTestFile(launcher,scriptstore,url,stat,reportParent){
 					running=false;
 				});
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				if(running)return;
 				++runloc;
 				return 'Select';
 			},
 		},
 		'Unload':{
-			OnStart:(ctrl,user)=>{
+			OnStart:(ctrl,proc)=>{
 				setMsg('');
 				installed.Clear();
 				installed=null;
 			},
-			OnPollInKeep:(ctrl,user)=>{
+			OnPollInKeep:(ctrl,proc)=>{
 				return true;
 			},
 		},

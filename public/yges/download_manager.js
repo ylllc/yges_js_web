@@ -60,13 +60,13 @@ function _create(launcher,monitor=null){
 
 			let states={
 				'Setup':{
-					OnPollInKeep:(smc,user)=>{
+					OnPollInKeep:(smc,proc)=>{
 						ctx.Loader=plugs[type].OnStart(url,(src)=>{
 							ctx.Source=src;
 							if(ctx.View)ctx.View.Apply();
-							user.Loaded=true;
+							proc.User.Loaded=true;
 						},(hap)=>{
-							user.Happening=hap;
+							proc.User.Happening=hap;
 							let p=hap.GetProp();
 							let msg=p.status?
 								('['+p.status+'] '+p.msg):
@@ -79,15 +79,15 @@ function _create(launcher,monitor=null){
 					},
 				},
 				'Download':{
-					OnPollInKeep:(smc,user)=>{
-						if(user.Happening)return 'Failure';
+					OnPollInKeep:(smc,proc)=>{
+						if(proc.User.Happening)return 'Failure';
 						if(ctx.View)ctx.View.Progress(ctx.Loader.Progress);
-						if(!user.Loaded)return;
+						if(!proc.User.Loaded)return;
 						return 'WaitDeps';
 					},
 				},
 				'WaitDeps':{
-					OnPollInKeep:(smc,user)=>{
+					OnPollInKeep:(smc,proc)=>{
 						for(let dep of depends){
 							if(ctrl.Ready[dep]===undefined)return;
 						}
@@ -95,10 +95,10 @@ function _create(launcher,monitor=null){
 					},
 				},
 				'Apply':{
-					OnReady:(smc,user)=>{
+					OnReady:(smc,proc)=>{
 						plugs[type].OnInit(ctx.Source,(res)=>{
 							ctrl.Ready[label]=res;
-							user.Ready=true;
+							proc.User.Ready=true;
 							if(ctx.View)ctx.View.Done();
 						},(hap)=>{
 							let msg=hap.ToString();
@@ -107,15 +107,15 @@ function _create(launcher,monitor=null){
 							});
 						});
 					},
-					OnPollInKeep:(smc,user)=>{
-						if(user.Happening)return 'Failure';
-						if(user.Ready)return true;
+					OnPollInKeep:(smc,proc)=>{
+						if(proc.User.Happening)return 'Failure';
+						if(proc.User.Ready)return true;
 					},
 				},
 				'Failure':{
-					OnPollInKeep:(smc,user)=>{
-						if(user.Happening.IsResolved()){
-							user.Happening=null;
+					OnPollInKeep:(smc,proc)=>{
+						if(proc.User.Happening.IsResolved()){
+							proc.User.Happening=null;
 							return 'Download';
 						}
 					},
