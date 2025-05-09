@@ -32,7 +32,7 @@ function _setup(target,src,hide=false){
 	let pool=[]
 	let view=hide?YgEs.ToQHT(null):
 		YgEs.NewQHT({Target:target,Tag:'div',Attr:{class:'yges_logview_window'}});
-	src.Way=(src)=>{
+	src.Way=(logger,src)=>{
 		pool.push(src);
 		if(view.Element)_logway(view,src);
 	}

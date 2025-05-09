@@ -8,7 +8,7 @@ const Log=YgEs.Log;
 
 // Happening Manager Test --------------- //
 
-Log.Way=(src)=>{
+Log.Way=(logger,src)=>{
 //	console.log(src.Text);
 }
 
