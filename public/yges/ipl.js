@@ -755,7 +755,7 @@ function _create_manager(prm,parent=null){
 	const onHappen=(hap)=>{
 		for(let hm=mng;hm;hm=hm.GetParent()){
 			if(!hm.OnHappen)continue;
-			hm.OnHappen(hap);
+			hm.OnHappen(hm,hap);
 			return;
 		}
 		_default_happened(hap);
