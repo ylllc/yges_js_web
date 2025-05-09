@@ -158,7 +158,7 @@ async function ipl_ready(){
 	});
 	const popup1=YgEs.GUI.PopUpMenu(mainboard,[
 		{Label:'Dummy'},
-		{Label:'Close',OnAction:()=>{
+		{Label:'Close',OnAction:(view,key)=>{
 			popup1.Hide();
 		}},
 	],{

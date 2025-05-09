@@ -269,7 +269,7 @@ YgEs.GUI.PopUpMenu=(target,items,opt={})=>{
 		let key=it.Key??it.Label;
 		let view2=YgEs.NewQHT({Target:view,Tag:'button',Attr:a,Sub:[it.Label]});
 		view2.Element.onclick=()=>{
-			if(onact)onact();
+			if(onact)onact(view,key);
 		}
 		view.Items.push(view2);
 		ref[key]=view2;

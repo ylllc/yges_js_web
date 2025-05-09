@@ -21,6 +21,7 @@ CB_Changing(prev,next):bool
 
 | Name | Type | Means |
 |------|------|-------|
+| view | @ref pg_class_gui_select | caller instance |
 | prev | string | previous selection |
 | next | string | next selection |
 
