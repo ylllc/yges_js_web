@@ -40,7 +40,7 @@ YgEs.GUI.Toggle=(target,label,init,opt={})=>{
 	}
 
 	let view=YgEs.GUI.Button(target,label,{
-		OnClick:(view)=>{
+		OnClick:(btnview)=>{
 			let ok=true;
 			if(view.OnChanging)ok=view.OnChanging(view,!cur);
 			if(ok){
@@ -101,7 +101,7 @@ YgEs.GUI.Radio=(target,items,opt={})=>{
 		}
 		if(opt.OffClass)o.OffClass=opt.OffClass;
 		if(opt.OnClass)o.OnClass=opt.OnClass;
-		o.OnChanging=(view,side)=>{
+		o.OnChanging=(subview,side)=>{
 			if(side){
 				if(view.OnChanging){
 					if(!view.OnChanging(view,cur,val))return false;
