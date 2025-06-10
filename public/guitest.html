@@ -59,7 +59,7 @@ async function ipl_ready(){
 		YgEs.GUI.Toggle(null,'Toggle',true,{
 			OffClass:'guitest_toggle_off',
 			OnClass:'guitest_toggle_on',
-			OnChanging:(view,prev,next)=>{
+			OnChanging:(view,next)=>{
 				console.log('Toggle: '+next);
 				return true;
 			},
