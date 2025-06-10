@@ -13,6 +13,7 @@
 	- @subpage pg_feat_file
 	- @subpage pg_feat_gamepad
 - Framework
+	- @subpage pg_feat_softclass
 	- @subpage pg_feat_happening
 	- @subpage pg_feat_timing
 	- @subpage pg_feat_engine

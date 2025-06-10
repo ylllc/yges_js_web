@@ -106,6 +106,17 @@ CreateEnum(src):dict<string,int>
 reverse lookup table of src.  
 
 -----
+## SoftClass() {#Common_SoftClass}
+
+### Spec
+
+SoftClass():@ref pg_class_softclass
+
+### Returns 
+
+a new SoftClass instance
+
+-----
 ## SetDefault() {#Common_SetDefault}
 
 complement default values.  

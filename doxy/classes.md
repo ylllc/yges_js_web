@@ -50,6 +50,7 @@
 - @subpage pg_class_quickqueue_container
 - @subpage pg_class_session_container
 - @subpage pg_class_session_driver
+- @subpage pg_class_softclass
 - @subpage pg_class_stmac_container
 - @subpage pg_class_stmac_context
 - @subpage pg_class_unittest
