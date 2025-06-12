@@ -175,12 +175,12 @@ manager info.
 -----
 ## Abandon() {#HappeningManager_Abandon}
 
+abandon all happens in this instance
+and all child HappeningManager.  
+
 ### Spec
 
 Abandon():void
-
-abandon all happens in this instance
-and all child HappeningManager.  
 
 -----
 ## CountIssues() {#HappeningManager_countIssues}
@@ -209,20 +209,20 @@ true means no happens in this instance and all child HappeningManager.
 -----
 ## Cleanup() {#HappeningManager_Cleanup}
 
+remove dirty resolved happens in this instance and all child HappeningManager.  
+
 ### Spec
 
 Cleanup():void
 
-remove dirty resolved happens in this instance and all child HappeningManager.  
-
 -----
 ## Poll() {#HappeningManager_poll}
+
+iterate all unresolved Happening include all child HappeningManager.  
 
 ### Spec
 
 Poll(cb):void
-
-iterate all unresolved Happening include all child HappeningManager.  
 
 | Name | Type | Means |
 |------|------|-------|
@@ -231,11 +231,11 @@ iterate all unresolved Happening include all child HappeningManager.
 -----
 ## Happen() {#HappeningManager_Happen}
 
+add a Happening.  
+
 ### Spec
 
 Happen(src,prop,init=null):@ref pg_class_happening
-
-add a Happening.  
 
 ### Args
 

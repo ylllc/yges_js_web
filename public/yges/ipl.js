@@ -36,6 +36,22 @@ YgEs.CreateEnum=(src)=>{
 	return ll;
 }
 
+YgEs.CoreError=(src,prop={})=>{
+
+	if(YgEs.HappeningManager)YgEs.HappeningManager.Happen(src,prop);
+	else throw src;
+}
+
+YgEs.CoreWarn=(src,prop={})=>{
+
+	if(YgEs.HappeningManager)YgEs.HappeningManager.Happen(src,prop);
+	else if(YgEs.Log)YgEs.Log.Warn(src,prop);
+	else{
+		console.warn(src);
+		console.dir(prop);
+	}
+}
+
 YgEs.SoftClass=()=>{
 
 	const name='YgEs.SoftClass';
