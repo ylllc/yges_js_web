@@ -9,11 +9,22 @@ created by @ref Common_SoftClass
 
 | Name | Type | Means |
 |------|------|-------|
-| Name | string | instance name |
+| Name | string | user defined instance name |
 | User | dict<string,any> | user definitions |
 
 -----
 # Methods
+
+-----
+## GetCaption() {#SoftClass_GetCaption}
+
+### Spec
+
+GetCaption():string
+
+### Returns
+
+user defined instance name when set, or class name
 
 -----
 ## GetClassName() {#SoftClass_GetClassName}
