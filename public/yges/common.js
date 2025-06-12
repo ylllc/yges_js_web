@@ -67,6 +67,10 @@ YgEs.SoftClass=()=>{
 		GetParentName:()=>inst._parent_,
 		IsComprised:(name)=>!!inst._private_[name],
 		Trait:(name,priv=null,pub=null)=>{
+			if(inst._private_[name]){
+				YgEs.CoreWarn('** '+name+' already exists in class table of '+inst.Name+' **',inst._private_);
+			}
+
 			let t=priv?priv:{}
 			inst._private_[name]=YgEs.ShowPrivate?t:{};
 			t._super_={}
@@ -81,6 +85,10 @@ YgEs.SoftClass=()=>{
 			return t;
 		},
 		Inherit:(symbol,override)=>{
+			if(priv_cur._super_[symbol]){
+				YgEs.CoreWarn('** '+symbol+' already exists in inheritance table of '+inst.Name+' **',priv_cur._super_);
+			}
+
 			const dst=priv_cur._super_[symbol]=inst[symbol];
 			inst[symbol]=override;
 			return dst;
