@@ -58,17 +58,18 @@ YgEs.SoftClass=()=>{
 	let priv_cur={_super_:{}}
 
 	let inst={
-		Name:name,
+		Name:undefined,
 		User:{},
 		_class_:name,
 		_parent_:undefined,
 		_private_:{},
+		GetCaption:()=>inst.Name??inst._class_,
 		GetClassName:()=>inst._class_,
 		GetParentName:()=>inst._parent_,
 		IsComprised:(name)=>!!inst._private_[name],
 		Trait:(name,priv=null,pub=null)=>{
 			if(inst._private_[name]){
-				YgEs.CoreWarn('** '+name+' already exists in class table of '+inst.Name+' **',inst._private_);
+				YgEs.CoreWarn('** '+name+' already exists in class table of '+inst.GetCaption()+' **',inst._private_);
 			}
 
 			let t=priv?priv:{}
@@ -80,13 +81,13 @@ YgEs.SoftClass=()=>{
 		Extend:(name,priv=null,pub=null)=>{
 			let t=inst.Trait(name,priv,pub);
 			inst._parent_=inst._class_;
-			inst._class_=inst.Name=name;
+			inst._class_=name;
 			priv_cur=t;
 			return t;
 		},
 		Inherit:(symbol,override)=>{
 			if(priv_cur._super_[symbol]){
-				YgEs.CoreWarn('** '+symbol+' already exists in inheritance table of '+inst.Name+' **',priv_cur._super_);
+				YgEs.CoreWarn('** '+symbol+' already exists in inheritance table of '+inst.GetCaption()+' **',priv_cur._super_);
 			}
 
 			const dst=priv_cur._super_[symbol]=inst[symbol];

@@ -122,8 +122,8 @@ Log.Info(obj.Name+' is instance of YourClassName?: '+YgEs.Inspect(obj.IsComprise
 ## Instance Name
 
 obj.Name can overwrite in your wish, and indicate custom label.  
-but overwritten in Extend() and Trait().  
-should write after all inheritance completed for renaming.  
+obj.GetCaption() get it when set, or class name instead of.  
+
 
 -----
 ## Extra User Definition
@@ -135,4 +135,4 @@ and can rewrite in your wish.
 -----
 # Class Reference
 
-@sa @ref pg_class_common
+@sa @ref pg_class_softclass

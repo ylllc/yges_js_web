@@ -17,6 +17,10 @@ const scenaria=[
 			Test.ChkStrict(undefined,obj.GetParentName());
 			Test.ChkStrict(true,obj.IsComprised('YgEs.SoftClass'),'means SoftClass instance');
 			Test.ChkStrict(false,obj.IsComprised(undefined),'means not extended');
+
+			Test.ChkStrict('YgEs.SoftClass',obj.GetCaption(),'caption is same to class name');
+			obj.Name='MySoftClass';
+			Test.ChkStrict('MySoftClass',obj.GetCaption(),'caption is same to user defined name');
 		},
 	},
 	{
