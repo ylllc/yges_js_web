@@ -55,34 +55,43 @@ YgEs.CoreWarn=(src,prop={})=>{
 YgEs.SoftClass=()=>{
 
 	const name='YgEs.SoftClass';
-	let priv_cur={_super_:{}}
+	let priv_idx={}
+
+	const entrait=(name,priv,pub)=>{
+
+		if(priv_idx[name]){
+			YgEs.CoreWarn('** '+name+' already exists in class table of '+inst.GetCaption()+' **',Object.keys(priv_idx));
+		}
+
+		let t=priv?priv:{}
+		priv_idx[name]=t;
+		if(pub)Object.assign(inst,pub);
+		return t;
+	}
 
 	let inst={
 		Name:undefined,
 		User:{},
 		_class_:name,
-		_parent_:undefined,
-		_private_:{},
+		_genealogy_:[],
+		_private_:YgEs.ShowPrivate?priv_idx:{},
 		GetCaption:()=>inst.Name??inst._class_,
 		GetClassName:()=>inst._class_,
-		GetParentName:()=>inst._parent_,
-		IsComprised:(name)=>!!inst._private_[name],
+		GetGenealogy:()=>inst._genealogy_,
+		IsComprised:(name)=>!!priv_idx[name],
 		Trait:(name,priv=null,pub=null)=>{
-			if(inst._private_[name]){
-				YgEs.CoreWarn('** '+name+' already exists in class table of '+inst.GetCaption()+' **',inst._private_);
-			}
-
-			let t=priv?priv:{}
-			inst._private_[name]=YgEs.ShowPrivate?t:{};
-			t._super_={}
-			if(pub)Object.assign(inst,pub);
+			let t=entrait(name,priv,pub);
+			priv_cur._trait_.push({_class_:name,_user_:t});
 			return t;
 		},
 		Extend:(name,priv=null,pub=null)=>{
-			let t=inst.Trait(name,priv,pub);
-			inst._parent_=inst._class_;
+
+			let t=entrait(name,priv,pub);
+			let pn=inst._class_;
 			inst._class_=name;
-			priv_cur=t;
+			inst._genealogy_.push(name);
+			priv_cur={_class_:name,_parent_:priv_cur,_trait_:[],_super_:{},_user_:t}
+			if(YgEs.ShowPrivate)inst._inherit_=priv_cur;
 			return t;
 		},
 		Inherit:(symbol,override)=>{
@@ -95,7 +104,12 @@ YgEs.SoftClass=()=>{
 			return dst;
 		},
 	}
-	inst.Trait(name);
+	let priv_cur={_class_:name,_trait_:[],_super_:{},_user_:entrait(name)}
+	if(YgEs.ShowPrivate){
+		inst._inherit_=priv_cur;
+		inst._private_=priv_idx;
+	}
+
 	return inst;
 }
 

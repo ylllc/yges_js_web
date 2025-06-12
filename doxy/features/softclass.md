@@ -69,6 +69,7 @@ set YgEs.ShowPrivate=false to load a empty instance inplace of it.
 
 ```
 Log.Debug("debug private info",obj._private_['YourClassName']);
+Log.Debug("debug inherit info",obj._inherit_);
 ```
 
 -----
