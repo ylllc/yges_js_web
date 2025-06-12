@@ -38,15 +38,15 @@ GetClassName():string
 class name
 
 -----
-## GetParentName() {#SoftClass_GetParentName}
+## GetGenealogy() {#SoftClass_GetGenealogy}
 
 ### Spec
 
-GetParentName():string
+GetGenealogy():array
 
 ### Returns
 
-parent class name
+inheritance names
 
 -----
 ## IsComprised() {#SoftClass_IsComprised}
