@@ -106,6 +106,42 @@ CreateEnum(src):dict<string,int>
 reverse lookup table of src.  
 
 -----
+## CoreError() {#Common_CoreError}
+
+an error happens,  
+redirect to @ref pg_class_happening_manager when ready,  
+or throw it.  
+
+### Spec
+
+CoreError(src,prop={}):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| src | @ref HappeningManager_HappeningSource | happening source |
+| prop | dict<string,any> | extra properties |
+
+-----
+## CoreWarn() {#Common_CoreWarn}
+
+a warning happens,  
+redirect to @ref pg_class_happening_manager when ready,  
+or log it.  
+
+### Spec
+
+CoreWarn(src,prop={}):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| src | @ref HappeningManager_HappeningSource | happening source |
+| prop | dict<string,any> | extra properties |
+
+-----
 ## SoftClass() {#Common_SoftClass}
 
 ### Spec
