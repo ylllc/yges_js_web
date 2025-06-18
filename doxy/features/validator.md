@@ -130,7 +130,7 @@ let still_null=YgEs.Validate(null,{Default:123});
 // List initialized with empty array 
 let empty_array=YgEs.Validate(undefined,{List:true});
 
-// Dicy initialized with empty object 
+// Dict initialized with empty object 
 let empty_obj=YgEs.Validate(undefined,{Dict:true});
 
 // but Struct still undefined 
