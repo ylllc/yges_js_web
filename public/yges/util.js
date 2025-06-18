@@ -6,11 +6,6 @@
 // Utilities ---------------------------- //
 (()=>{ // local namespace 
 
-const _rx_zero=/^(0+(|\.)0*|0*(|\.)0+)$/;
-const _rx_null=/^null$/i;
-const _rx_false=/^false$/i;
-const _rx_undefined=/^undefined$/i;
-
 let Util=YgEs.Util={
 	Name:'YgEs.Util',
 	User:{},
@@ -45,46 +40,6 @@ let Util=YgEs.Util={
 		if(val===null)return false;
 		if(typeof val==='object')return true;
 		return false;
-	},
-
-	Booleanize:(val,stringable=false)=>{
-		if(val===null)return false;
-		if(val===undefined)return false;
-		switch(typeof val){
-			case 'boolean':
-			return val;
-
-			case 'number':
-			if(isNaN(val))return true;
-			break;
-
-			case 'string':
-			if(stringable){
-				if(val.match(_rx_zero))return false;
-				if(val.match(_rx_false))return false;
-				if(val.match(_rx_null))return false;
-				if(val.match(_rx_undefined))return false;
-			}
-			break;
-
-			case 'object':
-			return true;
-		}
-		return !!val;
-	},
-
-	Trinarize:(val,stringable=false)=>{
-		if(val==null)return null;
-		if(val===undefined)return null;
-		switch(typeof val){
-			case 'string':
-			if(stringable){
-				if(val.match(_rx_null))return null;
-				if(val.match(_rx_undefined))return null;
-			}
-			break;
-		}
-		return Util.Booleanize(val,stringable);
 	},
 
 	FillZero:(val,col,sgn=false)=>{
@@ -146,6 +101,9 @@ let Util=YgEs.Util={
 			})(k);
 		}
 	},
+
+	Booleanize:YgEs.Booleanize,
+	Trinarize:YgEs.Trinarize,
 }
 
 })();
