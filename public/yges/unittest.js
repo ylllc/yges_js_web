@@ -319,17 +319,49 @@ YgEs.Test={
 	Name:'YgEs.Test',
 	User:{},
 	_private:{},
-	
+
 	Scenaria:{},
 
 	Never:(msg=null)=>{_assert(false,msg)},
 	Chk:(cond,msg=null)=>{_assert(cond,msg)},
-	ChkLoose:(v1,v2,msg=null)=>{_assert(v1==v2,_cpmsg(msg,v1,'==',v2))},
-	ChkStrict:(v1,v2,msg=null)=>{_assert(v1===v2,_cpmsg(msg,v1,'===',v2))},
 	ChkLess:(v1,v2,msg=null)=>{_assert(v1<v2,_cpmsg(msg,v1,'<',v2))},
 	ChkLessEq:(v1,v2,msg=null)=>{_assert(v1<=v2,_cpmsg(msg,v1,'<=',v2))},
 	ChkGreat:(v1,v2,msg=null)=>{_assert(v1>v2,_cpmsg(msg,v1,'>',v2))},
 	ChkGreatEq:(v1,v2,msg=null)=>{_assert(v1>=v2,_cpmsg(msg,v1,'>=',v2))},
+
+	ChkLoose:(v1,v2,msg=null)=>{
+		switch(typeof v1){
+			case 'object':
+			for(let k in v1)YgEs.Test.ChkLoose(v1[k],v2[k],msg);
+			for(let k in v2)YgEs.Test.ChkLoose(v1[k],v2[k],msg);
+			break;
+
+			default: 
+			_assert(v1==v2,_cpmsg(msg,v1,'==',v2))
+		}
+	},
+	ChkStrict:(v1,v2,msg=null)=>{
+		switch(typeof v1){
+			case 'object':
+			for(let k in v1)YgEs.Test.ChkStrict(v1[k],v2[k],msg);
+			for(let k in v2)YgEs.Test.ChkStrict(v1[k],v2[k],msg);
+			break;
+
+			default: 
+			_assert(v1===v2,_cpmsg(msg,v1,'===',v2))
+		}
+	},
+	ChkApprox:(v1,v2,range,msg=null)=>{
+		switch(typeof v1){
+			case 'object':
+			for(let k in v1)YgEs.Test.ChkApprox(v1[k],v2[k],range,msg);
+			for(let k in v2)YgEs.Test.ChkApprox(v1[k],v2[k],range,msg);
+			break;
+
+			default: 
+			_assert(((v1<v2)?(v2-v1):(v1-v2))<=range,_cpmsg(msg,v1,'>=',v2))
+		}
+	},
 
 	Run:(scn)=>{
 		// dummy 
