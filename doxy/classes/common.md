@@ -16,6 +16,35 @@
 # Structures
 
 -----
+## ValidateDefinitions {#Common_ValidateDefinitions}
+
+definition for @ref Common_Validate
+
+| Name | Type | Means |
+|------|------|-------|
+| Any | bool? | skip validation by types |
+| Boolable | bool? | allows false and true |
+| Class | @ref Common_ClassType? | allows object for used as a class instance |
+| Default | any? | complement to undefined value |
+| Dict | @ref Common_InnerType? | allows object for used as a dictionary |
+| Integer | bool? | allows integer value, warning by fragments |
+| List | @ref Common_InnerType? | allows array |
+| Literal | bool? | allows string value |
+| Nullable | bool? | allows null |
+| NaNable | bool? | allows NaN |
+| Numeric | bool? | allows numeric value |
+| Max | int? | maximum value or length |
+| Min | int? | minimum value or length |
+| Others | bool? | allows other keys in a structure |
+| Required | bool? | warning by undefined |
+| Struct | @ref Common_StructType? | allows object for used as a structure |
+| Validator | @ref Common_UserValidator? | user validating function |
+
+### Notes
+
+- don't be mixed Class, Dict and Struct.  
+
+-----
 ## HappenedError {#Common_HappenedError}
 
 Error caught in @ref pg_class_happening
@@ -34,12 +63,64 @@ Error caught in @ref pg_class_happening
 # Unions
 
 -----
+## ClassType {#Common_ClassType}
+
+| Type | Means |
+|------|-------|
+| string | @ref pg_class_softclass name |
+| func | standard class constructor |
+
+-----
+## InnerType {#Common_InnerType}
+
+| Type | Means |
+|------|-------|
+| bool | true means allow any type to inner values, and skip validating them |
+| @ref Common_ValidateDefinitions | definition for inner value |
+
+-----
+## StructType {#Common_StructType}
+
+| Type | Means |
+|------|-------|
+| bool | true means allow any type to inner values, and skip validating them |
+| dict<string,@ref Common_ValidateDefinitions> | definition for each Structure members |
+
+-----
 ## LoadedFile {#Common_LoadedFile}
 
 | Type | Means |
 |------|-------|
 | string | loaded as text |
 | ArrayBuffer | loaded binary buffer |
+
+-----
+# Callbacks
+
+-----
+## UserValidator {#Common_UserValidator}
+
+customize filtering for @ref Common_Validate
+
+### Spec
+
+UserValidator(src,attr,tag=''):any
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| src | any | checking value |
+| attr | @ref Common_ValidateDefinitions | definitions |
+| tag | string | variable name for log |
+
+### Returns
+
+filtered src
+
+### Implements
+
+filter src in your wish
 
 -----
 # Properties
@@ -142,6 +223,27 @@ CoreWarn(src,prop={}):void
 | prop | dict<string,any> | extra properties |
 
 -----
+## Validate() {#Common_Validate}
+
+@sa pg_feat_validator
+
+### Spec
+
+Validate(src,attr,tag=''):any
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| src | any | checking value |
+| attr | @ref Common_ValidateDefinitions | definitions |
+| tag | string | variable name for log |
+
+### Returns
+
+checked and filtered value
+
+-----
 ## SoftClass() {#Common_SoftClass}
 
 ### Spec
@@ -189,6 +291,53 @@ FromError(err):@ref Common_HappenedError
 ### Returns
 
 extract for @ref pg_class_happening
+
+-----
+## Booleanize() {#Common_Booleanize}
+
+### Spec
+
+Booleanize(val,stringable=false):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | number | source value |
+| stringable | bool | include stringified value |
+
+### Returns
+
+fix to bool.  
+
+number means nonzero.  
+(include NaN)     
+
+stringified 'null' 'undefined' 'false' '0' become false in stringable mode.  
+(include uppercase and pointed zero range)  
+other string means not empty.  
+
+empty array and object bcome true.  
+
+-----
+## Trinarize() {#Common_Trinarize}
+
+### Spec
+
+Trinarize(val,stringable=false):bool?
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| val | number | source value |
+| stringable | bool | include stringified value |
+
+### Returns
+
+fix to bool or null.  
+null and undefined become null, stringified too.  
+otherwize sami to Booleanize()
 
 -----
 ## JustString() {#Common_JustString}

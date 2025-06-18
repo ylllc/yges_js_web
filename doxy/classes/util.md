@@ -189,53 +189,6 @@ array, object nut null returns true.
 otherwise false.  
 
 -----
-## Booleanize() {#Util_Booleanize}
-
-### Spec
-
-Booleanize(val,stringable=false):bool
-
-### Args
-
-| Name | Type | Means |
-|------|------|-------|
-| val | number | source value |
-| stringable | bool | include stringified value |
-
-### Returns
-
-fix to bool.  
-
-number means nonzero.  
-(include NaN)     
-
-stringified 'null' 'undefined' 'false' '0' become false in stringable mode.  
-(include uppercase and pointed zero range)  
-other string means not empty.  
-
-empty array and object bcome true.  
-
------
-## Trinarize() {#Util_Trinarize}
-
-### Spec
-
-Trinarize(val,stringable=false):bool?
-
-### Args
-
-| Name | Type | Means |
-|------|------|-------|
-| val | number | source value |
-| stringable | bool | include stringified value |
-
-### Returns
-
-fix to bool or null.  
-null and undefined become null, stringified too.  
-otherwize sami to Booleanize()
-
------
 ## FillZero() {#Util_FillZero}
 
 ### Spec
