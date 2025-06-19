@@ -1,8 +1,9 @@
-﻿@page pg_class_logger Log
+﻿@page pg_class_logger Logger
 
 # What's It?
 
-@sa @ref pg_feat_logger
+@sa @ref pg_feat_logger  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Namespaces
@@ -75,7 +76,6 @@
 | Caption | string | caption |
 | Format | @ref Log_CB_LogFormat | formatter |
 | Way | @ref Log_CB_LogWay | output way |
-| User | dict<string,any> | user definitions |
 
 -----
 # Callbacks
@@ -195,6 +195,10 @@ GetCaption():string
 
 caption for this instance.  
 it's this Caption when already set or parent setting.   
+
+### Notes
+
+- fully overridden and defferent from @ref SoftClass_GetCaption  
 
 -----
 ## GetShowable() {#Log_GetShowable}
