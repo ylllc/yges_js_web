@@ -337,7 +337,7 @@ Trinarize(val,stringable=false):bool?
 
 fix to bool or null.  
 null and undefined become null, stringified too.  
-otherwize sami to Booleanize()
+otherwize same to Booleanize()
 
 -----
 ## JustString() {#Common_JustString}
