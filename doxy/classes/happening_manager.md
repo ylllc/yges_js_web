@@ -2,7 +2,8 @@
 
 # What's It?
 
-@sa @ref pg_feat_happening
+@sa @ref pg_feat_happening  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Namespaces

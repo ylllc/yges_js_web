@@ -72,7 +72,7 @@ function _view_manager(view,src){
 			view.Status.Element.innerText='['+src.CountIssues()+']';
 			view.Status.Element.setAttribute('class','yges_hapview_status_ng');
 		}
-		view.Capt.Element.innerText=src.Name;
+		view.Capt.Element.innerText=src.GetCaption();
 		view.Rmks.Element.innerText='{'+src.GetInstanceID()+'}';
 
 		for(let hap of src.GetIssues()){

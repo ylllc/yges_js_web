@@ -4,6 +4,7 @@
 # What's It?
 
 created and managed by @ref pg_class_happening_manager  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Structures
