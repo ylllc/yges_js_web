@@ -24,6 +24,7 @@ definition for @ref Common_Validate
 |------|------|-------|
 | Any | bool? | skip validation by types |
 | Boolable | bool? | allows false and true |
+| Callable | bool? | allows function |
 | Class | @ref Common_ClassType? | allows object for used as a class instance |
 | Default | any? | complement to undefined value |
 | Dict | @ref Common_InnerType? | allows object for used as a dictionary |
@@ -242,6 +243,24 @@ Validate(src,attr,tag=''):any
 ### Returns
 
 checked and filtered value
+
+-----
+## InstanceOf() {#Common_InstanceOf}
+
+### Spec
+
+InstanceOf(obj,name):bool
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| obj | any | check target |
+| name | string | name of @ref SoftClass_Extend or @ref SoftClass_Trait |
+
+### Returns
+
+true means @ref pg_class_softclass instance and extended for the class  
 
 -----
 ## SoftClass() {#Common_SoftClass}
