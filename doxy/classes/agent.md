@@ -2,7 +2,8 @@
 
 # What's It?
 
-created by @ref pg_class_agent_manager
+created by @ref pg_class_agent_manager  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Structures
@@ -20,7 +21,7 @@ created by @ref pg_class_agent_manager
 | Halt | bool | not poll by overbroken |
 | Aborted | bool | cancelled from external order |
 | Waiting | bool | prepareing in up or down |
-| User | dict<string,any> | user definition |
+| User | struct | user definition |
 | Happening | @ref Happening_HappeningInfo | happening manager info |
 | Launcher | @ref Launcher_LauncherInfo | launcher info |
 
@@ -40,7 +41,7 @@ CB_Wait(prop):bool
 
 | Name | Type | Means |
 |------|------|-------|
-| prop | dict<string,any> | user properties from @ref Agent_WaitFor |
+| prop | struct | user properties from @ref Agent_WaitFor |
 
 ### Returns
 
@@ -190,7 +191,7 @@ add required condition to complete its phase.
 |------|------|-------|
 | label | string | for info |
 | cb_wait | @ref Agent_CB_Wait | condition checking |
-| prop | dict<string,any> | for info, can access from cb_wait |
+| prop | struct | for info, can access from cb_wait |
 
 -----
 ## Restart() {#Agent_Restart}

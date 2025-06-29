@@ -42,7 +42,7 @@ CB_Changing(side):bool
 | OffClass | string? | class name of button tag for toggle off |
 | OnClass | string? | class name of button tag for toggle on |
 | OnChanging | @ref GUI_Toggle_CB_Changing | call by click |
-| User | dict<string,any>? | user definition, share on this instance |
+| User | struct? | user definition, share on this instance |
 
 -----
 # Properties
@@ -52,7 +52,7 @@ CB_Changing(side):bool
 | Name | Type | Means |
 |------|------|-------|
 | OnChanging | @ref GUI_Toggle_CB_Changing | call by click |
-| User | dict<string,any>? | user definition |
+| User | struct? | user definition |
 
 -----
 # Methods

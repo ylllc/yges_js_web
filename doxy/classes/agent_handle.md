@@ -2,7 +2,8 @@
 
 # What's It?
 
-created by @ref pg_class_agent
+created by @ref pg_class_agent  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Methods

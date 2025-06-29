@@ -28,7 +28,7 @@
 | Name | Type | Means |
 |------|------|-------|
 | PlayerConfig | @ref GamePadManager_PlayerConfig[] | settings by player |
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods

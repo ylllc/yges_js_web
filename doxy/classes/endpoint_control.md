@@ -44,7 +44,7 @@ it inherited from @ref Agent_AgentParam
 -----
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods

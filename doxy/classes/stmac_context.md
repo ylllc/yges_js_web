@@ -2,7 +2,8 @@
 
 # What's It?
 
-created by @ref pg_class_stmac_container
+created by @ref pg_class_stmac_container  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Callbacks
@@ -96,14 +97,7 @@ user defined object kept in a control
 | Prev | string | previous state |
 | Cur | string | current state |
 | Next | string | next state |
-| User | dict<string,any> | user definition |
-
------
-# Properties
-
-| Name | Type | Means |
-|------|------|-------|
-| User | @ref StMac_UserShared | user definitions and kept in this context |
+| User | struct | user definition |
 
 -----
 # Methods

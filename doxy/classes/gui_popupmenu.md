@@ -16,7 +16,7 @@ this class is inherited from @ref GUI_PopUp
 | Key | string | internal value of this item |
 | Label | string? | visible value of this item (or same to internal) |
 | OnAction | func | call by button clicked |
-| User | dict<string,any>? | user definition, share on this item |
+| User | struct? | user definition, share on this item |
 
 -----
 ## Option {#GUI_PopUpMenu_Option}
@@ -25,7 +25,7 @@ this class is inherited from @ref GUI_PopUp
 |------|------|-------|
 | WindowClass | string? | class name of div tag |
 | ItemClass | string? | class name of button tag |
-| User | dict<string,any>? | user definition, share on this instance |
+| User | struct? | user definition, share on this instance |
 
 -----
 # Unions

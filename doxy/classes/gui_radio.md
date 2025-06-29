@@ -42,7 +42,7 @@ CB_Changing(prev,next):bool
 |------|------|-------|
 | Value | string | internal value of this item |
 | Label | string? | visible value of this item (or same to internal) |
-| User | dict<string,any>? | user definition, share on this item |
+| User | struct? | user definition, share on this item |
 
 -----
 ## SelectOption {#GUI_Radio_SelectOption}
@@ -53,7 +53,7 @@ CB_Changing(prev,next):bool
 | ItemClass | string? | class name of button tag |
 | Init | string? | initial selectted key |
 | OnChanging | @ref GUI_Radio_CB_Changing | call by selection changing |
-| User | dict<string,any>? | user definition, share on this instance |
+| User | struct? | user definition, share on this instance |
 
 -----
 ## SelectItem {#GUI_Radio_SelectItem}
@@ -83,7 +83,7 @@ CB_Changing(prev,next):bool
 | Name | Type | Means |
 |------|------|-------|
 | OnChanging | @ref GUI_Radio_CB_Changing | call by selection changing |
-| User | dict<string,any>? | user definition |
+| User | struct? | user definition |
 
 -----
 # Methods

@@ -2,7 +2,8 @@
 
 # What's It?
 
-created by @pg_class_launcher
+created by @pg_class_launcher  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Callbacks
@@ -59,7 +60,6 @@ user definied object kept in a @ref pg_class_procedure instance
 | Name | Type | Means |
 |------|------|-------|
 | HappenTo | @ref pg_class_happening_manager? | user happening handler |
-| User | dict<string,any> | user definitions |
 
 -----
 # Methods

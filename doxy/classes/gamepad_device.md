@@ -10,7 +10,7 @@ created and managed by @ref pg_class_gamepad_manager
 
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods

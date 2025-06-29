@@ -110,8 +110,13 @@ let br_ranged=YgEs.Validate(123,{Integer:true,Min:0,Max:100});
 // limit 5 letters, and tranc it 
 let br_trunced=YgEs.Validate('abcdefg',{Literal:true,Max:5});
 
-// warning by empty string, but cannot fix 
+// warning by empty string (cannot fix) 
 let br_empty=YgEs.Validate('',{Literal:true,Min:1});
+
+// object keys only (invalid values become undefined)
+let br_key=YgEs.Validate('o',{Key:{'a':'A','b':'B','o':'O','ab':'AB'}});
+// array index only (invalid values become undefined)
+let br_idx=YgEs.Validate(2,{Key:['A','B','C','D','E']});
 
 ```
 
@@ -156,6 +161,80 @@ let filtered=YgEs.Validate('XYZ',{Any:true,Validator:(src,attr,tag)=>{
 	//	:
 	return src; // when no errors 
 }});
+
+```
+
+-----
+## Trivia
+
+### Complementation with Empty Object 
+
+```
+// returns [] 
+let o1=YgEs.Validate(undefined,{List:true});
+
+// returns {} 
+let o2=YgEs.Validate(undefined,{Dict:true});
+
+// returns undefined 
+let o3=YgEs.Validate(undefined,{Struct:true});
+
+// returns undefined 
+let o4=YgEs.Validate(undefined,{Class:Object});
+
+```
+
+### Special Meaning of null and undefined
+
+```
+// returns -123 
+// (complemented by Default) 
+let v1=YgEs.Validate(undefined,{Default:-123});
+
+// returns -123 
+// (null is invalid, become undefined temporarily, and complemented by Default) 
+let v2=YgEs.Validate(null,{Default:-123});
+
+// returns null 
+// (null is valid, and not complemented) 
+let v3=YgEs.Validate(null,{Nullable:true,Default:-123});
+
+```
+
+### Deep Validation Brings a Deep Copy
+
+```
+
+// quick validation 
+let src={A:12}
+let dst=YgEs.Validate(src,{Struct:true});
+src.A=123;
+
+// dst is reference of src 
+// and dst.A become 123 too 
+
+// deep validation 
+dst=YgEs.Validate(src,{Struct:{A:{Numeric:true}}});
+src.A=234;
+
+// dst is new object 
+// and dst.A keep 123 after src changed 
+
+```
+
+### Keep Class Instances after Cloning
+
+```
+
+let src={S:{S1:'SafeCloneTest',S2:'OK'},T:new Date()}
+let dst1=YgEs.Clone(src);
+let dst2=YgEs.Validate(src,{Clone:true,Struct:{
+	S:{Struct:true},
+	T:{Class:Date},
+}});
+
+// dst1.T is broken  
+// dst2.T kept a Date instance  
 
 ```
 

@@ -26,9 +26,11 @@ definition for @ref Common_Validate
 | Boolable | bool? | allows false and true |
 | Callable | bool? | allows function |
 | Class | @ref Common_ClassType? | allows object for used as a class instance |
+| Clone | bool? | make deep copies each member, exclude Class instances |
 | Default | any? | complement to undefined value |
-| Dict | @ref Common_InnerType? | allows object for used as a dictionary |
+| Dict | @ref Common_InnerType? | allows object for used as a dictionary, includes array |
 | Integer | bool? | allows integer value, warning by fragments |
+| Key | struct? | limited by struct keys |
 | List | @ref Common_InnerType? | allows array |
 | Literal | bool? | allows string value |
 | Nullable | bool? | allows null |
@@ -78,6 +80,11 @@ Error caught in @ref pg_class_happening
 |------|-------|
 | bool | true means allow any type to inner values, and skip validating them |
 | @ref Common_ValidateDefinitions | definition for inner value |
+
+### Caution
+
+true means skipping inner validation, and makes a reference of source.  
+
 
 -----
 ## StructType {#Common_StructType}
@@ -129,7 +136,7 @@ filter src in your wish
 -----
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods
@@ -203,7 +210,7 @@ CoreError(src,prop={}):void
 | Name | Type | Means |
 |------|------|-------|
 | src | @ref HappeningManager_HappeningSource | happening source |
-| prop | dict<string,any> | extra properties |
+| prop | struct | extra properties |
 
 -----
 ## CoreWarn() {#Common_CoreWarn}
@@ -221,7 +228,27 @@ CoreWarn(src,prop={}):void
 | Name | Type | Means |
 |------|------|-------|
 | src | @ref HappeningManager_HappeningSource | happening source |
-| prop | dict<string,any> | extra properties |
+| prop | struct | extra properties |
+
+-----
+## Clone() {#Common_Clone}
+
+### Spec
+
+Clone(src):any
+
+| Name | Type | Means |
+|------|------|-------|
+| src | any | copy source |
+
+### Returns
+
+cloned value
+
+### Caution
+
+class instances should broken  
+use @ref Common_Validate instead of  
 
 -----
 ## Validate() {#Common_Validate}
@@ -230,7 +257,7 @@ CoreWarn(src,prop={}):void
 
 ### Spec
 
-Validate(src,attr,tag=''):any
+Validate(src,attr,tag='',dcf=false):any
 
 ### Args
 
@@ -238,7 +265,8 @@ Validate(src,attr,tag=''):any
 |------|------|-------|
 | src | any | checking value |
 | attr | @ref Common_ValidateDefinitions | definitions |
-| tag | string | variable name for log |
+| tag | string? | variable name for log |
+| dcf | bool? | make deep copies |
 
 ### Returns
 
@@ -267,32 +295,18 @@ true means @ref pg_class_softclass instance and extended for the class
 
 ### Spec
 
-SoftClass():@ref pg_class_softclass
-
-### Returns 
-
-a new SoftClass instance
-
------
-## SetDefault() {#Common_SetDefault}
-
-complement default values.  
-undefined members set with default.  
-
-### Spec
-
-SetDefault(dst,def):dict
+SoftClass(name=undefined,user=undefined):@ref pg_class_softclass
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
-| dst | dict | complement target |
-| def | dict | default values |
+| name | string? | any name defined by user |
+| user | struct? | any structure defined by user |
 
-### Returns
+### Returns 
 
-complemented structure  
+a new SoftClass instance
 
 -----
 ## FromError() {#Common_FromError}

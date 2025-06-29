@@ -57,7 +57,24 @@ YgEs.CoreWarn=(src,prop=undefined)=>{
 	}
 }
 
-function _validate_number(src,attr,tag=''){
+YgEs.Clone=(src)=>{
+
+	if(src===null)return null;
+	else if(Array.isArray(src)){
+		let dst=[]
+		for(let v of src)dst.push(YgEs.Clone(v));
+		return dst;
+	}
+	else if(typeof src==='object'){
+		let dst={}
+		for(let k in src)dst[k]=YgEs.Clone(src[k]);
+		return dst;
+	}
+
+	return src;
+}
+
+function _validate_number(src,attr,tag){
 
 	let dst=src;
 	if(attr.Max!==undefined){
@@ -83,7 +100,7 @@ function _validate_number(src,attr,tag=''){
 	return dst;
 }
 
-function _validate_string(src,attr,tag=''){
+function _validate_string(src,attr,tag){
 
 	let dst=src;
 	if(attr.Max!==undefined){
@@ -101,7 +118,7 @@ function _validate_string(src,attr,tag=''){
 	return dst;
 }
 
-function _fix_undefined(src,attr,tag=''){
+function _fix_undefined(src,attr,tag){
 
 	if(src===null)return src;
 	if(src!==undefined)return src;
@@ -117,9 +134,10 @@ function _fix_undefined(src,attr,tag=''){
 	return src;
 }
 
-YgEs.Validate=(src,attr,tag='')=>{
+YgEs.Validate=(src,attr,tag='',dcf=false)=>{
 
 	let dst=src;
+	if(attr.Clone)dcf=true;
 
 	if(attr.Any){}
 	else switch(typeof src){
@@ -140,7 +158,13 @@ YgEs.Validate=(src,attr,tag='')=>{
 		break;
 
 		case 'number':
-		if(!attr.Integer && !attr.Numeric){
+		if(attr.Key){
+			if(!attr.Key[src]){
+				YgEs.CoreWarn(tag+' is invalid: '+YgEs.Inspect(src));
+				dst=undefined;
+			}
+		}
+		else if(!attr.Integer && !attr.Numeric){
 			YgEs.CoreWarn(tag+' is invalid: '+YgEs.Inspect(src));
 			if(attr.Literal)dst=''+dst;
 			else if(attr.Boolable)dst=!!dst;
@@ -150,7 +174,13 @@ YgEs.Validate=(src,attr,tag='')=>{
 		break;
 
 		case 'string':
-		if(!attr.Literal){
+		if(attr.Key){
+			if(!attr.Key[src]){
+				YgEs.CoreWarn(tag+' is invalid: '+YgEs.Inspect(src));
+				dst=undefined;
+			}
+		}
+		else if(!attr.Literal){
 			YgEs.CoreWarn(tag+' is invalid: '+YgEs.Inspect(src));
 			if(attr.Integer){
 				dst=parseInt(dst);
@@ -183,38 +213,56 @@ YgEs.Validate=(src,attr,tag='')=>{
 			}
 		}
 		else if(Array.isArray(src)){
-			if(!attr.List){
+			if(attr.List){
+				let sa=attr.List;
+				if(typeof sa==='object'){
+					dst=[];
+					for(let k in src){
+						dst[k]=YgEs.Validate(src[k],sa,tag+'['+k+']',dcf);
+					}
+				}
+				else if(dcf)dst=YgEs.Clone(src);
+			}
+			else if(attr.Dict){
+				let sa=attr.Dict;
+				if(typeof sa==='object'){
+					dst=[];
+					for(let k in src){
+						dst[k]=YgEs.Validate(src[k],sa,tag+'['+k+']',dcf);
+					}
+				}
+				else if(dcf)dst=YgEs.Clone(src);
+			}
+			else{
 				YgEs.CoreWarn(tag+' is invalid: '+YgEs.Inspect(src));
 				dst=undefiend;
-			}
-			else if(typeof attr.List==='object'){
-				dst=[];
-				for(let k in src){
-					dst[k]=YgEs.Validate(src[k],attr.List,tag+'['+k+']');
-				}
 			}
 		}
 		else{
 			let cnt=(attr.Dict?1:0)+(attr.Struct?1:0)+(attr.Class?1:0);
 			if(cnt>1){
 				YgEs.CoreWarn(tag+' has object types in a chaos',attr);
+				if(dcf)dst=YgEs.Clone(src);
 			}
 			else if(attr.Dict){
-				if(typeof attr.Dict==='object'){
+				let sa=attr.Dict;
+				if(typeof sa==='object'){
 					dst={}
 					for(let k in src){
-						dst[k]=YgEs.Validate(src[k],attr.Dict,tag+'["'+k+'"]');
+						dst[k]=YgEs.Validate(src[k],sa,tag+'["'+k+'"]',dcf);
 					}
 				}
+				else if(dcf)dst=YgEs.Clone(src);
 			}
 			else if(attr.Struct){
-				if(typeof attr.Struct==='object'){
+				let sa=attr.Struct;
+				if(typeof sa==='object'){
 					dst={}
-					for(let k in attr.Struct){
-						dst[k]=YgEs.Validate(src[k],attr.Struct[k],tag+'["'+k+'"]');
+					for(let k in sa){
+						dst[k]=YgEs.Validate(src[k],sa[k],tag+'["'+k+'"]',dcf);
 					}
 					for(let k in src){
-						if(attr.Struct[k])continue;
+						if(sa[k])continue;
 						// undefined item 
 						if(attr.Others)dst[k]=src[k];
 						else{
@@ -222,6 +270,7 @@ YgEs.Validate=(src,attr,tag='')=>{
 						}
 					}
 				}
+				else if(dcf)dst=YgEs.Clone(src);
 			}
 			else if(attr.Class){
 				switch(typeof attr.Class){
@@ -246,6 +295,7 @@ YgEs.Validate=(src,attr,tag='')=>{
 			}
 			else{
 				YgEs.CoreWarn(tag+' has unknown object type',attr);
+				if(dcf)dst=YgEs.Clone(src);
 			}
 		}
 		break;
@@ -266,67 +316,68 @@ YgEs.InstanceOf=(obj,name)=>{
 	return obj.IsComprised(name);
 }
 
-YgEs.SoftClass=()=>{
+YgEs.SoftClass=(name=undefined,user=undefined)=>{
 
-	const name='YgEs.SoftClass';
 	let priv_idx={}
 
-	const entrait=(name,priv,pub)=>{
+	const basename='YgEs.SoftClass';
+	const entrait=(subname,priv,pub)=>{
 
-		if(priv_idx[name]){
-			YgEs.CoreWarn('** '+name+' already exists in class table of '+inst.GetCaption()+' **',Object.keys(priv_idx));
+		if(priv_idx[subname]){
+			YgEs.CoreWarn('** '+subname+' already exists in class table of '+self.GetCaption()+' **',Object.keys(priv_idx));
 		}
 
 		let t=priv?priv:{}
-		priv_idx[name]=t;
-		if(pub)Object.assign(inst,pub);
+		priv_idx[subname]=t;
+		if(pub)Object.assign(self,pub);
 		return t;
 	}
 
-	let inst={
-		Name:undefined,
-		User:{},
-		_class_:name,
+	let self={
+		Name:name,
+		User:user??{},
+		_class_:basename,
 		_genealogy_:[],
 		_private_:YgEs.ShowPrivate?priv_idx:{},
-		GetCaption:()=>inst.Name??inst._class_,
-		GetClassName:()=>inst._class_,
-		GetGenealogy:()=>inst._genealogy_,
-		IsComprised:(name)=>!!priv_idx[name],
-		Trait:(name,priv=null,pub=null)=>{
-			let t=entrait(name,priv,pub);
-			priv_cur._trait_.push({_class_:name,_user_:t});
+		GetCaption:()=>self.Name??self._class_,
+		GetClassName:()=>self._class_,
+		GetGenealogy:()=>self._genealogy_,
+		IsComprised:(subname)=>!!priv_idx[subname],
+		Trait:(subname,priv=null,pub=null)=>{
+			let t=entrait(subname,priv,pub);
+			priv_cur._trait_.push({_class_:subname,_user_:t});
 			return t;
 		},
-		Extend:(name,priv=null,pub=null)=>{
+		Extend:(subname,priv=null,pub=null)=>{
 
-			let t=entrait(name,priv,pub);
-			let pn=inst._class_;
-			inst._class_=name;
-			inst._genealogy_.push(name);
-			priv_cur={_class_:name,_parent_:priv_cur,_trait_:[],_super_:{},_user_:t}
-			if(YgEs.ShowPrivate)inst._inherit_=priv_cur;
+			let t=entrait(subname,priv,pub);
+			let pn=self._class_;
+			self._class_=subname;
+			self._genealogy_.push(subname);
+			priv_cur={_class_:subname,_parent_:priv_cur,_trait_:[],_super_:{},_user_:t}
+			if(YgEs.ShowPrivate)self._inherit_=priv_cur;
 			return t;
 		},
 		Inherit:(symbol,override)=>{
 			if(priv_cur._super_[symbol]){
-				YgEs.CoreWarn('** '+symbol+' already exists in inheritance table of '+inst.GetCaption()+' **',priv_cur._super_);
+				YgEs.CoreWarn('** '+symbol+' already exists in inheritance table of '+self.GetCaption()+' **',priv_cur._super_);
 			}
 
-			const dst=priv_cur._super_[symbol]=inst[symbol];
-			inst[symbol]=override;
+			const dst=priv_cur._super_[symbol]=self[symbol];
+			self[symbol]=override;
 			return dst;
 		},
 	}
-	let priv_cur={_class_:name,_trait_:[],_super_:{},_user_:entrait(name)}
+	let priv_cur={_class_:basename,_trait_:[],_super_:{},_user_:entrait(basename)}
 	if(YgEs.ShowPrivate){
-		inst._inherit_=priv_cur;
-		inst._private_=priv_idx;
+		self._inherit_=priv_cur;
+		self._private_=priv_idx;
 	}
 
-	return inst;
+	return self;
 }
 
+// [Deprecated] 
 YgEs.SetDefault=(dst,def)=>{
 
 	if(Array.isArray(def))return dst;
@@ -619,7 +670,11 @@ function _do_write(t,src){
 }
 
 // create local instance 
-function _create_local(capt=null,showable=null,parent=null){
+function _create_local(capt=undefined,showable=undefined,parent=undefined){
+
+	capt=YgEs.Validate(capt,{Literal:true,Nullable:true},'capt');
+	showable=YgEs.Validate(showable,{Integer:true,Nullable:true,Min:0,Max:_level_names.length},'showable');
+	parent=YgEs.Validate(parent,{Class:'YgEs.LocalLog'},parent);
 
 	const iid=YgEs.NextID();
 
@@ -628,8 +683,8 @@ function _create_local(capt=null,showable=null,parent=null){
 		// private
 	},{
 		// public
-		Showable:YgEs.Validate(showable,{Integer:true,Nullable:true,Min:0,Max:_level_names.length}),
-		Caption:YgEs.Validate(capt,{Literal:true,Nullable:true}),
+		Showable:showable,
+		Caption:capt,
 		Format:null,
 		Way:null,
 
@@ -991,19 +1046,17 @@ function _default_resolved(hap){
 
 function _create_happening(cbprop,cbstr,cberr,prm={}){
 
+	prm=YgEs.Validate(prm,{Others:true,Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+
+		OnResolved:{Callable:true,Default:_default_resolved},
+		OnAbandoned:{Callable:true,Default:_default_abandoned},
+	}},'prm');
+
 	const iid=YgEs.NextID();
 
-	const onResolved=YgEs.Validate(prm.OnResolved,{
-		Callable:true,
-		Dafault:_default_resolved
-	});
-	const onAbandoned=YgEs.Validate(prm.OnAbandoned,{
-		Callable:true,
-		Default:_default_abandoned,
-	});
-
-	let self=YgEs.SoftClass();
-	if(YgEs.Validate(prm.User,{Struct:true}))Object.assign(self.User,prm.User);
+	let self=YgEs.SoftClass(prm.Name,prm.User);
 
 	let priv=self.Extend('YgEs.Happening',{
 		// private 
@@ -1038,14 +1091,14 @@ function _create_happening(cbprop,cbstr,cberr,prm={}){
 			if(priv.resolved)return;
 			priv.resolved=true;
 			priv.abandoned=false;
-			if(onResolved)onResolved(self);
+			prm.OnResolved(self);
 		},
 
 		Abandon:()=>{
 			if(priv.resolved)return;
 			if(priv.abandoned)return;
 			priv.abandoned=true;
-			if(onAbandoned)onAbandoned(self);
+			prm.OnAbandoned(self);
 		},
 	});
 
@@ -1053,6 +1106,12 @@ function _create_happening(cbprop,cbstr,cberr,prm={}){
 }
 
 function _create_manager(prm,parent=null){
+
+	prm=YgEs.Validate(prm,{Others:true,Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		OnHappen:{Callable:true},
+	}},'prm');
 
 	const iid=YgEs.NextID();
 
@@ -1065,8 +1124,7 @@ function _create_manager(prm,parent=null){
 		_default_happened(self,hap);
 	}
 
-	let self=YgEs.SoftClass();
-	if(YgEs.Validate(prm.User,{Struct:true}))Object.assign(self.User,prm.User);
+	let self=YgEs.SoftClass(prm.Name,prm.User);
 
 	let priv=self.Extend('YgEs.HappeningManager',{
 		// private 
@@ -1075,7 +1133,7 @@ function _create_manager(prm,parent=null){
 		children:[],
 	},{
 		// public 
-		OnHappen:YgEs.Validate(prm.OnHappen,{Callable:true}),
+		OnHappen:prm.OnHappen,
 
 		CreateLocal:(prm={})=>{
 			let cm=_create_manager(prm,self);
@@ -1160,7 +1218,7 @@ function _create_manager(prm,parent=null){
 			}
 		},
 
-		Happen:(src,prop={},prm={})=>{
+		Happen:(src,prop=null,prm={})=>{
 
 			let hap=null;
 			if(src==null || typeof src!='object'){
@@ -1219,114 +1277,116 @@ const Timing=YgEs.Timing;
 const DEFAULT_ROOT_CYCLE=20;
 const DEFAULT_LAUNCHER_CYCLE=20;
 const DEFAULT_SYNC_CYCLE=10;
-const CLASS_PROC='YgEs.Procedure';
-const CLASS_LAUNCHER='YgEs.Launcher';
-const CLASS_LAUNCHERPROC='YgEs.LauncherProc';
-const CLASS_DELAYPROC='YgEs.DelayProc';
-const CLASS_ROOT='YgEs.RootLauncher';
 
 function _create_proc(prm,launcher){
 
-	const onStart=prm.OnStart??((proc)=>{});
-	const onPoll=prm.OnPoll??((proc)=>{});
-	const onDone=prm.OnDone??((proc)=>{});
-	const onAbort=prm.OnAbort??((proc)=>{
-		proc.HappenTo.Happen(
-			'Aborted',{
-			Class:CLASS_PROC,
-			Cause:'Aborted',
-			Info:proc.GetInfo('Aborted'),
-		});
-	});
-
-	let started=false;
-	let finished=false;
-	let aborted=false;
+	prm=YgEs.Validate(prm,{Others:true,Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		Log:{Class:'YgEs.LocalLog',Default:launcher.Log??Log},
+		HappenTo:{Class:'YgEs.HappeningManager',Default:launcher.HappenTo??HappeningManager},
+		OnStart:{Callable:true,Default:(self)=>{}},
+		OnPoll:{Callable:true,Default:(self)=>{}},
+		OnDone:{Callable:true,Default:(self)=>{}},
+		OnAbort:{Callable:true,Default:(self)=>{
+			self.HappenTo.Happen(
+				'Aborted',{
+				Class:self.GetClassName(),
+				Cause:'Aborted',
+				Info:self.GetInfo('Aborted'),
+			});
+		}},
+	}},'prm');
 
 	const iid=YgEs.NextID();
-	let proc={
-		Name:prm.Name??CLASS_PROC,
-		User:prm.User??{},
-		_private_:{},
 
-		Log:prm.Log??launcher.Log??Log,
-		HappenTo:prm.HappenTo??launcher.HappenTo??HappeningManager,
+	let self=YgEs.SoftClass(prm.Name,prm.User);
+
+	let priv=self.Extend('YgEs.Procedure',{
+		// private 
+		started:false,
+		finished:false,
+		aborted:false,
+	},{
+		// public 
+		Log:prm.Log,
+		HappenTo:prm.HappenTo,
 
 		GetInstanceID:()=>iid,
-		IsStarted:()=>started,
-		IsFinished:()=>finished,
-		IsAborted:()=>aborted,
-		IsEnd:()=>finished||aborted,
+		IsStarted:()=>priv.started,
+		IsFinished:()=>priv.finished,
+		IsAborted:()=>priv.aborted,
+		IsEnd:()=>priv.finished||priv.aborted,
 
 		GetStatus:()=>{
-			if(finished)return 'Finished';
-			if(aborted)return 'Aborted';
-			if(started)return 'Running';
+			if(priv.finished)return 'Finished';
+			if(priv.aborted)return 'Aborted';
+			if(priv.started)return 'Running';
 			return 'StandBy';
 		},
 		GetInfo:(site='')=>{return {
 			InstanceID:iid,
-			Name:proc.Name,
+			Name:self.Name,
 			CrashSite:site,
-			Status:proc.GetStatus(),
-			User:proc.User,
+			Status:self.GetStatus(),
+			User:self.User,
 		}},
 
 		_start:()=>{
-			if(started)return;
-			if(proc.IsEnd())return;
-			started=true;
+			if(priv.started)return;
+			if(self.IsEnd())return;
+			priv.started=true;
 			try{
-				onStart(proc);
+				prm.OnStart(self);
 			}
 			catch(e){
-				proc.HappenTo.Happen(e,{
-					Class:CLASS_PROC,
+				self.HappenTo.Happen(e,{
+					Class:self.GetClassName(),
 					Cause:'ThrownFromCallback',
-					Info:proc.GetInfo('OnStart'),
+					Info:self.GetInfo('OnStart'),
 				});
-				proc.Abort();
+				self.Abort();
 			}
 		},
 		Abort:()=>{
-			if(proc.IsEnd())return;
-			aborted=true;
+			if(self.IsEnd())return;
+			priv.aborted=true;
 			try{
-				onAbort(proc);
+				prm.OnAbort(self);
 			}
 			catch(e){
-				proc.HappenTo.Happen(e,{
-					Class:CLASS_PROC,
+				self.HappenTo.Happen(e,{
+					Class:self.GetClassName(),
 					Cause:'ThrownFromCallback',
-					Info:proc.GetInfo('OnAbort'),
+					Info:self.GetInfo('OnAbort'),
 				});
 			}
 		},
 		Poll:()=>{
-			if(proc.IsEnd())return false;
+			if(self.IsEnd())return false;
 			try{
-				if(onPoll(proc))return true;
+				if(prm.OnPoll(self))return true;
 			}
 			catch(e){
-				proc.HappenTo.Happen(e,{
-					Class:CLASS_PROC,
+				self.HappenTo.Happen(e,{
+					Class:self.GetClassName(),
 					Cause:'ThrownFromCallback',
-					Info:proc.GetInfo('OnPoll'),
+					Info:self.GetInfo('OnPoll'),
 				});
-				proc.Abort();
+				self.Abort();
 				return false;
 			}
 			try{
-				onDone(proc);
-				finished=true;
+				prm.OnDone(self);
+				priv.finished=true;
 			}
 			catch(e){
-				proc.HappenTo.Happen(e,{
-					Class:CLASS_PROC,
+				YgEs.Trinarize.HappenTo.Happen(e,{
+					Class:self.GetClassName(),
 					Cause:'ThrownFromCallback',
-					Info:proc.GetInfo('OnDone'),
+					Info:self.GetInfo('OnDone'),
 				});
-				proc.Abort();
+				self.Abort();
 				return false;
 			}
 			return false;
@@ -1334,26 +1394,26 @@ function _create_proc(prm,launcher){
 
 		Sync:(cb_sync,interval=null)=>{
 			if(!cb_sync){
-				proc.HappenTo.Happen(
+				self.HappenTo.Happen(
 					'Empty callback for sync',{
-					Class:CLASS_PROC,
+					Class:self.GetClassName(),
 					Cause:'EmptySyncCallback',
-					Info:proc.GetInfo('CannotSync'),
+					Info:self.GetInfo('CannotSync'),
 				});
 				return;
 			}
 			if(interval===null)interval=DEFAULT_SYNC_CYCLE;
 			Timing.Sync(interval,
-				()=>{return proc.IsEnd();},
+				()=>{return self.IsEnd();},
 				()=>{
 					try{
-						cb_sync(proc.User);
+						cb_sync(self.User);
 					}
 					catch(e){
-						proc.HappenTo.Happen(e,{
-							Class:CLASS_PROC,
+						self.HappenTo.Happen(e,{
+							Class:self.GetClassName(),
 							Cause:'ThrownFromCallback',
-							Info:proc.GetInfo('OnSync'),
+							Info:self.GetInfo('OnSync'),
 						});
 					}
 				},
@@ -1361,168 +1421,177 @@ function _create_proc(prm,launcher){
 		},
 		ToPromise:(breakable,interval=null)=>{
 			return Timing.ToPromise((ok,ng)=>{
-				proc.Sync(()=>{
-					if(breakable || finished)ok(proc.User);
-					else ng(new Error('abort',{cause:proc.User}));
+				self.Sync(()=>{
+					if(breakable || priv.finished)ok(self.User);
+					else ng(new Error('abort',{cause:self.User}));
 				},interval);
 			});
 		},
-	}
-	return proc;
+	});
+
+	return self;
 }
 
 function _yges_enginge_create_launcher(prm){
 
-	const onAbort=prm.OnAbort??((lnc)=>{});
-
-	let abandoned=false;
-	let aborted=false;
-
-	let sublauncher=[]
-	let launched=[]
-	let active=[]
+	prm=YgEs.Validate(prm,{Others:true,Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		Log:{Class:'YgEs.LocalLog'},
+		HappenTo:{Class:'YgEs.HappeningManager',Default:HappeningManager},
+		Limit:{Integer:true,Min:-1,Default:-1},
+		Cycle:{Numeric:true,Default:DEFAULT_LAUNCHER_CYCLE},
+		OnAbort:{Callable:true,Default:(lnc)=>{}},
+	}},'prm');
 
 	const iid=YgEs.NextID();
-	let lnc={
-		Name:prm.Name??CLASS_LAUNCHER,
-		User:prm.User??{},
-		_private_:{},
 
-		Log:prm.Log??undefined,
-		HappenTo:prm.HappenTo??HappeningManager,
-		Limit:prm.Limit??-1,
-		Cycle:prm.Cycle??DEFAULT_LAUNCHER_CYCLE,
+	let self=YgEs.SoftClass(prm.Name,prm.User);
+
+	let priv=self.Extend('YgEs.Launcher',{
+		// private 
+		abandoned:false,
+		aborted:false,
+		sublauncher:[],
+		launched:[],
+		active:[],
+	},{
+		// public 
+		Log:prm.Log,
+		HappenTo:prm.HappenTo,
+		Limit:prm.Limit,
+		Cycle:prm.Cycle,
 
 		GetInstanceID:()=>iid,
-		GetActive:()=>active,
-		GetHeld:()=>launched,
-		GetSub:()=>sublauncher,
+		GetActive:()=>priv.active,
+		GetHeld:()=>priv.launched,
+		GetSub:()=>priv.sublauncher,
 
 		GetStatus:()=>{
-			if(abandoned)return 'Abandoned';
-			if(aborted)return 'Aborted';
+			if(priv.abandoned)return 'Abandoned';
+			if(priv.aborted)return 'Aborted';
 			return 'Ready';
 		},
 		GetInfo:(site='')=>{
 			let r={
 				InstanceID:iid,
-				Name:lnc.Name,
+				Name:self.Name,
 				CrashSite:site,
-				Status:lnc.GetStatus(),
-				Limit:lnc.Limit,
-				Cycle:lnc.Cycle,
-				User:lnc.User,
+				Status:self.GetStatus(),
+				Limit:self.Limit,
+				Cycle:self.Cycle,
+				User:self.User,
 				Active:[],
 				Held:[],
 				Sub:[],
 			}
-			for(let proc of active)r.Active.push(proc.GetInfo());
-			for(let proc of launched)r.Held.push(proc.GetInfo());
-			for(let sub of sublauncher)r.Sub.push(sub.GetInfo());
+			for(let proc of priv.active)r.Active.push(proc.GetInfo());
+			for(let proc of priv.launched)r.Held.push(proc.GetInfo());
+			for(let sub of priv.sublauncher)r.Sub.push(sub.GetInfo());
 			return r;
 		},
 
 		IsEnd:()=>{
-			if(launched.length>0)return false;
-			if(active.length>0)return false;
-			for(let sub of sublauncher){
+			if(priv.launched.length>0)return false;
+			if(priv.active.length>0)return false;
+			for(let sub of priv.sublauncher){
 				if(!sub.IsEnd())return false;
 			}
 			return true;
 		},
-		IsAbandoned:()=>abandoned,
+		IsAbandoned:()=>priv.abandoned,
 		CountActive:()=>{
-			let n=active.length
-			for(let sub of sublauncher)n+=sub.CountActive();
+			let n=priv.active.length
+			for(let sub of priv.sublauncher)n+=sub.CountActive();
 			return n;
 		},
 		CountHeld:()=>{
-			let n=launched.length
-			for(let sub of sublauncher)n+=sub.CountHeld();
+			let n=priv.launched.length
+			for(let sub of priv.sublauncher)n+=sub.CountHeld();
 			return n;
 		},
 
 		Abandon:()=>{
-			abandoned=true;
-			lnc.Abort();
+			priv.abandoned=true;
+			self.Abort();
 		},
 
-		CreateLauncher:(prm={})=>{
-			let sub=_yges_enginge_create_launcher(prm);
-			sublauncher.push(sub);
+		CreateLauncher:(prm2={})=>{
+			let sub=_yges_enginge_create_launcher(prm2);
+			priv.sublauncher.push(sub);
 			return sub;
 		},
 
-		Launch:(prm={})=>{
+		Launch:(prm2={})=>{
 			if(Engine.IsAbandoned()){
-				lnc.HappenTo.Happen('the Engine was abandoned, no longer launch new procedures.');
+				self.HappenTo.Happen('the Engine was abandoned, no longer launch new procedures.');
 				return;
 			}
 			if(!_working){
 				Log.Notice('the Engine not started. call Start() to run.');
 			}
-			if(abandoned){
-				onAbort(lnc);
+			if(priv.abandoned){
+				prm2.OnAbort(self);
 				return;
 			}
-			if(!prm.OnPoll){
-				lnc.HappenTo.Happen(
+			if(!prm2.OnPoll){
+				self.HappenTo.Happen(
 					'Empty callback for poll',{
-					Class:CLASS_LAUNCHER,
+					Class:self.GetClassName(),
 					Cause:'CannotPoll',
 				});
 				return;
 			}
 
-			let proc=_create_proc(prm,lnc);
-			if(lnc.Limit<0 || active.length<lnc.Limit){
-				active.push(proc);
+			let proc=_create_proc(prm2,self);
+			if(self.Limit<0 || priv.active.length<self.Limit){
+				priv.active.push(proc);
 				proc._start();
 			}
 			else{
-				launched.push(proc);
+				priv.launched.push(proc);
 			}
 			return proc;
 		},
 		Abort:()=>{
-			if(lnc.IsEnd())return;
-			aborted=true;
-			for(let sub of sublauncher)sub.Abort();
-			sublauncher=[]
-			for(let proc of launched)proc.Abort();
-			launched=[]
-			for(let proc of active)proc.Abort();
-			active=[]
+			if(self.IsEnd())return;
+			priv.aborted=true;
+			for(let sub of priv.sublauncher)sub.Abort();
+			priv.sublauncher=[]
+			for(let proc of priv.launched)proc.Abort();
+			priv.launched=[]
+			for(let proc of priv.active)proc.Abort();
+			priv.active=[]
 		},
 		Poll:()=>{
-			for(let sub of sublauncher){
+			for(let sub of priv.sublauncher){
 				sub.Poll();
 			}
 
 			let cont=[]
-			for(let proc of active){
+			for(let proc of priv.active){
 				if(proc.Poll())cont.push(proc);
 			}
-			active=cont;
+			priv.active=cont;
 
-			if(lnc.Limit<0 || active.length<lnc.Limit){
+			if(self.Limit<0 || priv.active.length<self.Limit){
 				let hold=[]
-				for(let proc of launched){
-					if(lnc.Limit>=0 && active.length>=lnc.Limit)hold.push(proc);
+				for(let proc of priv.launched){
+					if(self.Limit>=0 && priv.active.length>=self.Limit)hold.push(proc);
 					else{
 						proc._start();
-						active.push(proc);
+						priv.active.push(proc);
 					}
 				}
-				launched=hold;
+				priv.launched=hold;
 			}
 		},
 
 		Sync:(cb_sync,interval=null)=>{
 			if(!cb_sync){
-				lnc.HappenTo.Happen(
+				self.HappenTo.Happen(
 					'Empty callback for sync',{
-					Class:CLASS_LAUNCHER,
+					Class:self.GetClassName(),
 					Cause:'CannotSync',
 				});
 				return;
@@ -1530,18 +1599,18 @@ function _yges_enginge_create_launcher(prm){
 			if(interval===null)interval=DEFAULT_SYNC_CYCLE;
 			Timing.Sync(interval,
 				()=>{
-					lnc.Poll();
-					return lnc.IsEnd();
+					self.Poll();
+					return self.IsEnd();
 				},
 				()=>{
 					try{
-						cb_sync(lnc.User);
+						cb_sync(self.User);
 					}
 					catch(e){
-						lnc.HappenTo.Happen(e,{
-							Class:CLASS_PROC,
+						self.HappenTo.Happen(e,{
+							Class:self.GetClassName(),
 							Cause:'ThrownFromCallback',
-							Info:lnc.GetInfo('OnSync'),
+							Info:self.GetInfo('OnSync'),
 						});
 					}
 				}
@@ -1550,17 +1619,17 @@ function _yges_enginge_create_launcher(prm){
 
 		ToPromise:(breakable,interval=null)=>{
 			return Timing.ToPromise((ok,ng)=>{
-				lnc.Sync(()=>{
-					if(breakable || !aborted)ok(lnc.User);
-					else ng(new Error('abort',{cause:lnc.GetInfo('abort')}));
+				self.Sync(()=>{
+					if(breakable || !priv.aborted)ok(self.User);
+					else ng(new Error('abort',{cause:self.GetInfo('abort')}));
 				},interval);
 			});
 		},
 
 		Delay:(time,cb_done,cb_abort=null)=>{
 			let until=new Date(Date.now()+time);
-			return lnc.Launch({
-					Name:CLASS_DELAYPROC,
+			return self.Launch({
+					Name:'YgEs.DelayProc',
 					OnPoll:(proc)=>{
 						return Date.now()<until;
 					},
@@ -1568,12 +1637,13 @@ function _yges_enginge_create_launcher(prm){
 					OnAbort:cb_abort??cb_done,
 				});
 		},
-	}
-	return lnc;
+	});	
+
+	return self;
 }
 
 let Engine=YgEs.Engine=_yges_enginge_create_launcher({
-	Name:CLASS_ROOT,
+	Name:'YgEs.RootLauncher',
 	Cycle:DEFAULT_ROOT_CYCLE,
 });
 
@@ -1630,77 +1700,80 @@ const Log=YgEs.Log;
 
 function _run(start,states={},opt={}){
 
-	let launcher=opt.Launcher??Engine;
-	let cur=null;
+	start=YgEs.Validate(start,{Literal:true,Nullable:true},'start');
+	states=YgEs.Validate(states,{Dict:true},'states');
+	opt=YgEs.Validate(opt,{Others:true,Struct:{
+		Name:{Literal:true,Default:'YgEs.StateMachine'},
+		User:{Struct:true},
+		Log:{Class:'YgEs.LocalLog',Default:Log},
+		HappenTo:{Class:'YgEs.HappeningManager',Default:HappeningManager},
+		Launcher:{Class:'YgEs.Launcher',Default:Engine},
+		OnDone:{Callable:true},
+		OnAbort:{Callable:true},
+	}},'opt');
 
-	let name=opt.Name??'YgEs.StateMachine';
-	let log=opt.Log??Log;
-	let happen=opt.HappenTo??HappeningManager;
-	let user=opt.User??{};
+	let ctrl=YgEs.SoftClass(opt.Name,opt.User);
 
-	let state_prev=null;
-	let state_cur=null;
-	let state_next=start;
-
-	let GetInfo=(site='')=>{
-		return {
-			Name:name,
-			CrashSite:site,
-			Prev:state_prev,
-			Cur:state_cur,
-			Next:state_next,
-			User:user,
-		}
-	}
-
-	let ctrl={
-		Name:name+'.Control',
-		User:user,
-		_private_:{},
-
-		GetLogger:()=>log,
-		GetHappeningManager:()=>happen,
-		GetPrevState:()=>state_prev,
-		GetCurState:()=>state_cur,
-		GetNextState:()=>state_next,
-		GetInfo:()=>GetInfo(),
-	}
+	let priv=ctrl.Extend('YgEs.StateMachine',{
+		// private 
+		cur:null,
+		state_prev:null,
+		state_cur:null,
+		state_next:start,
+	},{
+		// public 
+		GetLogger:()=>opt.Log,
+		GetHappeningManager:()=>opt.HappenTo,
+		GetPrevState:()=>priv.state_prev,
+		GetCurState:()=>priv.state_cur,
+		GetNextState:()=>priv.state_next,
+		GetInfo:(site='')=>{
+			return {
+				Name:ctrl.GetCaption(),
+				CrashSite:site,
+				Prev:priv.state_prev,
+				Cur:priv.state_cur,
+				Next:priv.state_next,
+				User:opt.User,
+			}
+		},
+	});
 
 	let poll_nop=(proc)=>{}
 	let poll_cur=poll_nop;
 
 	let call_start=(proc)=>{
-		if(state_next==null){
+		if(priv.state_next==null){
 			// normal end 
-			cur=null;
-			state_prev=state_cur;
-			state_cur=null;
+			priv.cur=null;
+			priv.state_prev=priv.state_cur;
+			priv.state_cur=null;
 			poll_cur=poll_nop;
 			return;
 		}
-		cur=states[state_next]??null;
-		if(!cur){
-			happen.Happen(
-				'Missing State: '+state_next,{
-				Class:'YgEs.StateMachine',
+		priv.cur=states[priv.state_next]??null;
+		if(!priv.cur){
+			opt.HappenTo.Happen(
+				'Missing State: '+priv.state_next,{
+				Source:ctrl.GetCaption(),
 				Cause:'MissingState',
-				Info:GetInfo('selecting'),
+				Info:ctrl.GetInfo('selecting'),
 			});
 			poll_cur=poll_nop;
 			return;
 		}
-		state_prev=state_cur;
-		state_cur=state_next;
-		state_next=null;
+		priv.state_prev=priv.state_cur;
+		priv.state_cur=priv.state_next;
+		priv.state_next=null;
 		try{
-			if(cur.OnStart)cur.OnStart(ctrl,proc);
+			if(priv.cur.OnStart)priv.cur.OnStart(ctrl,proc);
 			poll_cur=poll_up;
 		}
 		catch(e){
-			happen.Happen(e,{
-				Class:'YgEs.StateMachine',
+			opt.HappenTo.Happen(e,{
+				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
-				Info:GetInfo('OnStart'),
+				Info:ctrl.GetInfo('OnStart'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1710,13 +1783,13 @@ function _run(start,states={},opt={}){
 	}
 	let poll_up=(proc)=>{
 		try{
-			var r=cur.OnPollInUp?cur.OnPollInUp(ctrl,proc):true;
+			var r=priv.cur.OnPollInUp?priv.cur.OnPollInUp(ctrl,proc):true;
 		}
 		catch(e){
-			happen.Happen(e,{
-				Class:'YgEs.StateMachine',
+			opt.HappenTo.Happen(e,{
+				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
-				Info:GetInfo('OnPollInUp'),
+				Info:ctrl.GetInfo('OnPollInUp'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1726,14 +1799,14 @@ function _run(start,states={},opt={}){
 		else if(r===true){
 			try{
 				// normal transition 
-				if(cur.OnReady)cur.OnReady(ctrl,proc);
+				if(priv.cur.OnReady)priv.cur.OnReady(ctrl,proc);
 				poll_cur=poll_keep;
 			}
 			catch(e){
-				happen.Happen(e,{
-					Class:'YgEs.StateMachine',
+				opt.HappenTo.Happen(e,{
+					Source:ctrl.GetCaption(),
 					Cause:'ThrownFromCallback',
-					Info:GetInfo('OnReady'),
+					Info:ctrl.GetInfo('OnReady'),
 				});
 				poll_cur=poll_nop;
 				return;
@@ -1743,19 +1816,19 @@ function _run(start,states={},opt={}){
 		}
 		else{
 			// interruption 
-			state_next=r.toString();
+			priv.state_next=r.toString();
 			call_end(proc);
 		}
 	}
 	let poll_keep=(proc)=>{
 		try{
-			var r=cur.OnPollInKeep?cur.OnPollInKeep(ctrl,proc):true;
+			var r=priv.cur.OnPollInKeep?priv.cur.OnPollInKeep(ctrl,proc):true;
 		}
 		catch(e){
-			happen.Happen(e,{
-				Class:'YgEs.StateMachine',
+			opt.HappenTo.Happen(e,{
+				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
-				Info:GetInfo('OnPollInKeep'),
+				Info:ctrl.GetInfo('OnPollInKeep'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1764,25 +1837,25 @@ function _run(start,states={},opt={}){
 		else if(r===false)proc.Abort();
 		else if(r===true){
 			// normal end 
-			state_next=null;
+			priv.state_next=null;
 			call_stop(proc);
 		}
 		else{
 			// normal transition 
-			state_next=r.toString();
+			priv.state_next=r.toString();
 			call_stop(proc);
 		}
 	}
 	let call_stop=(proc)=>{
 		try{
-			if(cur.OnStop)cur.OnStop(ctrl,proc);
+			if(priv.cur.OnStop)priv.cur.OnStop(ctrl,proc);
 			poll_cur=poll_down;
 		}
 		catch(e){
-			happen.Happen(e,{
-				Class:'YgEs.StateMachine',
+			opt.HappenTo.Happen(e,{
+				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
-				Info:GetInfo('OnStop'),
+				Info:ctrl.GetInfo('OnStop'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1792,13 +1865,13 @@ function _run(start,states={},opt={}){
 	}
 	let poll_down=(proc)=>{
 		try{
-			var r=cur.OnPollInDown?cur.OnPollInDown(ctrl,proc):true;
+			var r=priv.cur.OnPollInDown?priv.cur.OnPollInDown(ctrl,proc):true;
 		}
 		catch(e){
-			happen.Happen(e,{
-				Class:'YgEs.StateMachine',
+			opt.HappenTo.Happen(e,{
+				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
-				Info:GetInfo('OnPollInDown'),
+				Info:ctrl.GetInfo('OnPollInDown'),
 			});
 			poll_cur=poll_nop;
 			return;
@@ -1811,45 +1884,55 @@ function _run(start,states={},opt={}){
 		}
 		else{
 			// interruption 
-			state_next=r.toString();
+			priv.state_next=r.toString();
 			call_end(proc);
 		}
 	}
 	let call_end=(proc)=>{
 		try{
-			if(cur.OnEnd)cur.OnEnd(ctrl,proc);
+			if(priv.cur.OnEnd)priv.cur.OnEnd(ctrl,proc);
 			call_start(proc);
 		}
 		catch(e){
-			happen.Happen(e,{
-				Class:'YgEs.StateMachine',
+			opt.HappenTo.Happen(e,{
+				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
-				Info:GetInfo('OnEnd'),
+				Info:ctrl.GetInfo('OnEnd'),
 			});
 			poll_cur=poll_nop;
 			return;
 		}
 	}
 
-	let stmac={
-		Name:name+'.Proc',
-		Log:log,
-		HappenTo:happen,
-		User:user,
+	let proc=opt.Launcher.Launch({
+		Name:opt.Name+'.Proc',
+		Log:opt.Log,
+		HappenTo:opt.HappenTo,
+		User:opt.User,
 		OnStart:(proc)=>{
 			call_start(proc);
 		},
 		OnPoll:(proc)=>{
 			poll_cur(proc);
-			return !!cur;
+			return !!priv.cur;
 		},
-		OnDone:opt.OnDone??null,
-		OnAbort:opt.OnAbort??null,
-	}
+		OnDone:opt.OnDone,
+		OnAbort:opt.OnAbort,
+	});
 
-	let proc=launcher.Launch(stmac);
-	let ProcInfo=proc.GetInfo;
-	proc.GetInfo=()=>Object.assign(ProcInfo(),{StateMachine:GetInfo()});
+	proc.Trait('YgEs.StateMachine.Proc');
+	const proc_GetInfo=proc.Inherit('GetInfo',()=>{
+		return {
+			StateMachine:{
+				Name:ctrl.GetCaption(),
+				Prev:priv.state_prev,
+				Cur:priv.state_cur,
+				Next:priv.state_next,
+			},
+			Procedure:proc_GetInfo('ProcInfo'),
+		}
+	});
+
 	ctrl.IsStarted=proc.IsStarted;
 	ctrl.IsFinished=proc.IsFinished;
 	ctrl.IsAborted=proc.IsAborted;
@@ -1889,6 +1972,29 @@ const _state_lookup=Object.freeze(ll);
 
 function _standby(prm){
 
+	prm=YgEs.Validate(prm,{Others:true,Struct:{
+		Name:{Literal:true,Default:'YgEs.Agent'},
+		User:{Struct:true},
+		Log:{Class:'YgEs.LocalLog',Default:Log},
+		HappenTo:{Class:'YgEs.HappeningManager',Default:HappeningManager},
+		Launcher:{Class:'YgEs.Launcher',Default:Engine},
+		AgentBypasses:{List:{Literal:true}},
+		UserBypasses:{List:{Literal:true}},
+		Dependencies:{Dict:{Class:'YgEs.Handle'}},
+		OnOpen:{Callable:true,Default:(agent)=>{}},
+		OnClose:{Callable:true,Default:(agent)=>{}},
+		OnBack:{Callable:true,Default:(agent)=>{}},
+		OnRepair:{Callable:true,Default:(agent)=>{}},
+		OnReady:{Callable:true,Default:(agent)=>{}},
+		OnTrouble:{Callable:true,Default:(agent)=>{}},
+		OnRecover:{Callable:true,Default:(agent)=>{}},
+		OnHalt:{Callable:true,Default:(agent)=>{}},
+		OnPollInHealthy:{Callable:true,Default:(agent)=>{}},
+		OnPollInTrouble:{Callable:true,Default:(agent)=>{}},
+		OnFinish:{Callable:true,Default:(agent,cleaned)=>{}},
+		OnAbort:{Callable:true,Default:(agent)=>{}},
+	}},'prm');
+
 	let opencount=0;
 	let ctrl=null;
 	let ready=false;
@@ -1897,17 +2003,9 @@ function _standby(prm){
 	let aborted=false;
 	let wait=[]
 
-	let name=prm.Name??'YgEs.Agent';
-	let log=prm.Log??Log;
-	let happen=prm.HappenTo??HappeningManager;
-	let launcher=prm.Launcher??Engine;
-	let user=prm.User??{};
-	let abps=prm.AgentBypasses??[];
-	let ubps=prm.UserBypasses??[];
-
 	let GetInfo=(site='')=>{
 		let r={
-			Name:name,
+			Name:prm.Name,
 			CrashSite:site,
 			State:ctrl?ctrl.GetCurState():'NONE',
 			Busy:!!ctrl,
@@ -1916,10 +2014,9 @@ function _standby(prm){
 			Aborted:aborted,
 			Restarting:restart,
 			Handles:opencount,
-			User:user,
+			User:prm.User,
 			Waiting:[],
-			Happening:happen.GetInfo(),
-			Launcher:launcher.GetInfo(),
+			Happening:prm.HappenTo.GetInfo(),
 		}
 		for(let w of wait)r.Waiting.push({Label:w.Label,Prop:w.Prop});
 		return r;
@@ -1931,8 +2028,8 @@ function _standby(prm){
 				if(opencount<1)return true;
 				restart=false;
 
-				happen.CleanUp();
-				return happen.IsCleaned()?'UP':'REPAIR';
+				prm.HappenTo.CleanUp();
+				return prm.HappenTo.IsCleaned()?'UP':'REPAIR';
 			},
 		},
 		'BROKEN':{
@@ -1949,10 +2046,10 @@ function _standby(prm){
 				try{
 					//start repairing 
 					wait=[]
-					if(prm.OnRepair)prm.OnRepair(agent);
+					prm.OnRepair(agent);
 				}
 				catch(e){
-					happen.Happen(e,{
+					prm.HappenTo.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
 						Info:GetInfo('OnRepair'),
@@ -1961,8 +2058,8 @@ function _standby(prm){
 			},
 			OnPollInKeep:(ctrl,proc)=>{
 				if(opencount<1){
-					happen.CleanUp();
-					return happen.IsCleaned()?'IDLE':'BROKEN';
+					prm.HappenTo.CleanUp();
+					return prm.HappenTo.IsCleaned()?'IDLE':'BROKEN';
 				}
 
 				// wait for delendencies 
@@ -1973,7 +2070,7 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.Happen(e,{
+						prm.HappenTo.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
 							Info:GetInfo('wait for repair'),
@@ -1984,8 +2081,8 @@ function _standby(prm){
 				if(wait.length>0)return;
 
 				// wait for all happens resolved 
-				happen.CleanUp();
-				if(happen.IsCleaned())return 'UP';
+				prm.HappenTo.CleanUp();
+				if(prm.HappenTo.IsCleaned())return 'UP';
 			},
 		},
 		'DOWN':{
@@ -2003,14 +2100,14 @@ function _standby(prm){
 
 					if(ctrl.GetPrevState()=='UP'){
 						back=true;
-						if(prm.OnBack)prm.OnBack(agent);
+						prm.OnBack(agent);
 					}
 					else{
-						if(prm.OnClose)prm.OnClose(agent);
+						prm.OnClose(agent);
 					}
 				}
 				catch(e){
-					happen.Happen(e,{
+					prm.HappenTo.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
 						Info:GetInfo(back?'OnBack':'OnClose'),
@@ -2027,7 +2124,7 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.Happen(e,{
+						prm.HappenTo.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
 							Info:GetInfo('wait for down'),
@@ -2036,15 +2133,15 @@ function _standby(prm){
 				}
 				wait=cont;
 				if(wait.length>0)return null;
-				happen.CleanUp();
-				return happen.IsCleaned()?'IDLE':'BROKEN';
+				prm.HappenTo.CleanUp();
+				return prm.HappenTo.IsCleaned()?'IDLE':'BROKEN';
 			},
 		},
 		'UP':{
 			OnStart:(ctrl,proc)=>{
 				try{
 					wait=[]
-					if(prm.OnOpen)prm.OnOpen(agent);
+					prm.OnOpen(agent);
 
 					// up dependencles too 
 					if(prm.Dependencies){
@@ -2058,7 +2155,7 @@ function _standby(prm){
 					}
 				}
 				catch(e){
-					happen.Happen(e,{
+					prm.HappenTo.Happen(e,{
 						Class:'YgEs.Agent',
 						Cause:'ThrownFromCallback',
 						Info:GetInfo('OnOpen'),
@@ -2076,7 +2173,7 @@ function _standby(prm){
 						cont.push(d);
 					}
 					catch(e){
-						happen.Happen(e,{
+						prm.HappenTo.Happen(e,{
 							Class:'YgEs.Agent',
 							Cause:'ThrownFromCallback',
 							Info:GetInfo('wait for up'),
@@ -2084,7 +2181,7 @@ function _standby(prm){
 					}
 				}
 				wait=cont;
-				if(!happen.IsCleaned())return 'DOWN';
+				if(!prm.HappenTo.IsCleaned())return 'DOWN';
 				if(wait.length<1)return 'HEALTHY';
 			},
 			OnEnd:(ctrl,proc)=>{
@@ -2092,10 +2189,10 @@ function _standby(prm){
 					try{
 						// mark ready before callback 
 						ready=true;
-						if(prm.OnReady)prm.OnReady(agent);
+						prm.OnReady(agent);
 					}
 					catch(e){
-						happen.Happen(e,{
+						prm.HappenTo.Happen(e,{
 							Class:'YgEs.AgentError',
 							Cause:'ThrownFromCallback',
 							Info:GetInfo('OnReady'),
@@ -2110,13 +2207,13 @@ function _standby(prm){
 					ready=false;
 					return 'DOWN';
 				}
-				if(!happen.IsCleaned())return 'TROUBLE';
+				if(!prm.HappenTo.IsCleaned())return 'TROUBLE';
 
 				try{
-					if(prm.OnPollInHealthy)prm.OnPollInHealthy(agent);
+					prm.OnPollInHealthy(agent);
 				}
 				catch(e){
-					happen.Happen(e,{
+					prm.HappenTo.Happen(e,{
 						Class:'YgEs.AgentError',
 						Cause:'ThrownFromCallback',
 						Info:GetInfo('OnPollInHealthy'),
@@ -2128,10 +2225,10 @@ function _standby(prm){
 		'TROUBLE':{
 			OnStart:(ctrl,proc)=>{
 				try{
-					if(prm.OnTrouble)prm.OnTrouble(agent);
+					prm.OnTrouble(agent);
 				}
 				catch(e){
-					happen.Happen(e,{
+					prm.HappenTo.Happen(e,{
 						Class:'YgEs.AgentError',
 						Cause:'ThrownFromCallback',
 						Info:GetInfo('OnTrouble'),
@@ -2143,16 +2240,16 @@ function _standby(prm){
 					ready=false;
 					return 'DOWN';
 				}
-				happen.CleanUp();
-				if(happen.IsCleaned())return 'HEALTHY';
+				prm.HappenTo.CleanUp();
+				if(prm.HappenTo.IsCleaned())return 'HEALTHY';
 
 				try{
-					let c=happen.CountIssues();
-					if(prm.OnPollInTrouble)prm.OnPollInTrouble(agent);
-					if(c<happen.CountIssues())return 'HALT';
+					let c=prm.HappenTo.CountIssues();
+					prm.OnPollInTrouble(agent);
+					if(c<prm.HappenTo.CountIssues())return 'HALT';
 				}
 				catch(e){
-					happen.Happen(e,{
+					prm.HappenTo.Happen(e,{
 						Class:'YgEs.AgentError',
 						Cause:'ThrownFromCallback',
 						Info:GetInfo('OnPollInTrouble'),
@@ -2163,10 +2260,10 @@ function _standby(prm){
 			OnEnd:(ctrl,proc)=>{
 				if(ctrl.GetNextState()=='HEALTHY'){
 					try{
-						if(prm.OnRecover)prm.OnRecover(agent);
+						prm.OnRecover(agent);
 					}
 					catch(e){
-						happen.Happen(e,{
+						prm.HappenTo.Happen(e,{
 							Class:'YgEs.AgentError',
 							Cause:'ThrownFromCallback',
 							Info:GetInfo('OnRecover'),
@@ -2180,10 +2277,10 @@ function _standby(prm){
 				halt=true;
 
 				try{
-					if(prm.OnHalt)prm.OnHalt(agent);
+					prm.OnHalt(agent);
 				}
 				catch(e){
-					happen.Happen(e,{
+					prm.HappenTo.Happen(e,{
 						Class:'YgEs.AgentError',
 						Cause:'ThrownFromCallback',
 						Info:GetInfo('OnHalt'),
@@ -2195,18 +2292,18 @@ function _standby(prm){
 					ready=false;
 					return 'DOWN';
 				}
-				happen.CleanUp();
-				if(happen.IsCleaned())return 'HEALTHY';
+				prm.HappenTo.CleanUp();
+				if(prm.HappenTo.IsCleaned())return 'HEALTHY';
 			},
 			OnEnd:(ctrl,proc)=>{
 				halt=false;
 
 				if(ctrl.GetNextState()=='HEALTHY'){
 					try{
-						if(prm.OnRecover)prm.OnRecover(agent);
+						prm.OnRecover(agent);
 					}
 					catch(e){
-						happen.Happen(e,{
+						prm.HappenTo.Happen(e,{
 							Class:'YgEs.AgentError',
 							Cause:'ThrownFromCallback',
 							Info:GetInfo('OnRecover'),
@@ -2217,11 +2314,12 @@ function _standby(prm){
 		},
 	}
 
-	let agent={
-		Name:name+'.Worker',
-		User:user,
-		_private_:{},
+	let agent=YgEs.SoftClass(prm.Name+'.Worker',prm.User);
 
+	let priv_a=agent.Extend('YgEs.Agent',{
+		// private 
+	},{
+		// public 
 		IsOpen:()=>opencount>0,
 		IsBusy:()=>!!ctrl || opencount>0,
 		IsReady:()=>ready && opencount>0,
@@ -2229,9 +2327,9 @@ function _standby(prm){
 		GetState:()=>ctrl?ctrl.GetCurState():'NONE',
 		GetInfo:()=>GetInfo(''),
 
-		GetLogger:()=>log,
-		GetLauncher:()=>{return launcher;},
-		GetHappeningManager:()=>{return happen;},
+		GetLogger:()=>prm.Log,
+		GetLauncher:()=>{return prm.Launcher;},
+		GetHappeningManager:()=>{return prm.HappenTo;},
 		GetDependencies:()=>{return prm.Dependencies;},
 
 		WaitFor:(label,cb_chk,prop={})=>{
@@ -2247,18 +2345,18 @@ function _standby(prm){
 			h.Open();
 			return h;
 		},
-	}
+	});
 
 	let ctrlopt={
-		Name:name+'.StateMachine',
-		Log:log,
-		HappenTo:happen,
-		Launcher:launcher,
-		User:user,
+		Name:prm.Name+'.StateMachine',
+		Log:prm.Log,
+		HappenTo:prm.HappenTo,
+		Launcher:prm.Launcher,
+		User:prm.User,
 		OnDone:(proc)=>{
 			ctrl=null;
 			aborted=false;
-			if(prm.OnFinish)prm.OnFinish(agent,happen.IsCleaned());
+			if(prm.OnFinish)prm.OnFinish(agent,prm.HappenTo.IsCleaned());
 		},
 		OnAbort:(proc)=>{
 			ctrl=null;
@@ -2268,18 +2366,20 @@ function _standby(prm){
 	}
 
 	let handle=(w)=>{
-		let in_open=false;
-		let h={
-			Name:name+'.Handle',
-			User:{},
 
+		let h=YgEs.SoftClass(prm.Name+'.Handle');
+		let priv_h=h.Extend('YgEs.Handle',{
+			// private
+			in_open:false,
+		},{
+			// public
 			GetAgent:()=>{return agent;},
 			GetLogger:()=>agent.GetLogger(),
 			GetLauncher:()=>agent.GetLauncher(),
 			GetHappeningManager:()=>agent.GetHappeningManager(),
 			GetDependencies:()=>agent.GetDependencies(),
 
-			IsOpenHandle:()=>in_open,
+			IsOpenHandle:()=>priv_h.in_open,
 			IsOpenAgent:()=>agent.IsOpen(),
 			IsBusy:()=>agent.IsBusy(),
 			IsReady:()=>agent.IsReady(),
@@ -2289,8 +2389,8 @@ function _standby(prm){
 			Restart:()=>agent.Restart(),
 
 			Open:()=>{
-				if(!in_open){
-					in_open=true;
+				if(!priv_h.in_open){
+					priv_h.in_open=true;
 					++opencount;
 				}
 				if(!ctrl){
@@ -2300,12 +2400,13 @@ function _standby(prm){
 				}
 			},
 			Close:()=>{
-				if(!in_open)return;
-				in_open=false;
+				if(!priv_h.in_open)return;
+				priv_h.in_open=false;
 				--opencount;
 			},
-		}
-		for(let n of abps){
+		});
+
+		for(let n of prm.AgentBypasses){
 			h[n]=(...args)=>{
 				if(!h.IsReady()){
 					h.GetLogger().Notice('not ready');
@@ -2314,7 +2415,7 @@ function _standby(prm){
 				return agent[n].call(null,...args);
 			}
 		}
-		for(let n of ubps){
+		for(let n of prm.UserBypasses){
 			h[n]=(...args)=>{
 				if(!h.IsReady()){
 					h.GetLogger().Notice('not ready');

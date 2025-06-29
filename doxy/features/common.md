@@ -42,6 +42,24 @@ console.log(lut.TEN); // 10
 ```
 
 -----
+## Deep Copy
+
+```
+let src={A:'Clone Test',B:'OK'}
+let dst1=src;
+let dst2=YgEs.Clone(src);
+src.B='NG';
+
+console.log(dst1.B); // NG 
+console.log(dst2.B); // OK 
+```
+
+### Caution
+
+class instance is broken from YgEs.Clone()  
+use @ref pg_feat_validator instaad of it  
+
+-----
 ## Booleanize
 
 fix to bool.  

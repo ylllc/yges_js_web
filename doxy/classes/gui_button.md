@@ -22,7 +22,7 @@ CB_Click(user):void
 | Name | Type | Means |
 |------|------|-------|
 | view | @ref pg_class_gui_button | caller instance |
-| user | dict<string,any> | user definition |
+| user | struct | user definition |
 
 ### Spec
 
@@ -38,7 +38,7 @@ CB_Click():void
 |------|------|-------|
 | Class | string? | class name of select tag |
 | OnClick | @ref GUI_Button_CB_Click | call by clicked |
-| User | dict<string,any>? | user definition, share on this instance |
+| User | struct? | user definition, share on this instance |
 
 -----
 # Properties
@@ -48,5 +48,5 @@ CB_Click():void
 | Name | Type | Means |
 |------|------|-------|
 | OnClick | @ref GUI_Button_CB_Click | call by clicked |
-| User | dict<string,any>? | user definition |
+| User | struct? | user definition |
 

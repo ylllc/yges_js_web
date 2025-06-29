@@ -1,4 +1,4 @@
-﻿@page pg_class_logger Logger
+﻿@page pg_class_logger LocalLog
 
 # What's It?
 
@@ -25,7 +25,7 @@ it inherited from @ref pg_class_softclass
 | Capt | string | caption |
 | Lev | int | log level |
 | Msg | @ref Log_LogSource | message |
-| Prop | dict<string,any>? | properties |
+| Prop | struct? | properties |
 | Text | string? | formatted value |
 
 -----
@@ -228,7 +228,7 @@ Put(lev,msg,prop=null):void
 |------|------|-------|
 | lev | int | log level |
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Tick() {#Log_Tick}
@@ -244,7 +244,7 @@ Tick(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Trace() {#Log_Trace}
@@ -260,7 +260,7 @@ Trace(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Debug() {#Log_Debug}
@@ -276,7 +276,7 @@ Debug(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Info() {#Log_Info}
@@ -292,7 +292,7 @@ Info(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Notice() {#Log_Notice}
@@ -308,7 +308,7 @@ Notice(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Warn() {#Log_Warn}
@@ -324,7 +324,7 @@ Warn(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Fatal() {#Log_Fatal}
@@ -340,7 +340,7 @@ Fatal(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Crit() {#Log_Crit}
@@ -356,7 +356,7 @@ Crit(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Alert() {#Log_Alert}
@@ -372,7 +372,7 @@ Alert(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |
 
 -----
 ## Emerg() {#Log_Emerg}
@@ -388,4 +388,4 @@ Emerg(msg,prop=null):void
 | Name | Type | Means |
 |------|------|-------|
 | msg | string | message |
-| prop | dict<string,any>? | properties |
+| prop | struct? | properties |

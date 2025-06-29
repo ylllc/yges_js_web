@@ -10,7 +10,7 @@ created by @ref pg_class_quickqueue_container
 -----
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods
