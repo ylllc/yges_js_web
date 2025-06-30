@@ -138,7 +138,7 @@ create a new local log instance
 
 ### Spec
 
-CreateLocal(capt=null,showable=null):@ref pg_class_logger
+CreateLocal(capt=undefined,showable=undefined):@ref pg_class_logger
 
 ### Args
 
@@ -159,7 +159,7 @@ create a new local log instance within splitting feature
 
 ### Spec
 
-CreateSplitter(capt=null,showable=null):@ref pg_class_log_splitter
+CreateSplitter(capt=undefined,showable=undefined):@ref pg_class_log_splitter
 
 ### Args
 
@@ -220,7 +220,7 @@ suppressed when lower than showable.
 
 ### Spec
 
-Put(lev,msg,prop=null):void
+Put(lev,msg,prop=undefined):void
 
 ### Args
 
@@ -237,7 +237,7 @@ put TICK log
 
 ### Spec
 
-Tick(msg,prop=null):void
+Tick(msg,prop=undefined):void
 
 ### Args
 
@@ -253,7 +253,7 @@ put TRACE log
 
 ### Spec
 
-Trace(msg,prop=null):void
+Trace(msg,prop=undefined):void
 
 ### Args
 
@@ -269,7 +269,7 @@ put DEBUG log
 
 ### Spec
 
-Debug(msg,prop=null):void
+Debug(msg,prop=undefined):void
 
 ### Args
 
@@ -285,7 +285,7 @@ put INFO log
 
 ### Spec
 
-Info(msg,prop=null):void
+Info(msg,prop=undefined):void
 
 ### Args
 
@@ -301,7 +301,7 @@ put NOTICE log
 
 ### Spec
 
-Notice(msg,prop=null):void
+Notice(msg,prop=undefined):void
 
 ### Args
 
@@ -317,7 +317,7 @@ put WARN log
 
 ### Spec
 
-Warn(msg,prop=null):void
+Warn(msg,prop=undefined):void
 
 ### Args
 
@@ -333,7 +333,7 @@ put FATAL log
 
 ### Spec
 
-Fatal(msg,prop=null):void
+Fatal(msg,prop=undefined):void
 
 ### Args
 
@@ -349,7 +349,7 @@ put CRIT log
 
 ### Spec
 
-Crit(msg,prop=null):void
+Crit(msg,prop=undefined):void
 
 ### Args
 
@@ -365,7 +365,7 @@ put ALERT log
 
 ### Spec
 
-Alert(msg,prop=null):void
+Alert(msg,prop=undefined):void
 
 ### Args
 
@@ -381,7 +381,7 @@ put EMERG log
 
 ### Spec
 
-Emerg(msg,prop=null):void
+Emerg(msg,prop=undefined):void
 
 ### Args
 
