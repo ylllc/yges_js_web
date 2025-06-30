@@ -46,5 +46,8 @@ distinguished for convenience.
 | void | is undefined, return value is not exist |
 | int | is number, fractions are invalid |
 | float | is number, fractions are valid |
-| dict | is object, key value stores |
+| dict | is object, key indexed values, includes array |
+| struct | is object, key value stores |
 | func | is function, mere abbreviation |
+| mono | is string, number, bool, and null |
+| poly | is object or array, and not null |

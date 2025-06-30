@@ -37,7 +37,7 @@
 | Name | Type | Means |
 |------|------|-------|
 | HappenTo | @ref pg_class_happening_manager | happenings kept on it |
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods

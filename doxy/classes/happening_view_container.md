@@ -18,7 +18,7 @@ happening viewer of @ref pg_feat_happening
 
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods

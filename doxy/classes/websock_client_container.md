@@ -81,7 +81,7 @@ user definition kept on a @ref pg_class_websock_client_agent instance
 -----
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods

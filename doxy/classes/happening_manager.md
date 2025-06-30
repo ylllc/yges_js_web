@@ -2,7 +2,8 @@
 
 # What's It?
 
-@sa @ref pg_feat_happening
+@sa @ref pg_feat_happening  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Namespaces
@@ -33,7 +34,7 @@
 |------|------|-------|
 | Name | string? | user class name |
 | OnHappen | @ref HappeningManager_CB_Happen | call on happened |
-| User | dict<string,any> | user difinition |
+| User | struct | user difinition |
 
 -----
 ## HappeningManagerInfo {#HappeningManager_HappeningManagerInfo}
@@ -43,7 +44,7 @@
 | InstanceID | int | instance ID |
 | Name | string | instance name |
 | Status | string | @ref Happening_GetStatus returns |
-| User | dict<string,any> | user definition |
+| User | struct | user definition |
 | Issues | @ref Happening_HappeningInfo[] | happenings in this instance |
 | Sub | @ref HappeningManager_HappeningManagerInfo[] | submanagers in this instance |
 
@@ -55,7 +56,7 @@
 | Name | string? | instance name |
 | OnResolved | func<@ref pg_class_happening>? | call on resolved |
 | OnAbandoned | func<@ref pg_class_happening>? | call on abandoned |
-| User | dict<string,any>? | other user definitions kept on created @ref pg_class_happening |
+| User | struct? | other user definitions kept on created @ref pg_class_happening |
 
 -----
 # Unions
@@ -68,7 +69,7 @@
 | string | message |
 | Error | from Error |
 | @ref pg_class_happening | rehappening |
-| dict<string,any> | merge to prop |
+| struct | merge to prop |
 
 -----
 # Properties
@@ -76,7 +77,7 @@
 | Name | Type | Means |
 |------|------|-------|
 | OnHappen | @ref HappeningManager_CB_Happen | call on happened |
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods
@@ -242,7 +243,7 @@ Happen(src,prop,init=null):@ref pg_class_happening
 | Name | Type | Means |
 |------|------|-------|
 | src | @ref HappeningManager_HappeningSource | happening source |
-| prop | dict<string,any> | extra properties |
+| prop | struct | extra properties |
 | init | @ref HappeningOption? | optional params |
 
 ### Returns

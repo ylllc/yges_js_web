@@ -2,7 +2,8 @@
 
 # What's It?
 
-created by @ref pg_class_engine
+created by @ref pg_class_engine  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Callbacks
@@ -52,7 +53,7 @@ user definied object kept in a @ref pg_class_procedure instance
 | Status | string | @ref Launcher_GetStatus returns |
 | Limit | int | running procedures limit |
 | Cycle | int | polling interval msec |
-| User | dict<string,any> | user definition |
+| User | struct | user definition |
 | Active | @ref Procedure_ProcedureInfo[] | running procedures |
 | Held | @ref Procedure_ProcedureInfo[] | standby procedures |
 | Sub | @ref Launcher_LauncherInfo[] | subinstances |
@@ -66,7 +67,6 @@ user definied object kept in a @ref pg_class_procedure instance
 | HappenTo | @ref pg_class_happening_manager | happenings managed on |
 | Limit | int | parallel running capacity |
 | Cycle | int | polling cycle msec |
-| User | dict<string,any> | user definitions |
 
 -----
 # Methods

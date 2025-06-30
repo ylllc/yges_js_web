@@ -29,7 +29,7 @@ created by @ref pg_class_proptree_container
 -----
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Callbacks

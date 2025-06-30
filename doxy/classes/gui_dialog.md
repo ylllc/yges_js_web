@@ -14,7 +14,7 @@ this class is inherited from @ref pg_class_qht
 |------|------|-------|
 | Class | string? | class name of dialog tag |
 | Sub | @ref QHT_QHTPrm[]? | dialog contents |
-| User | dict<string,any>? | user definition, share on this instance |
+| User | struct? | user definition, share on this instance |
 
 -----
 # Methods

@@ -4,6 +4,7 @@
 # What's It?
 
 created and managed by @ref pg_class_happening_manager  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Structures
@@ -17,15 +18,15 @@ created and managed by @ref pg_class_happening_manager
 | Name | string | instance name |
 | Status | string | @ref Happening_GetStatus returns |
 | Msg | string | happening message |
-| Prop | dict<string,any> | happening properties |
-| User | dict<string,any> | user definition |
+| Prop | struct | happening properties |
+| User | struct | user definition |
 
 -----
 # Properties
 
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods
@@ -46,7 +47,7 @@ instance ID created by @ref Common_NextID
 
 ### Spec
 
-GetProp():dict<string,any>
+GetProp():struct
 
 ### Returns
 

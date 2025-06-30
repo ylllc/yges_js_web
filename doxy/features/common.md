@@ -42,6 +42,100 @@ console.log(lut.TEN); // 10
 ```
 
 -----
+## Deep Copy
+
+```
+let src={A:'Clone Test',B:'OK'}
+let dst1=src;
+let dst2=YgEs.Clone(src);
+src.B='NG';
+
+console.log(dst1.B); // NG 
+console.log(dst2.B); // OK 
+```
+
+### Caution
+
+class instance is broken from YgEs.Clone()  
+use @ref pg_feat_validator instaad of it  
+
+-----
+## Booleanize
+
+fix to bool.  
+
+```
+f = YgEs.Booleanize(0); // false
+f = YgEs.Booleanize(1); // true
+f = YgEs.Booleanize(""); // false
+f = YgEs.Booleanize("0"); // true
+f = YgEs.Booleanize(".00"); // true
+f = YgEs.Booleanize("A"); // true
+f = YgEs.Booleanize(false); // false
+f = YgEs.Booleanize("false"); // true
+f = YgEs.Booleanize("FaLsE"); // true
+f = YgEs.Booleanize(null); // false
+f = YgEs.Booleanize("null"); // true
+f = YgEs.Booleanize(undefined); // false
+f = YgEs.Booleanize("undefined"); // true
+f = YgEs.Booleanize([]); // true
+f = YgEs.Booleanize({}); // true
+f = YgEs.Booleanize(NaN); // true
+f = YgEs.Booleanize("NaN"); // true
+```
+
+### Unstring Booleanize
+
+include stringified values.  
+
+```
+f = YgEs.Booleanize("0",true); // false
+f = YgEs.Booleanize(".00",true); // false
+f = YgEs.Booleanize("false",true); // false
+f = YgEs.Booleanize("FaLsE",true); // false
+f = YgEs.Booleanize("null",true); // false
+f = YgEs.Booleanize("undefined",true); // false
+```
+
+-----
+## Trinarize
+
+fix to bool or null.  
+
+```
+f = YgEs.Trinarize(0); // false
+f = YgEs.Trinarize(1); // true
+f = YgEs.Trinarize(""); // false
+f = YgEs.Trinarize("0"); // true
+f = YgEs.Trinarize(".00"); // true
+f = YgEs.Trinarize("A"); // true
+f = YgEs.Trinarize(false); // false
+f = YgEs.Trinarize("false"); // true
+f = YgEs.Trinarize("FaLsE"); // true
+f = YgEs.Trinarize(null); // null
+f = YgEs.Trinarize("null"); // true
+f = YgEs.Trinarize(undefined); // null
+f = YgEs.Trinarize("undefined"); // true
+f = YgEs.Trinarize([]); // true
+f = YgEs.Trinarize({}); // true
+f = YgEs.Trinarize(NaN); // true
+f = YgEs.Trinarize("NaN"); // true
+```
+
+### Unstring Booleanize
+
+include stringified values.  
+
+```
+f = YgEs.Trinarize("0",true); // false
+f = YgEs.Trinarize(".00",true); // false
+f = YgEs.Trinarize("false",true); // false
+f = YgEs.Trinarize("FaLsE",true); // false
+f = YgEs.Trinarize("null",null); // false
+f = YgEs.Trinarize("undefined",null); // false
+```
+
+-----
 ## Just String
 
 ```

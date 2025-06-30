@@ -10,7 +10,7 @@ created by @ref Common_SoftClass
 | Name | Type | Means |
 |------|------|-------|
 | Name | string | user defined instance name |
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods
@@ -75,15 +75,15 @@ add noninherit class definitions.
 
 ### Spec
 
-Trait(name,priv=null,src=null):dict<string,any>
+Trait(name,priv=null,src=null):struct
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | name | string | class name |
-| priv | dict<string,any> | private definitions |
-| pub | dict<string,any> | public definitions |
+| priv | struct | private definitions |
+| pub | struct | public definitions |
 
 ### Returns
 
@@ -96,15 +96,15 @@ add inherit class definitions.
 
 ### Spec
 
-Extend(name,priv=null,src=null):dict<string,any>
+Extend(name,priv=null,src=null):struct
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
 | name | string | class name |
-| priv | dict<string,any> | private definitions |
-| pub | dict<string,any> | public definitions |
+| priv | struct | private definitions |
+| pub | struct | public definitions |
 
 ### Returns
 

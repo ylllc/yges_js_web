@@ -112,7 +112,7 @@ BakeArgs(src)
 
 ### Spec
 
-ExtractProp():dict<string,string>
+ExtractProp():struct
 
 extract query as prop
 
@@ -131,4 +131,4 @@ BakeProp(src)
 
 | Name | Type | Means |
 |------|------|-------|
-| src | dict<string,string> | baking source query |
+| src | struct | baking source query |

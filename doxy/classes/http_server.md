@@ -130,7 +130,7 @@ user definition kept on a @ref pg_class_http_listener instance
 | Name | Type | Means |
 |------|------|-------|
 | DefaultCharset | string | default charset of HTML |
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods

@@ -18,7 +18,7 @@ test viewer of @ref pg_class_unittest
 
 | Name | Type | Means |
 |------|------|-------|
-| User | dict<string,any> | user definitions |
+| User | struct | user definitions |
 
 -----
 # Methods

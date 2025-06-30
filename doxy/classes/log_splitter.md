@@ -2,7 +2,7 @@
 
 # What's It?
 
-created by @ref pg_class_logger
+created by @ref pg_class_logger  
 it inherited from @ref pg_class_logger  
 
 -----
