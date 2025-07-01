@@ -45,16 +45,16 @@ let client=WebSockClient.SetUp(ServerURL,{
 	// wait ms and auto reconnect when disconnected 
 	AutoReconnectWait:5000, 
 
-	OnConnected:()=>{
+	OnConnected:(agent)=>{
 		// call after connected 
 	},
-	OnDisconnect:(normal)=>{
+	OnDisconnect:(agent,normal)=>{
 		// call on disconnected 
 	},
-	OnReceived:(msg)=>{
+	OnReceived:(agent,msg)=>{
 		// received from server 
 	},
-	OnError:(err)=>{
+	OnError:(agent,err)=>{
 		// error from server 
 	},
 });

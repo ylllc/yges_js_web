@@ -22,7 +22,13 @@ call on connection ready
 
 ### Spec
 
-CB_Connect():void
+CB_Connect(agent):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| agent | @ref pg_class_websock_client_agent | managing client agent |
 
 -----
 ## CB_Disconnect {#WebSockClient_Container_CB_Disconnect}
@@ -31,12 +37,13 @@ call by disconnection to server
 
 ### Spec
 
-CB_Disconnect(normal):void
+CB_Disconnect(agent,normal):void
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
+| agent | @ref pg_class_websock_client_agent | managing client agent |
 | normal | bool | disconnected normally |
 
 -----
@@ -46,12 +53,13 @@ call by received from server
 
 ### Spec
 
-CB_Received(data):void
+CB_Received(agent,data):void
 
 ### Args
 
 | Name | Type | Means |
 |------|------|-------|
+| agent | @ref pg_class_websock_client_agent | managing client agent |
 | data | @ref WebSockServer_Connection_TransportData | payload |
 
 -----

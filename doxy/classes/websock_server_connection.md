@@ -2,7 +2,8 @@
 
 # What's It?
 
-created by @ref pg_class_websock_server_container
+created by @ref pg_class_websock_server_container  
+it inherited from @ref pg_class_softclass  
 
 -----
 # Unions
@@ -15,15 +16,18 @@ sendable data types @n
 @sa https://developer.mozilla.org/ja/docs/Web/API/WebSocket/send
 
 -----
-# Properties
-
------
-| Name | Type | Means |
-|------|------|-------|
-| User | struct | user definitions |
-
------
 # Methods
+
+-----
+## GetAgent() {#WebSockServer_Connection_GetAgent}
+
+### Spec
+
+GetAgent():@ref pg_class_websock_server_agent
+
+### Returns
+
+managing server agent.  
 
 -----
 ## IsReady() {#WebSockServer_Connection_IsReady}

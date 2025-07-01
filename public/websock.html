@@ -88,14 +88,14 @@ function ws_client_new(name,url,interval){
 		// wait ms and auto reconnect when disconnected 
 		AutoReconnectWait:5000, 
 
-		OnConnected:()=>{
+		OnConnected:(agent)=>{
 			log.Info('WebSock client '+name+' is ready');
 		},
-		OnDisconnected:(normal)=>{
+		OnDisconnected:(agent,normal)=>{
 
 			log.Info('WebSock client '+name+' is disconnected');
 		},
-		OnReceived:(msg)=>{
+		OnReceived:(agent,msg)=>{
 
 			// (tentative) fix broken ClientTo 
 			// [ToDo] ClientTo should always null 
@@ -105,9 +105,6 @@ function ws_client_new(name,url,interval){
 
 			// send to the server Transport 
 			tp_cli.Receive(null,msg);
-		},
-		OnError:(err)=>{
-			log.Fatal(err.message,err);
 		},
 	}
 	let client=YgEs.WebSockClient.SetUp(url,opt);
