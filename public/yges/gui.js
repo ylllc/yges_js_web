@@ -14,32 +14,53 @@ YgEs.GUI={
 
 YgEs.GUI.Button=(target,label,opt={})=>{
 
+	opt=YgEs.Validate(opt,{Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		Class:{Literal:true},
+		OnClick:{Callable:true},
+	}},'opt');
+
 	let a={}
 	if(opt.Class)a.class=opt.Class;
-	let view=YgEs.NewQHT({Target:target,Tag:'button',Attr:a,Sub:[label]});
+	let view=YgEs.NewQHT({
+		Name:opt.Name,
+		User:opt.User,
+		Target:target,
+		Tag:'button',
+		Attr:a,
+		Sub:[label],
+	});
 	if(opt.OnClick)view.Element.onclick=()=>opt.OnClick(view);
-	if(opt.User)view.User=opt.User;
 	return view;
 }
 
 YgEs.GUI.Toggle=(target,label,init,opt={})=>{
 
+	opt=YgEs.Validate(opt,{Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		OffClass:{Literal:true},
+		OnClass:{Literal:true},
+		OnChanging:{Callable:true},
+	}},'opt');
+
 	let cur=init;
-	let class_off=opt.OffClass;
-	let class_on=opt.OnClass;
 
 	const setStyle=()=>{
 		if(cur){
-			if(class_on)view.Element.setAttribute('class',class_on);
+			if(opt.OnClass)view.Element.setAttribute('class',opt.OnClass);
 			else view.Element.style['background-color']='#ce4';
 		}
 		else{
-			if(class_off)view.Element.setAttribute('class',class_off);
+			if(opt.OffClass)view.Element.setAttribute('class',opt.OffClass);
 			else view.Element.style['background-color']='#888';
 		}
 	}
 
 	let view=YgEs.GUI.Button(target,label,{
+		Name:opt.Name,
+		User:opt.User,
 		OnClick:(btnview)=>{
 			let ok=true;
 			if(view.OnChanging)ok=view.OnChanging(view,!cur);
@@ -57,16 +78,31 @@ YgEs.GUI.Toggle=(target,label,init,opt={})=>{
 
 	setStyle();
 	if(opt.OnChanging)view.OnChanging=opt.OnChanging;
-	if(opt.User)view.User=opt.User;
 	return view;
 }
 
 YgEs.GUI.Radio=(target,items,opt={})=>{
 
+	opt=YgEs.Validate(opt,{Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		Nullable:{Boolable:true},
+		Init:{Literal:true,Numeric:true,Nullable:true},
+		WindowClass:{Literal:true},
+		OffClass:{Literal:true},
+		OnClass:{Literal:true},
+		OnChanging:{Callable:true},
+	}},'opt');
+
 	let attr={}
 	if(opt.WindowClass)attr.class=opt.WindowClass;
-	let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:attr});
-	if(opt.User)view.User=opt.User;
+	let view=YgEs.NewQHT({
+		Name:opt.Name,
+		User:opt.User,
+		Target:target,
+		Tag:'div',
+		Attr:attr,
+	});
 
 	let nullable=!!opt.Nullable;
 	let cur=null;
@@ -150,10 +186,23 @@ YgEs.GUI.Radio=(target,items,opt={})=>{
 
 YgEs.GUI.Select=(target,items,opt={})=>{
 
+	opt=YgEs.Validate(opt,{Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		Init:{Literal:true,Numeric:true,Nullable:true},
+		Class:{Literal:true},
+		OnChanging:{Callable:true},
+	}},'opt');
+
 	let attr={}
 	if(opt.Class)attr.class=opt.Class;
-	let view=YgEs.NewQHT({Target:target,Attr:attr,Tag:'select'});
-	if(opt.User)view.User=opt.User;
+	let view=YgEs.NewQHT({
+		Name:opt.Name,
+		User:opt.User,
+		Target:target,
+		Tag:'select',
+		Attr:attr,
+	});
 
 	let cur=null;
 	let ent=[]
@@ -178,7 +227,12 @@ YgEs.GUI.Select=(target,items,opt={})=>{
 			cur=a.value;
 			a.selected='selected';
 		}
-		let v=YgEs.NewQHT({Target:view,Attr:a,Tag:'option',Sub:[lab]});
+		let v=YgEs.NewQHT({
+			Target:view,
+			Attr:a,
+			Tag:'option',
+			Sub:[lab]
+		});
 		if(u)v.User=u;
 		ent.push({Value:a.value,View:v});
 	}
@@ -217,10 +271,23 @@ YgEs.GUI.Select=(target,items,opt={})=>{
 
 YgEs.GUI.Dialog=(target,modal,opt={})=>{
 
+	opt=YgEs.Validate(opt,{Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		Class:{Literal:true},
+		Sub:{List:true},
+	}},'opt');
+
 	let a={}
 	if(opt.Class)a.class=opt.Class;
-	let view=YgEs.NewQHT({Target:target,Tag:'dialog',Attr:a,Sub:opt.Sub??[]});
-	if(opt.User)view.User=opt.User;
+	let view=YgEs.NewQHT({
+		Name:opt.Name,
+		User:opt.User,
+		Target:target,
+		Tag:'dialog',
+		Attr:a,
+		Sub:opt.Sub,
+	});
 
 	view.Open=()=>{
 		if(modal)view.Element.showModal();
@@ -234,10 +301,24 @@ YgEs.GUI.Dialog=(target,modal,opt={})=>{
 
 YgEs.GUI.PopUp=(target,opt={})=>{
 
+	opt=YgEs.Validate(opt,{Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		Class:{Literal:true},
+		Sub:{List:true},
+	}},'opt');
+
 	let a={}
 	if(opt.Class)a.class=opt.Class;
-	let view=YgEs.NewQHT({Target:target,Tag:'div',Attr:a,Style:{display:'none'},Sub:opt.Sub??[]});
-	if(opt.User)view.User=opt.User;
+	let view=YgEs.NewQHT({
+		Name:opt.Name,
+		User:opt.User,
+		Target:target,
+		Tag:'div',
+		Attr:a,
+		Style:{display:'none'},
+		Sub:opt.Sub,
+	});
 
 	view.Show=()=>{
 		view.Element.style.display='block';
@@ -250,9 +331,18 @@ YgEs.GUI.PopUp=(target,opt={})=>{
 
 YgEs.GUI.PopUpMenu=(target,items,opt={})=>{
 
+	opt=YgEs.Validate(opt,{Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		WindowClass:{Literal:true},
+		ItemClass:{Literal:true},
+		Sub:{List:true},
+	}},'opt');
+
 	let baseopt={}
-	if(opt.WindowClass)baseopt.Class=opt.WindowClass;
+	if(opt.Name)baseopt.Name=opt.Name;
 	if(opt.User)baseopt.User=opt.User;
+	if(opt.WindowClass)baseopt.Class=opt.WindowClass;
 	let view=YgEs.GUI.PopUp(target,baseopt);
 	view.Items=[]
 	let ref={}
@@ -267,7 +357,12 @@ YgEs.GUI.PopUpMenu=(target,items,opt={})=>{
 		if(opt.ItemClass)a.class=opt.ItemClass;
 		let onact=it.OnAction;
 		let key=it.Key??it.Label;
-		let view2=YgEs.NewQHT({Target:view,Tag:'button',Attr:a,Sub:[it.Label]});
+		let view2=YgEs.NewQHT({
+			Target:view,
+			Tag:'button',
+			Attr:a,
+			Sub:[it.Label],
+		});
 		view2.Element.onclick=()=>{
 			if(onact)onact(view,key);
 		}
@@ -284,6 +379,5 @@ YgEs.GUI.PopUpMenu=(target,items,opt={})=>{
 
 	return view
 }
-
 
 })();

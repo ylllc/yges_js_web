@@ -2443,20 +2443,18 @@ YgEs.AgentManager={
 }
 
 })();
-// † Yggdrasil Essense for JavaScript † //
-// ====================================== //
-// © 2024-5 Yggdrasil Leaves, LLC.        //
-//        All rights reserved.            //
 
 // Quick HyperText for web -------------- //
 (()=>{ // local namespace 
 
-YgEs.ToQHT=(el)=>{
+YgEs.ToQHT=(el,name=undefined,user=undefined)=>{
 
-	let qht={
-		Name:'YgEs.QHT.Unit',
+	let qht=YgEs.SoftClass(name,user);
+	qht.Extend('YgEs.QHT.Unit',{
+		// private 
+	},{
+		// public 
 		_yges_qht_:true,
-		User:{},
 		Element:el,
 
 		Remove:()=>{
@@ -2490,13 +2488,24 @@ YgEs.ToQHT=(el)=>{
 			if(!qht.Element)return;
 			qht.Element.append(document.createElement('hr'));
 		},
-	}
+	});
+
 	return qht;
 }
 
 YgEs.NewQHT=(prm)=>{
 
 	if(!prm.Tag)return null;
+
+	prm=YgEs.Validate(prm,{Struct:{
+		Name:{Literal:true},
+		User:{Struct:true},
+		Target:{Class:'YgEs.QHT.Unit',Nullable:true},
+		Tag:{Literal:true},
+		Attr:{Dict:{Literal:true,Numeric:true}},
+		Style:{Dict:{Literal:true}},
+		Sub:{List:true},
+	}},'prm');
 
 	let el=document.createElement(prm.Tag);
 
@@ -2522,7 +2531,7 @@ YgEs.NewQHT=(prm)=>{
 	}
 	if(prm.Target)prm.Target.Append(el);
 
-	return YgEs.ToQHT(el);
+	return YgEs.ToQHT(el,prm.Name,prm.User);
 }
 
 })();
