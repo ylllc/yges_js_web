@@ -11,7 +11,7 @@ it inherited from @ref pg_class_agent
 -----
 ## SessionDriverOption {#SessionDriver_SessionDriverOption}
 
-it inherited from @ref Agent_AgentParam 
+it inherited from @ref Agent_Field 
 
 | Name | Type | Means |
 |------|------|-------|

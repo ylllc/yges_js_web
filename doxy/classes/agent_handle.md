@@ -169,7 +169,7 @@ close this handle.
 -----
 ## other methods
 
-auto imprementation named by AgentBypasses[] and UserBypasses[] on @ref Agent_AgentParam  
+auto imprementation named by AgentBypasses[] and UserBypasses[] on @ref Agent_Field  
 each method processes  
 
 - check target @ref pg_class_agent is ready 

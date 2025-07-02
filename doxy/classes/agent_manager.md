@@ -21,7 +21,7 @@
 user defined object kept in an agent
 
 -----
-## AgentParam {#Agent_AgentParam}
+## Field {#Agent_Field}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -52,7 +52,7 @@ user defined object kept in an agent
 
 ### Spec
 
-Standby(prm):@ref pg_class_agent
+Standby(field):@ref pg_class_agent
 
 create a new Agent.  
 
@@ -60,7 +60,7 @@ create a new Agent.
 
 | Name | Type | Means |
 |------|------|-------|
-| prm | @ref Agent_AgentParam | initializing parameter. |
+| field | @ref Agent_Field | field settings for the agent |
 
 ### Returns
 
@@ -71,7 +71,7 @@ a new @ref pg_class_agent
 
 ### Spec
 
-Launch(prm):@ref pg_class_agent_handle
+Launch(field):@ref pg_class_agent_handle
 
 create a new handle driven by a new @ref pg_class_agent. 
 
@@ -79,7 +79,7 @@ create a new handle driven by a new @ref pg_class_agent.
 
 | Name | Type | Means |
 |------|------|-------|
-| prm | @ref Agent_AgentParam | initializing parameter. |
+| field | @ref Agent_Field | field settings for the agent |
 
 ### Returns
 
@@ -90,7 +90,7 @@ a new @ref pg_class_agent_handle
 
 ### Spec
 
-Run(prm):@ref pg_class_agent_handle
+Run(field):@ref pg_class_agent_handle
 
 create a new handle driven by a new @ref pg_class_agent.  
 this handle openes now.  
@@ -99,7 +99,7 @@ this handle openes now.
 
 | Name | Type | Means |
 |------|------|-------|
-| prm | @ref Agent_AgentParam | initializing parameter. |
+| field | @ref Agent_Field | field settings for the agent |
 
 ### Returns
 

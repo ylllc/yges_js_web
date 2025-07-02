@@ -31,7 +31,7 @@ CB_Received(ep_to,epid_from,data):void
 -----
 ## EndPointOption {#EndPointControl_EndPointOption}
 
-it inherited from @ref Agent_AgentParam 
+it inherited from @ref Agent_Field 
 
 | Name | Type | Means |
 |------|------|-------|
