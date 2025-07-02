@@ -60,7 +60,7 @@ create a new Agent.
 
 | Name | Type | Means |
 |------|------|-------|
-| field | @ref Agent_Field | field settings for the agent |
+| field | @ref Agent_Field | field settings for an Agent |
 
 ### Returns
 
@@ -79,7 +79,7 @@ create a new handle driven by a new @ref pg_class_agent.
 
 | Name | Type | Means |
 |------|------|-------|
-| field | @ref Agent_Field | field settings for the agent |
+| field | @ref Agent_Field | field settings for an Agent |
 
 ### Returns
 
@@ -99,7 +99,7 @@ this handle openes now.
 
 | Name | Type | Means |
 |------|------|-------|
-| field | @ref Agent_Field | field settings for the agent |
+| field | @ref Agent_Field | field settings for an Agent |
 
 ### Returns
 

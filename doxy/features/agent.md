@@ -5,9 +5,41 @@
 it provides statable async procs.  
 
 -----
-## Handle
+### Agent
+
+an async worker.  
+
+### Field
+
+settings for an Agent.  
+the Agent works in async.  
+
+### Handle
 
 an Agent controlled by Handle.  
+
+@startuml "What's Agent?"
+actor Handler
+note right of Handler: do Mission 1
+
+package Field {
+	actor Agent
+
+	usecase "Mission 1" as mis1
+	usecase "Mission 2" as mis2
+
+	note "work in async" as do1
+}
+
+Handler --> Agent
+Agent .. do1
+do1 ..> mis1
+
+note "callback the report" as cb1
+mis1 .. cb1
+cb1 ..> Handler
+
+@enduml
 
 -----
 ### Open/Close
