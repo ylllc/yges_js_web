@@ -164,10 +164,22 @@ this response of the HTTP request means transfering target file.
 
 Serve(dir,opt={}):HTTPRoute
 
+### Args
+
 | Name | Type | Means |
 |------|------|-------|
 | dir | string | base directory |
 | opt | @ref HTTPServer_ServeOption | optional |
+
+-----
+## Empty() {#HTTPServer_Empty}
+
+empty route of this HTTP request.  
+respond always 204 No Content.  
+
+### Spec
+
+Empty(map,opt={}):HTTPRoute
 
 -----
 ## Present() {#HTTPServer_Serve}
@@ -178,6 +190,8 @@ calling meth[HTTP method] to makes a response by method.
 ### Spec
 
 Present(meth,opt={}):HTTPRoute
+
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
@@ -193,6 +207,8 @@ branching by HTTP path layer.
 ### Spec
 
 Route(map,opt={}):HTTPRoute
+
+### Args
 
 | Name | Type | Means |
 |------|------|-------|
