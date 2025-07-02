@@ -196,7 +196,7 @@ spec by payload type
 -----
 ## TransportDriverOption {#TransportDriver_TransportDriverOption}
 
-it inherited from @ref Agent_AgentParam 
+it inherited from @ref Agent_Field 
 
 | Name | Type | Means |
 |------|------|-------|
