@@ -47,6 +47,7 @@ const priv=obj1.Extend('YourClassName',{
 	// private members 
 },{
 	// public members 
+	NewFunc:()=>'OK',
 });
 
 ```
@@ -59,6 +60,18 @@ generally, all private members can access via this instance.
 
 these members are not overridden from subclasses.  
 same name members in subclass can exist parallel.  
+
+-----
+### Refer Public Instance from Private
+
+private instances added a prop named _public  
+it refer a public instance chained from private.  
+
+```
+// they are same 
+obj1.NewFunc(); 
+priv._public.NewFunc();
+```
 
 -----
 ### Private Backdoor
