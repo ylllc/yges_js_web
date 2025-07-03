@@ -206,7 +206,7 @@ function _create_manager(prm,parent=null){
 			else if(src instanceof Error){
 				hap=_create_happening(
 					()=>YgEs.FromError(src),
-					()=>'{'+src.Name+'} '+src.message,
+					()=>'{'+src.name+'} '+src.message,
 					()=>src,
 					prm
 				);
