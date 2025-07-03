@@ -87,7 +87,12 @@ Trait(name,priv=null,src=null):struct
 
 ### Returns
 
-private scope (same to priv or new object)
+private scope (same to priv or new object)  
+it added extra prop  
+
+| Name | Type | Means |
+|------|------|-------|
+| _public | @ref pg_class_softclass | public instance |
 
 -----
 ## Extend() {#SoftClass_Extend}
@@ -108,7 +113,13 @@ Extend(name,priv=null,src=null):struct
 
 ### Returns
 
-private scope (same to priv or new object)
+private scope (same to priv or new object)  
+it added extra prop  
+
+| Name | Type | Means |
+|------|------|-------|
+| _public | @ref pg_class_softclass | public instance |
+
 
 -----
 ## Inherit() {#SoftClass_Inherit}
