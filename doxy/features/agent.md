@@ -20,24 +20,45 @@ an Agent controlled by Handle.
 
 @startuml "What's Agent?"
 actor Handler
-note right of Handler: do Mission 1
+note right of Handler: do Missions
+
+card ordering
+
+folder Report
+control "checking progress" as checking
 
 package Field {
 	actor Agent
 
+	note "work in async" as order
+
 	usecase "Mission 1" as mis1
 	usecase "Mission 2" as mis2
+	usecase "Mission 3" as mis3
 
-	note "work in async" as do1
+	card "Report 1" as rep1
+	card "Report 2" as rep2
+	card "Report 3" as rep3
+
+	mis1 .. rep1
+	mis2 .. rep2
+	mis3 .. rep3
 }
 
-Handler --> Agent
-Agent .. do1
-do1 ..> mis1
+Handler .. ordering
+ordering ..> Agent
 
-note "callback the report" as cb1
-mis1 .. cb1
-cb1 ..> Handler
+Handler <.. checking
+checking .. Report
+
+Agent -- order
+order --> mis1
+mis1 --> mis2
+mis2 --> mis3
+
+rep1 ..> Report
+rep2 ..> Report
+rep3 ..> Report
 
 @enduml
 
