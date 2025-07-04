@@ -17,6 +17,8 @@ function _run(start,states={},opt={}){
 	opt=YgEs.Validate(opt,{Others:true,Struct:{
 		Name:{Literal:true,Default:'YgEs.StateMachine'},
 		User:{Struct:true},
+		Trace:{Boolable:true},
+		Trace_Proc:{Boolable:true},
 		Log:{Class:'YgEs.LocalLog',Default:Log},
 		HappenTo:{Class:'YgEs.HappeningManager',Default:HappeningManager},
 		Launcher:{Class:'YgEs.Launcher',Default:Engine},
@@ -28,12 +30,29 @@ function _run(start,states={},opt={}){
 
 	let priv=ctrl.Extend('YgEs.StateMachine',{
 		// private 
+		tracing:opt.Trace,
+		tracing_proc:opt.Trace_Proc,
 		cur:null,
 		state_prev:null,
 		state_cur:null,
 		state_next:start,
+
+		trace:(msg)=>{
+			if(!priv.tracing)return;
+			ctrl.GetLogger().Trace(msg);
+		},
 	},{
 		// public 
+		SetTracing_StMac:(side)=>priv.tracing=!!side,
+		SetTracing_Proc:(side)=>{
+			priv.tracing_proc=!!side;
+			proc.SetTracing(priv.tracing_proc);
+		},
+		SetTracing:(side)=>{
+			SetTracing_StMac(side);
+			SetTracing_Proc(side);
+		},
+
 		GetLogger:()=>opt.Log,
 		GetHappeningManager:()=>opt.HappenTo,
 		GetPrevState:()=>priv.state_prev,
@@ -57,6 +76,7 @@ function _run(start,states={},opt={}){
 	let call_start=(proc)=>{
 		if(priv.state_next==null){
 			// normal end 
+			priv.trace('end of statemachine');
 			priv.cur=null;
 			priv.state_prev=priv.state_cur;
 			priv.state_cur=null;
@@ -65,6 +85,7 @@ function _run(start,states={},opt={}){
 		}
 		priv.cur=states[priv.state_next]??null;
 		if(!priv.cur){
+			priv.trace(priv.state_next+' missing');
 			opt.HappenTo.Happen(
 				'Missing State: '+priv.state_next,{
 				Source:ctrl.GetCaption(),
@@ -78,10 +99,12 @@ function _run(start,states={},opt={}){
 		priv.state_cur=priv.state_next;
 		priv.state_next=null;
 		try{
+			priv.trace(priv.state_cur+' start');
 			if(priv.cur.OnStart)priv.cur.OnStart(ctrl,proc);
 			poll_cur=poll_up;
 		}
 		catch(e){
+			priv.trace(priv.state_cur+' crashed in OnStart');
 			opt.HappenTo.Happen(e,{
 				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
@@ -98,6 +121,7 @@ function _run(start,states={},opt={}){
 			var r=priv.cur.OnPollInUp?priv.cur.OnPollInUp(ctrl,proc):true;
 		}
 		catch(e){
+			priv.trace(priv.state_cur+' crashed in OnPollInUp');
 			opt.HappenTo.Happen(e,{
 				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
@@ -111,10 +135,12 @@ function _run(start,states={},opt={}){
 		else if(r===true){
 			try{
 				// normal transition 
+				priv.trace(priv.state_cur+' ready');
 				if(priv.cur.OnReady)priv.cur.OnReady(ctrl,proc);
 				poll_cur=poll_keep;
 			}
 			catch(e){
+				priv.trace(priv.state_cur+' crashed in OnReady');
 				opt.HappenTo.Happen(e,{
 					Source:ctrl.GetCaption(),
 					Cause:'ThrownFromCallback',
@@ -129,6 +155,7 @@ function _run(start,states={},opt={}){
 		else{
 			// interruption 
 			priv.state_next=r.toString();
+			priv.trace(priv.state_cur+' interrupted to '+priv.state_next);
 			call_end(proc);
 		}
 	}
@@ -137,6 +164,7 @@ function _run(start,states={},opt={}){
 			var r=priv.cur.OnPollInKeep?priv.cur.OnPollInKeep(ctrl,proc):true;
 		}
 		catch(e){
+			priv.trace(priv.state_cur+' crashed in OnPollInKeep');
 			opt.HappenTo.Happen(e,{
 				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
@@ -149,21 +177,25 @@ function _run(start,states={},opt={}){
 		else if(r===false)proc.Abort();
 		else if(r===true){
 			// normal end 
+			priv.trace(priv.state_cur+' will terminate');
 			priv.state_next=null;
 			call_stop(proc);
 		}
 		else{
 			// normal transition 
 			priv.state_next=r.toString();
+			priv.trace(priv.state_cur+' will transit to '+priv.state_next);
 			call_stop(proc);
 		}
 	}
 	let call_stop=(proc)=>{
 		try{
+			priv.trace(priv.state_cur+' stop');
 			if(priv.cur.OnStop)priv.cur.OnStop(ctrl,proc);
 			poll_cur=poll_down;
 		}
 		catch(e){
+			priv.trace(priv.state_cur+' crashed in OnStop');
 			opt.HappenTo.Happen(e,{
 				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
@@ -180,6 +212,7 @@ function _run(start,states={},opt={}){
 			var r=priv.cur.OnPollInDown?priv.cur.OnPollInDown(ctrl,proc):true;
 		}
 		catch(e){
+			priv.trace(priv.state_cur+' crashed in OnPollInDown');
 			opt.HappenTo.Happen(e,{
 				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
@@ -192,11 +225,13 @@ function _run(start,states={},opt={}){
 		else if(r===false)proc.Abort();
 		else if(r===true){
 			// normal transition 
+			priv.trace(priv.state_cur+' end');
 			call_end(proc);
 		}
 		else{
 			// interruption 
 			priv.state_next=r.toString();
+			priv.trace(priv.state_cur+' interrupted to '+priv.state_next);
 			call_end(proc);
 		}
 	}
@@ -206,6 +241,7 @@ function _run(start,states={},opt={}){
 			call_start(proc);
 		}
 		catch(e){
+			priv.trace(priv.state_cur+' crashed in OnEnd');
 			opt.HappenTo.Happen(e,{
 				Source:ctrl.GetCaption(),
 				Cause:'ThrownFromCallback',
@@ -218,6 +254,7 @@ function _run(start,states={},opt={}){
 
 	let proc=opt.Launcher.Launch({
 		Name:opt.Name+'.Proc',
+		Trace:priv.tracing_proc,
 		Log:opt.Log,
 		HappenTo:opt.HappenTo,
 		User:opt.User,

@@ -80,12 +80,15 @@ user defined object kept in a control
 | Name | Type | Means |
 |------|------|-------|
 | Name | string? | user class name |
+| Trace | bool? | tracing enbled |
+| Trace_Proc | bool? | tracing enbled for internal procedure |
 | Log | @ref pg_class_logger? | logs to it |
 | HappenTo | @ref pg_class_happening_manager? | user happening handler |
 | Launcher | @ref pg_class_launcher? | procedure runs on it |
 | User | @ref StMac_UserShared | user definitions and kept in created context |
 | OnDone | func<@ref StMac_UserShared> | call at normal end of the states procedure |
 | OnAbort | func<@ref StMac_UserShared> | call at abend of the states procedure |
+| User | @ref Launcher_UserShared | user definitions |
 
 -----
 ## StateMachineInfo {#StMac_StateMachineInfo}
@@ -101,6 +104,51 @@ user defined object kept in a control
 
 -----
 # Methods
+
+-----
+## SetTracing() {#Launcher_SetTracing}
+
+set tracing enablity within internal procedure.  
+
+### Spec
+
+SetTracing(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
+
+-----
+## SetTracing_Proc() {#Launcher_SetTracing_Proc}
+
+set tracing enablity for internal procedure.  
+
+### Spec
+
+SetTracing_Proc(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
+
+-----
+## SetTracing_StMac() {#Launcher_SetTracing_StMac}
+
+set tracing enablity without internal procedure.  
+
+### Spec
+
+SetTracing_StMac(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
 
 -----
 ## GetPrevState() {#StMac_GetPrevState}
