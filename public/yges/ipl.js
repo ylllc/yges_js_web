@@ -1284,6 +1284,7 @@ function _create_proc(prm,launcher){
 	prm=YgEs.Validate(prm,{Others:true,Struct:{
 		Name:{Literal:true},
 		User:{Struct:true},
+		Trace:{Boolable:true},
 		Log:{Class:'YgEs.LocalLog',Default:launcher.Log??Log},
 		HappenTo:{Class:'YgEs.HappeningManager',Default:launcher.HappenTo??HappeningManager},
 		OnStart:{Callable:true,Default:(self)=>{}},
@@ -1305,13 +1306,21 @@ function _create_proc(prm,launcher){
 
 	let priv=self.Extend('YgEs.Procedure',{
 		// private 
+		tracing:prm.Trace,
 		started:false,
 		finished:false,
 		aborted:false,
+
+		trace:(msg)=>{
+			if(!priv.tracing)return;
+			self.Log.Trace(msg);
+		},
 	},{
 		// public 
 		Log:prm.Log,
 		HappenTo:prm.HappenTo,
+
+		SetTracing:(side)=>priv.tracing=!!side,
 
 		GetInstanceID:()=>iid,
 		IsStarted:()=>priv.started,
@@ -1337,6 +1346,7 @@ function _create_proc(prm,launcher){
 			if(priv.started)return;
 			if(self.IsEnd())return;
 			priv.started=true;
+			priv.trace(()=>'proc '+iid+' started');
 			try{
 				prm.OnStart(self);
 			}
@@ -1352,6 +1362,7 @@ function _create_proc(prm,launcher){
 		Abort:()=>{
 			if(self.IsEnd())return;
 			priv.aborted=true;
+			priv.trace(()=>'proc '+iid+' aborted');
 			try{
 				prm.OnAbort(self);
 			}
@@ -1378,6 +1389,7 @@ function _create_proc(prm,launcher){
 				return false;
 			}
 			try{
+				priv.trace(()=>'proc '+iid+' finished');
 				prm.OnDone(self);
 				priv.finished=true;
 			}
@@ -1438,7 +1450,8 @@ function _yges_enginge_create_launcher(prm){
 	prm=YgEs.Validate(prm,{Others:true,Struct:{
 		Name:{Literal:true},
 		User:{Struct:true},
-		Log:{Class:'YgEs.LocalLog'},
+		Trace:{Boolable:true},
+		Log:{Class:'YgEs.LocalLog',Default:Log},
 		HappenTo:{Class:'YgEs.HappeningManager',Default:HappeningManager},
 		Limit:{Integer:true,Min:-1,Default:-1},
 		Cycle:{Numeric:true,Default:DEFAULT_LAUNCHER_CYCLE},
@@ -1451,17 +1464,25 @@ function _yges_enginge_create_launcher(prm){
 
 	let priv=self.Extend('YgEs.Launcher',{
 		// private 
+		tracing:prm.Trace,
 		abandoned:false,
 		aborted:false,
 		sublauncher:[],
 		launched:[],
 		active:[],
+
+		trace:(msg)=>{
+			if(!priv.tracing)return;
+			self.Log.Trace(msg);
+		},
 	},{
 		// public 
 		Log:prm.Log,
 		HappenTo:prm.HappenTo,
 		Limit:prm.Limit,
 		Cycle:prm.Cycle,
+
+		SetTracing:(side)=>priv.tracing=!!side,
 
 		GetInstanceID:()=>iid,
 		GetActive:()=>priv.active,
@@ -1514,12 +1535,14 @@ function _yges_enginge_create_launcher(prm){
 
 		Abandon:()=>{
 			priv.abandoned=true;
+			priv.trace(()=>'launcher '+iid+' abandoned');
 			self.Abort();
 		},
 
 		CreateLauncher:(prm2={})=>{
 			let sub=_yges_enginge_create_launcher(prm2);
 			priv.sublauncher.push(sub);
+			priv.trace(()=>'launcher '+iid+' created sublauncher '+sub.GetInstanceID());
 			return sub;
 		},
 
@@ -1545,6 +1568,7 @@ function _yges_enginge_create_launcher(prm){
 			}
 
 			let proc=_create_proc(prm2,self);
+			priv.trace(()=>'launcher '+iid+' launched proc '+proc.GetInstanceID());
 			if(self.Limit<0 || priv.active.length<self.Limit){
 				priv.active.push(proc);
 				proc._start();
@@ -1557,6 +1581,8 @@ function _yges_enginge_create_launcher(prm){
 		Abort:()=>{
 			if(self.IsEnd())return;
 			priv.aborted=true;
+			priv.trace(()=>'launcher '+iid+' aborted');
+
 			for(let sub of priv.sublauncher)sub.Abort();
 			priv.sublauncher=[]
 			for(let proc of priv.launched)proc.Abort();
@@ -1575,6 +1601,10 @@ function _yges_enginge_create_launcher(prm){
 					if(proc.Poll())cont.push(proc);
 				}
 				priv.active=cont;
+
+				if(priv.active.length<1 && priv.launched.length<1){
+					priv.trace(()=>'launcher '+iid+' all cleared');
+				}
 			}
 
 			if(priv.launched.length<1){}

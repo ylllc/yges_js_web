@@ -35,6 +35,7 @@ user definied object kept in a @ref pg_class_procedure instance
 | Name | Type | Means |
 |------|------|-------|
 | Name | string? | class name |
+| Trace | bool? | tracing enbled |
 | Log | @ref pg_class_logger? | logs to it |
 | HappenTo | @ref pg_class_happening_manager? | user happening handler |
 | OnStart | func<@ref Procedure_CB_Event> | called on beginning of the procedure |
@@ -63,6 +64,19 @@ user definied object kept in a @ref pg_class_procedure instance
 
 -----
 # Methods
+
+-----
+## SetTracing() {#Launcher_SetTracing}
+
+### Spec
+
+SetTracing(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
 
 -----
 ## GetInstanceID() {#Log_GetInstanceID}
