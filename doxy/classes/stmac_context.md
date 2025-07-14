@@ -82,6 +82,7 @@ user defined object kept in a control
 | Name | string? | user class name |
 | Trace | bool? | tracing enbled |
 | Trace_Proc | bool? | tracing enbled for internal procedure |
+| Trace_StMac | bool? | tracing enbled for statemachine transition |
 | Log | @ref pg_class_logger? | logs to it |
 | HappenTo | @ref pg_class_happening_manager? | user happening handler |
 | Launcher | @ref pg_class_launcher? | procedure runs on it |
@@ -108,7 +109,7 @@ user defined object kept in a control
 -----
 ## SetTracing() {#Launcher_SetTracing}
 
-set tracing enablity within internal procedure.  
+set tracing enablity in all internal instances.  
 
 ### Spec
 
@@ -128,6 +129,21 @@ set tracing enablity for internal procedure.
 ### Spec
 
 SetTracing_Proc(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
+
+-----
+## SetTracing_StMac() {#Launcher_SetTracing_StMac}
+
+set tracing enablity for statemachine transition only.  
+
+### Spec
+
+SetTracing_StMac(side):void
 
 ### Args
 
