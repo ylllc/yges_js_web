@@ -26,6 +26,10 @@ user defined object kept in an agent
 | Name | Type | Means |
 |------|------|-------|
 | Name | string? | user class name |
+| Trace | bool? | tracing enbled |
+| Trace_Proc | bool? | tracing enbled for internal procedure |
+| Trace_StMac | bool? | tracing enbled for statemachine transition |
+| Trace_Agent | bool? | tracing enbled for agent transition |
 | Log | @ref pg_class_logger? | logs to it |
 | HappenTo | @ref pg_class_happening_manager? | happenings reported in it |
 | Launcher | @ref pg_class_launcher? | procedures running on it |
@@ -46,6 +50,66 @@ user defined object kept in an agent
 
 -----
 # Methods
+
+-----
+## SetTracing() {#Launcher_SetTracing}
+
+set tracing enablity in all internal instances.  
+
+### Spec
+
+SetTracing(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
+
+-----
+## SetTracing_Proc() {#Launcher_SetTracing_Proc}
+
+set tracing enablity for internal procedure.  
+
+### Spec
+
+SetTracing_Proc(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
+
+-----
+## SetTracing_StMac() {#Launcher_SetTracing_StMac}
+
+set tracing enablity for statemachine transition only.  
+
+### Spec
+
+SetTracing_StMac(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
+
+-----
+## SetTracing_Agent() {#Launcher_SetTracing_Agent}
+
+set tracing enablity for agent transition only.  
+
+### Spec
+
+SetTracing_Agent(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | tracing enablity |
 
 -----
 ## Standby() {#Agent_Standby}

@@ -152,21 +152,6 @@ SetTracing_StMac(side):void
 | side | bool | tracing enablity |
 
 -----
-## SetTracing_StMac() {#Launcher_SetTracing_StMac}
-
-set tracing enablity without internal procedure.  
-
-### Spec
-
-SetTracing_StMac(side):void
-
-### Args
-
-| Name | Type | Means |
-|------|------|-------|
-| side | bool | tracing enablity |
-
------
 ## GetPrevState() {#StMac_GetPrevState}
 
 ### Spec
