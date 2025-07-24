@@ -1772,8 +1772,8 @@ function _run(start,states={},opt={}){
 			proc.SetTracing(priv.tracing_proc);
 		},
 		SetTracing:(side)=>{
-			SetTracing_StMac(side);
-			SetTracing_Proc(side);
+			ctrl.SetTracing_StMac(side);
+			ctrl.SetTracing_Proc(side);
 		},
 
 		GetLogger:()=>opt.Log,
@@ -2504,9 +2504,9 @@ function _standby(field){
 		SetTracing_StMac:(side)=>priv_a.tracing_stmac=!!side,
 		SetTracing_Proc:(side)=>priv_a.tracing_proc=!!side,
 		SetTracing:(side)=>{
-			SetTracing_Agent(side);
-			SetTracing_StMac(side);
-			SetTracing_Proc(side);
+			agent.SetTracing_Agent(side);
+			agent.SetTracing_StMac(side);
+			agent.SetTracing_Proc(side);
 		},
 
 		GetLogger:()=>field.Log,
@@ -2557,14 +2557,10 @@ function _standby(field){
 			in_open:false,
 		},{
 			// public
-			SetTracing_Agent:(side)=>priv_a.tracing_agent=!!side,
-			SetTracing_StMac:(side)=>priv_a.tracing_stmac=!!side,
-			SetTracing_Proc:(side)=>priv_a.tracing_proc=!!side,
-			SetTracing:(side)=>{
-				SetTracing_Agent(side);
-				SetTracing_StMac(side);
-				SetTracing_Proc(side);
-			},
+			SetTracing_Agent:(side)=>agent.SetTracing_Agent(side),
+			SetTracing_StMac:(side)=>agent.SetTracing_StMac(side),
+			SetTracing_Proc:(side)=>agent.SetTracing_Proc(side),
+			SetTracing:(side)=>agent.SetTracing(side),
 
 			GetAgent:()=>{return agent;},
 			GetLogger:()=>agent.GetLogger(),
