@@ -122,6 +122,17 @@ const priv=obj1.Trait('YourTraitName',{
 
 ```
 
+### Untrait
+
+traited class can remove.  
+
+```
+obj1.Untrait('YourTraitName');
+
+// public members on YourTraitName are undefined too 
+
+```
+
 -----
 ## Inheritance Check
 

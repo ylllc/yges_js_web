@@ -69,6 +69,22 @@ IsComprised(name):bool
 | false | unrelated |
 
 -----
+## Untrait() {#SoftClass_Untrait}
+
+remove traited symbols.  
+public members from traited class are removed too.  
+
+### Spec
+
+Untrait(name):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| name | string | class name |
+
+-----
 ## Trait() {#SoftClass_Trait}
 
 add noninherit class definitions.  
