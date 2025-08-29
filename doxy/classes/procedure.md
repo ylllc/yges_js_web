@@ -43,6 +43,7 @@ user definied object kept in a @ref pg_class_procedure instance
 | OnDone | func<@ref Procedure_CB_Event> | called on finished of the procedure |
 | OnAbort | func<@ref Procedure_CB_Event> | called on aborted of the procedure |
 | User | @ref Procedure_UserShared | user definitions |
+| Trace | bool | add trace logs |
 
 -----
 ## ProcedureInfo {#Procedure_ProcedureInfo}
@@ -66,7 +67,7 @@ user definied object kept in a @ref pg_class_procedure instance
 # Methods
 
 -----
-## SetTracing() {#Launcher_SetTracing}
+## SetTracing() {#Procedure_SetTracing}
 
 ### Spec
 
@@ -76,10 +77,10 @@ SetTracing(side):void
 
 | Name | Type | Means |
 |------|------|-------|
-| side | bool | tracing enablity |
+| side | bool | additional trace logs are enabled |
 
 -----
-## GetInstanceID() {#Log_GetInstanceID}
+## GetInstanceID() {#Procedure_GetInstanceID}
 
 ### Spec
 

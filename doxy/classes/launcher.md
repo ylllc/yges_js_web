@@ -42,6 +42,7 @@ user definied object kept in a @ref pg_class_procedure instance
 | Cycle | int | polling cycle msec |
 | OnAbort | @ref Launcher_CB_Event | call on Launcher aborted |
 | User | @ref Launcher_UserShared | user definitions |
+| Trace | bool | add trace logs |
 
 -----
 ## LauncherInfo {#Launcher_LauncherInfo}
@@ -83,7 +84,7 @@ SetTracing(side):void
 
 | Name | Type | Means |
 |------|------|-------|
-| side | bool | tracing enablity |
+| side | bool | additional trace logs are enabled |
 
 -----
 ## GetInstanceID() {#Launcher_GetInstanceID}

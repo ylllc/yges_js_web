@@ -90,6 +90,9 @@ user defined object kept in a control
 | OnDone | func<@ref StMac_UserShared> | call at normal end of the states procedure |
 | OnAbort | func<@ref StMac_UserShared> | call at abend of the states procedure |
 | User | @ref Launcher_UserShared | user definitions |
+| Trace | bool | add trace logs |
+| Trace_StMac | bool | add trace logs in StateMachine |
+| Trace_Proc | bool | add trace logs in Procedure |
 
 -----
 ## StateMachineInfo {#StMac_StateMachineInfo}
@@ -107,9 +110,7 @@ user defined object kept in a control
 # Methods
 
 -----
-## SetTracing() {#Launcher_SetTracing}
-
-set tracing enablity in all internal instances.  
+## SetTracing() {#StMac_SetTracing}
 
 ### Spec
 
@@ -119,27 +120,12 @@ SetTracing(side):void
 
 | Name | Type | Means |
 |------|------|-------|
-| side | bool | tracing enablity |
+| side | bool | additional trace logs are enabled |
 
 -----
-## SetTracing_Proc() {#Launcher_SetTracing_Proc}
+## SetTracing_StMac() {#StMac_SetTracing_StMac}
 
-set tracing enablity for internal procedure.  
-
-### Spec
-
-SetTracing_Proc(side):void
-
-### Args
-
-| Name | Type | Means |
-|------|------|-------|
-| side | bool | tracing enablity |
-
------
-## SetTracing_StMac() {#Launcher_SetTracing_StMac}
-
-set tracing enablity for statemachine transition only.  
+call SetTracing() (for in StateMachine only)  
 
 ### Spec
 
@@ -149,7 +135,22 @@ SetTracing_StMac(side):void
 
 | Name | Type | Means |
 |------|------|-------|
-| side | bool | tracing enablity |
+| side | bool | additional trace logs are enabled |
+
+-----
+## SetTracing_Proc() {#StMac_SetTracing_Proc}
+
+call SetTracing() (for inner Procedure only)  
+
+### Spec
+
+SetTracing_Proc(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | additional trace logs are enabled |
 
 -----
 ## GetPrevState() {#StMac_GetPrevState}

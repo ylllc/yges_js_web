@@ -24,6 +24,10 @@ it inherited from @ref pg_class_softclass
 | User | struct | user definition |
 | Happening | @ref Happening_HappeningInfo | happening manager info |
 | Launcher | @ref Launcher_LauncherInfo | launcher info |
+| Trace | bool | add trace logs |
+| Trace_Agent | bool | add trace logs in Agent |
+| Trace_StMac | bool | add trace logs in StateMachine |
+| Trace_Proc | bool | add trace logs in Procedure |
 
 -----
 # Callbacks
@@ -52,6 +56,64 @@ CB_Wait(prop):bool
 
 -----
 # Methods
+
+-----
+## SetTracing() {#Agent_SetTracing}
+
+### Spec
+
+SetTracing(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | additional trace logs are enabled |
+
+-----
+## SetTracing_Agent() {#Agent_SetTracing_Agent}
+
+call SetTracing() (for in Agent only)  
+
+### Spec
+
+SetTracing_Agent(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | additional trace logs are enabled |
+
+-----
+## SetTracing_StMac() {#Agent_SetTracing_StMac}
+
+call SetTracing() (for in StateMachine only)  
+
+### Spec
+
+SetTracing_StMac(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | additional trace logs are enabled |
+
+-----
+## SetTracing_Proc() {#Agent_SetTracing_Proc}
+
+call SetTracing() (for inner Procedure only)  
+
+### Spec
+
+SetTracing_Proc(side):void
+
+### Args
+
+| Name | Type | Means |
+|------|------|-------|
+| side | bool | additional trace logs are enabled |
 
 -----
 ## GetState() {#Agent_GetState}
