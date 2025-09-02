@@ -36,50 +36,69 @@ mainboard.Clear();
 let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
 let log=null; // Logger 
 let ws_cli=null; // WebSock 
-let tp_cli=null; // Transport 
+let ws_receiver=null; // Receiver 
+let ws_sender=null; // Sender 
+let ws_transport=null; // Transport 
+let ws_endpoint=null; // EndPoint 
+let ws_protocol=null; // Protocol 
 
 let gui_echo_content_recv=null;
 
+const WSGuestEPN='WSGuest';
+
 // payload definition (shared between server and client) 
-const PAYLOAD_NAMES=['ECHO_REQ','ECHO_REP']
-const PAYLOAD=YgEs.CreateEnum(PAYLOAD_NAMES);
-const pld_specs={}
-pld_specs[PAYLOAD.ECHO_REQ]={
-	CallOnce:{
-		// only 1 call until replied 
-		Limit:true,
-		// can next request after replied 
-		Reply:PAYLOAD.ECHO_REP,
-		// can call again after msec 
-		Timeout:10000,
+const pld_specs={
+	ECHO_REQ:{
+		CallOnce:{
+			// only 1 call until replied 
+			Limit:true,
+			// can call again after msec 
+			Timeout:10000,
+		},
+	},
+	ECHO_REP:{
+		// unlock ECHO_REQ when received 
+		UnlockOnce:['ECHO_REQ'],
 	},
 }
-pld_specs[PAYLOAD.ECHO_REP]={
-//	QuickCall:true, // call on just received 
+
+// WebSocket receiver 
+const recvopt={
 }
 
-// extract a payload type from received structure 
-const pld_extract_type=(payload)=>payload.Type;
+// WebSocket sender 
+const sendopt={
+	OnSend:(sender,rawdata,prop)=>{
 
-// client Transport driver
-const tp_cli_opt={
-	HasHost:true,
+		log.Trace('transport sending',rawdata);
+
+		ws_cli.Send(rawdata);
+	},
+}
+
+// WebSocket Transport 
+const tpopt={
+	PIDPrefix:'WebSockTest',
 	PayloadSpecs:pld_specs,
-	PayloadReceivers:{}, // client's receive functions by available payload type 
-	OnExtractPayloadType:pld_extract_type,
-	OnSend:(ep,epid_to,pack)=>{
+	PayloadHooks:{
+		ECHO_REP:{
+			OnBound:(tp,payload,prop)=>{
 
-		log.Trace('ECHO_REQ sent to '+epid_to,pack);
+				log.Trace('bound new Protocol',payload);
 
-		// send to the server 
-		ws_cli.Send(pack);
+				return WSGuestEPN;
+			},
+			OnRespond:(tp,prot,payload,prop)=>{
+
+				log.Trace('respond in Protocol '+prot.GetPID(),payload);
+
+				gui_echo_content_recv.Element.value=payload.Body;
+
+				// this Protocol is continued 
+				return true;
+			},
+		},
 	},
-}
-tp_cli_opt.PayloadReceivers[PAYLOAD.ECHO_REP]=(ep_to,epid_from,data)=>{
-
-	log.Debug('ECHO_REP received from '+epid_from,data);
-
-	gui_echo_content_recv.Element.value=data.Content;
 }
 
 function ws_client_new(name,url,interval){
@@ -90,21 +109,20 @@ function ws_client_new(name,url,interval){
 
 		OnConnected:(agent)=>{
 			log.Info('WebSock client '+name+' is ready');
+
+			ws_endpoint.Open();
+			ws_protocol=ws_transport.NewProtocol(WSGuestEPN);
 		},
 		OnDisconnected:(agent,normal)=>{
 
 			log.Info('WebSock client '+name+' is disconnected');
+
+			ws_protocol.Release();
+			ws_endpoint.Close();
 		},
 		OnReceived:(agent,msg)=>{
 
-			// (tentative) fix broken ClientTo 
-			// [ToDo] ClientTo should always null 
-			let j=JSON.parse(msg);
-			j.ClientTo=null;
-			msg=JSON.stringify(j);
-
-			// send to the server Transport 
-			tp_cli.Receive(null,msg);
+			ws_receiver.Receive(msg);
 		},
 	}
 	let client=YgEs.WebSockClient.SetUp(url,opt);
@@ -134,7 +152,8 @@ function gui_test_echo(){
 		OnClick:(view)=>{
 			log.Trace('try sending: '+content_send.Element.value);
 
-			tp_cli.Send(null,{Type:PAYLOAD.ECHO_REQ,Content:content_send.Element.value});
+//			ws_endpoint.Send(null,'ECHO_REQ',content_send.Element.value);
+			ws_protocol.Send(null,'ECHO_REQ',content_send.Element.value);
 		},
 	});
 }
@@ -148,11 +167,10 @@ async function ipl_ready(){
 	// resources 
 	YgEs.LoadCSS('testview.css');
 	YgEs.LoadCSS('logview.css');
+	YgEs.LoadJS('yges/network.js');
 	YgEs.LoadJS('yges/gui.js');
 	YgEs.LoadJS('yges/logger_view.js');
 	YgEs.LoadJS('yges/websock_client.js');
-	YgEs.LoadJS('yges/endpoint.js');
-	YgEs.LoadJS('yges/transport.js');
 	await YgEs.LoadSync().ToPromise();
 	YgEs.DisposeMonitor();
 
@@ -161,8 +179,19 @@ async function ipl_ready(){
 	let logviewarea=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'yges_logview_area'}});
 	let logview=YgEs.LogView.SetUp(logviewarea,log,false);
 
-	// client Transport 
-	tp_cli=YgEs.Transport.CreateDriver(tp_cli_opt).Open();
+	// WebSocket Transport 
+	ws_receiver=YgEs.Network.CreateReceiver(recvopt);
+	ws_sender=YgEs.Network.CreateSender(sendopt);
+	ws_transport=YgEs.Network.CreateTransport(tpopt);
+	ws_transport.AttachReceiver('ws',ws_receiver);
+	ws_transport.AttachSender('ws',ws_sender);
+	ws_transport.SetSelector((tp,target,prop)=>'ws');
+
+	// WebSocket EndPoint 
+	const epopt={
+	}
+	ws_endpoint=YgEs.Network.CreateEndPoint(epopt).Fetch();
+	ws_transport.Connect(WSGuestEPN,ws_endpoint);
 
 	// connect via WebSocket 
 	ws_cli=ws_client_new('WebSockTestClient','ws://localhost:8801',100);
