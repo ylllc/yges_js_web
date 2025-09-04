@@ -207,7 +207,7 @@ AttachReceiver(name,recver):void
 | Name | Type | Means |
 |------|------|-------|
 | name | string | Receiver name in the Transport |
-| recver | @ref pg_class_receiver | receiver |
+| recver | @ref pg_class_network_driver | receiver |
 
 ### Notes
 
@@ -243,7 +243,7 @@ AttachSender(name,sender):void
 | Name | Type | Means |
 |------|------|-------|
 | name | string | Sender name in the Transport |
-| sender | @ref pg_class_sender | sender |
+| sender | @ref pg_class_network_driver | sender |
 
 ### Notes
 

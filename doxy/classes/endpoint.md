@@ -92,7 +92,7 @@ Launch(target,type,body,prop={}):void
 | target | string? | target EndPoint name |
 | type | string? | payload type |
 | body | any | payload body |
-| prop | struct | properties for @ref pg_class_sender |
+| prop | struct | properties for @ref pg_class_network_driver |
 
 -----
 ## Kick() {#EndPoint_Kick}
@@ -108,7 +108,7 @@ Kick(target,prop={}):void
 | Name | Type | Means |
 |------|------|-------|
 | target | string? | target EndPoint name |
-| prop | struct | properties for @ref pg_class_sender |
+| prop | struct | properties for @ref pg_class_network_driver |
 
 -----
 ## KickAll() {#EndPoint_KickAll}
@@ -123,7 +123,7 @@ KickAll(prop={}):void
 
 | Name | Type | Means |
 |------|------|-------|
-| prop | struct | properties for @ref pg_class_sender |
+| prop | struct | properties for @ref pg_class_network_driver |
 
 -----
 ## Send() {#EndPoint_Send}
@@ -141,4 +141,4 @@ Send(target,type,body,prop={}):void
 | target | string? | target EndPoint name |
 | type | string? | payload type |
 | body | any | payload body |
-| prop | struct | properties for @ref pg_class_sender |
+| prop | struct | properties for @ref pg_class_network_driver |

@@ -36,8 +36,7 @@ mainboard.Clear();
 let ipl_loading=YgEs.NewQHT({Target:mainboard,Tag:'div',Attr:{class:'warning'},Sub:['(IPL Loading...)']});
 let log=null; // Logger 
 let ws_cli=null; // WebSock 
-let ws_receiver=null; // Receiver 
-let ws_sender=null; // Sender 
+let ws_driver=null; // Receiver 
 let ws_transport=null; // Transport 
 let ws_endpoint=null; // EndPoint 
 let ws_protocol=null; // Protocol 
@@ -62,12 +61,8 @@ const pld_specs={
 	},
 }
 
-// WebSocket receiver 
-const recvopt={
-}
-
-// WebSocket sender 
-const sendopt={
+// WebSocket driver 
+const drvopt={
 	OnSend:(sender,rawdata,prop)=>{
 
 		log.Trace('transport sending',rawdata);
@@ -122,7 +117,7 @@ function ws_client_new(name,url,interval){
 		},
 		OnReceived:(agent,msg)=>{
 
-			ws_receiver.Receive(msg);
+			ws_driver.Receive(msg);
 		},
 	}
 	let client=YgEs.WebSockClient.SetUp(url,opt);
@@ -180,11 +175,10 @@ async function ipl_ready(){
 	let logview=YgEs.LogView.SetUp(logviewarea,log,false);
 
 	// WebSocket Transport 
-	ws_receiver=YgEs.Network.CreateReceiver(recvopt);
-	ws_sender=YgEs.Network.CreateSender(sendopt);
+	ws_driver=YgEs.Network.CreateDriver(drvopt);
 	ws_transport=YgEs.Network.CreateTransport(tpopt);
-	ws_transport.AttachReceiver('ws',ws_receiver);
-	ws_transport.AttachSender('ws',ws_sender);
+	ws_transport.AttachReceiver('ws',ws_driver);
+	ws_transport.AttachSender('ws',ws_driver);
 	ws_transport.SetSelector((tp,target,prop)=>'ws');
 
 	// WebSocket EndPoint 

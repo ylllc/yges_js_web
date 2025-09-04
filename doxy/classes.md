@@ -39,6 +39,7 @@
 - @subpage pg_class_logger_view
 - @subpage pg_class_logger_view_container
 - @subpage pg_class_network
+- @subpage pg_class_network_driver
 - @subpage pg_class_parsedurl
 - @subpage pg_class_procedure
 - @subpage pg_class_procedure_view
@@ -49,8 +50,6 @@
 - @subpage pg_class_qht_container
 - @subpage pg_class_quickqueue
 - @subpage pg_class_quickqueue_container
-- @subpage pg_class_receiver
-- @subpage pg_class_sender
 - @subpage pg_class_softclass
 - @subpage pg_class_stmac_container
 - @subpage pg_class_stmac_context
