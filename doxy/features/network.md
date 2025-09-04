@@ -32,23 +32,38 @@ and can use YgEs.Network too.
 # How to Use
 
 -----
-## Receiver Definition
+## Driver Definition
 
-an interface from any receiving features.  
-it's not only real networking.  
+an interface with any transport features.  
+but it's not only real networking.  
 
 ```
-// receiver setting
-const recvopt={
-	// (for tough test) insert random msec delay 
-	DelayMin:0,
-	DelayMax:400,
-	// (for tough test) maybe break ordering by delay 
-//	Unorderable:true,
-	// (for tough test) ratio of dubbed packet on received 
-//	DubRatio:0.25,
-//	DubIntervalMin:0,
-//	DubIntervalMax:500,
+// driver setting
+const drvopt={
+	// tough test for sending 
+	ToughOut:{
+		// insert random msec delay 
+		DelayMin:0,
+		DelayMax:400,
+		// maybe break ordering by delay 
+//		Unorderable:true,
+		// ratio of packet dubbing
+//		DubRatio:0.25,
+//		DubIntervalMin:0,
+//		DubIntervalMax:500,
+	},
+	// tough test for receiving 
+	ToughIn:{
+		// insert random msec delay 
+		DelayMin:0,
+		DelayMax:400,
+		// maybe break ordering by delay 
+//		Unorderable:true,
+		// ratio of packet dubbing
+//		DubRatio:0.25,
+//		DubIntervalMin:0,
+//		DubIntervalMax:500,
+	},
 	// (for tough test) maybe cutoff during receiving 
 	OnGate:(recver,rawdata,prop)=>{
 //		if(Math.random()<0.25)return rawdata.substring(0,Math.random()*rawdata.length);
@@ -56,8 +71,10 @@ const recvopt={
 	},
 }
 
-// receiver instance 
-let recv=Network.CreateReceiver(recvopt);
+// loopback driver instance 
+let loopback=Network.CreateLoopback(drvopt);
+// terminal driver instance 
+let terminal=Network.CreateTerminator(drvopt);
 
 ```
 
@@ -82,44 +99,15 @@ Receiver may receiving dubbed packets.
 possibility, a Sender stop sending in the middle.  
 then a Receiver caught a broken payload.  
 
------
-## Sender Definition
-
-an interface to any sending features.  
-it's not only real networking.  
-
-```
-const sendopt={
-	// (for tough test) insert random msec delay 
-	DelayMin:0,
-	DelayMax:400,
-	// (for tough test) maybe break ordering by delay 
-	Unorderable:false,
-}
-
-// sender instance 
-let send=Network.CreateTerminator(sendopt);
-// loopback instance 
-let loopback=Network.CreateLoopback(recv,sendopt);
-// terminator instance 
-let terminal=Network.CreateTerminator(sendopt);
-```
-
 ### Loopback
 
-send to a Receiver on the self process.  
+one of network driver preset.  
+send to myself.  
 
 ### Terminator
 
+one of network driver preset.  
 ignore sending explicitly.  
-
-### Delay simulation 
-
-see same feature in Receiver  
-
-### Unorder simulation 
-
-see same feature in Receiver  
 
 -----
 ## Transport Definition
@@ -137,7 +125,7 @@ let tp=Network.CreateTransport(tpopt);
 // receivers 
 // Transport can attach more Recever instances 
 // but a Receiver attaches to only one Transport 
-tp.AttachReceiver('lb',recv);
+tp.AttachReceiver('lb',loopback);
 
 // senders 
 // Transport can attach more Sender instances 
@@ -312,20 +300,17 @@ const tpopt_guest={
 // estimating online communication, 
 // each EndPoint have a separated instance 
 // and each sender connect to otherside receiver 
-let recv_host=Network.CreateReceiver(recvopt);
-let recv_guest=Network.CreateReceiver(recvopt);
-
-let send_host=Network.CreateLoopback(recv_guest,sendopt);
-let send_guest=Network.CreateLoopback(recv_host,sendopt);
+let host2guest=Network.CreateLoopback(drvopt);
+let guest2host=Network.CreateLoopback(drvopt);
 
 let tp_host=Network.CreateTransport(tpopt_host);
-tp_host.AttachReceiver('port_host',recv_host);
-tp_host.AttachSender('port_host',send_host);
+tp_host.AttachReceiver('port_host',guest2host);
+tp_host.AttachSender('port_host',host2guest);
 tp_host.SetSelector((tp,target,prop)=>'port_host');
 
 let tp_guest=Network.CreateTransport(tpopt_guest);
-tp_guest.AttachReceiver('port_guest',recv_guest);
-tp_guest.AttachSender('port_guest',send_guest);
+tp_guest.AttachReceiver('port_guest',host2guest);
+tp_guest.AttachSender('port_guest',guest2host);
 tp_guest.SetSelector((tp,target,prop)=>'port_guest');
 ```
 
@@ -359,8 +344,7 @@ ep_guest.Send(null,'HELLO','Hello, host');
 # Class Reference
 
 @sa @ref pg_class_network @n
-@sa @ref pg_class_receiver @n
-@sa @ref pg_class_sender @n
+@sa @ref pg_class_network_driver @n
 @sa @ref pg_class_transport @n
 @sa @ref pg_class_protocol @n
 @sa @ref pg_class_endpoint @n
