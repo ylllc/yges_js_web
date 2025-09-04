@@ -5,8 +5,8 @@
 Redefining transport layer for ...
 - Use on free protocol 
 - Can use realtime communicating (e.g. WebSocket) 
+- Useful for async and parallel networking
 - Can simulation in standalone 
-- Safety features
 - Tough test features
 
 -----
