@@ -65,6 +65,17 @@ IsConnected():bool
 connected to a Transport
 
 -----
+## GetConnectionName() {#EndPoint_GetConnectionName}
+
+### Spec
+
+GetConnectionName():string?
+
+### Returns
+
+connection name in Transport  
+
+-----
 ## GetTransport() {#EndPoint_GetTransport}
 
 ### Spec

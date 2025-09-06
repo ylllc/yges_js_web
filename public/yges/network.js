@@ -775,8 +775,8 @@ function _endpoint_new(opt={}){
 
 	opt.AgentBypasses.push(
 		'SetTracing_EndPoint',
-		'IsConnected',
-		'GetTransportName','Launch','Kick','KickAll','Send'
+		'IsConnected','GetConnectionName',
+		'Launch','Kick','KickAll','Send'
 	);
 
 	const onOpen=opt.OnOpen??((agent)=>{});
@@ -833,6 +833,7 @@ function _endpoint_new(opt={}){
 		SetTracing_EndPoint:(side)=>priv.tracing_agent=!!side,
 
 		IsConnected:()=>!!priv.tp,
+		GetConnectionName:()=>priv.tp?.GetConnectionName(),
 		GetTransport:()=>{
 			if(!priv.tp)return undefined;
 			return priv.tp.GetAgent();
