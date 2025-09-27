@@ -34,7 +34,7 @@ Engine.Start();
 ```
 
 -----
-## Create a Server Instance
+## Create a Server Instance (for LowLevel WebSocket)
 
 ```
 let server=WebSockServer.SetUp(ListeningPort,{
@@ -59,6 +59,27 @@ let server=WebSockServer.SetUp(ListeningPort,{
 ```
 
 -----
+## Create a Server Instance (via @ref pg_feat_network)
+
+```
+// payload definition  
+const pld_specs={
+	:
+}
+const pld_server={
+	:
+}
+
+let server=WebSockServer.Manage(ListeningPort,{
+	// max clients 
+	ConnectionLimit:5,
+	// payload definition 
+	PayloadSpecs:pld_specs,
+	PayloadHooks:pld_server,
+}).Fetch();
+```
+
+-----
 ## Start a Server
 
 ```
@@ -78,3 +99,4 @@ server.Close();
 @sa @ref pg_class_websock_server_agent  
 @sa @ref pg_class_websock_server_connection  
 @sa @ref pg_class_websock_server_container  
+@sa @ref pg_class_websock_server_manager  

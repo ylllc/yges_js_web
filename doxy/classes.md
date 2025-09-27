@@ -66,3 +66,4 @@
 - @subpage pg_class_websock_server_agent
 - @subpage pg_class_websock_server_connection
 - @subpage pg_class_websock_server_container
+- @subpage pg_class_websock_server_manager

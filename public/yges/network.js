@@ -644,7 +644,8 @@ function _transport_new(opt={}){
 				else{
 					let cb=null;
 					let prot=priv.prot[pid];
-					if(!prot){
+					let bound=!!prot;
+					if(!bound){
 						// handshaking 
 						cb=opt.PayloadHooks[plt]?.OnBound;
 						if(!cb){
@@ -656,10 +657,8 @@ function _transport_new(opt={}){
 								priv.trace(()=>'no handing EndPoint');
 							}
 							else{
-								prot=tp.NewProtocol(epn,{PID:pid});
-								if(prot){
-									priv.trace(()=>'handing accepted by EndPoint ('+epn+')');
-								}
+								priv.trace(()=>'handing accepted by EndPoint ('+epn+')');
+								prot=_protocol_new(tp,epn,pid,{});
 							}
 						}
 					}
@@ -673,8 +672,14 @@ function _transport_new(opt={}){
 
 					// receivements 
 					cb=opt.PayloadHooks[plt]?.OnRespond;
-					if(cb && !cb(tp,prot,pl,prop)){
-						priv.trace(()=>'end of Protocol ('+pid+')');
+					if(cb && cb(tp,prot,pl,prop)){
+						if(!bound){
+							priv.trace(()=>'Protocol ('+pid+') is bound now with EndPoint('+prot.GetEndPoint().GetConnectionName()+')');
+							priv.prot[pid]=prot;
+						}
+					}
+					else if(bound){
+						priv.trace(()=>'Protocol ('+pid+') is expired');
 						tp.ExpireProtocol(pid);
 					}
 				}
@@ -830,7 +835,7 @@ function _endpoint_new(opt={}){
 		},
 	},{
 		// public
-		SetTracing_EndPoint:(side)=>priv.tracing_agent=!!side,
+		SetTracing_EndPoint:(side)=>priv.tracing_endpoint=!!side,
 
 		IsConnected:()=>!!priv.tp,
 		GetConnectionName:()=>priv.tp?.GetConnectionName(),

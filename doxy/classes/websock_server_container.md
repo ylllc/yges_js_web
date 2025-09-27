@@ -89,18 +89,27 @@ CB_Error(cnx,err):void
 # Structures
 
 -----
-## Option {#WebSockServer_Container_Option}
+## AgentOption {#WebSockServer_Container_AgentOption}
+
+it inherited from @ref Agent_Field  
 
 | Name | Type | Means |
 |------|------|-------|
 | ConnectionLimit? | int | max connectable clients (or unlimited) |
-| OnOpen | func | call on this server open |
-| OnReady | func | call on this server ready |
-| OnClose | func | call on this server close |
+| Trace_WebSock | bool? | tracing enbled for WebSocket |
 | OnConnect? | @ref WebSockServer_Container_CB_Connect | call by connection from client |
 | OnDisconnect? | @ref WebSockServer_Container_CB_Disconnect | call by disconnection from client |
 | OnReceived? | @ref WebSockServer_Container_CB_Received | call by received from client |
 | OnError? | @ref WebSockServer_Container_CB_Error | call by an error from client |
+
+-----
+## ManagerOption {#WebSockServer_Container_ManagerOption}
+
+it inherited from @ref WebSockServer_Container_AgentOption, @ref Transport_TransportOption and @ref NetworkDriver_DriverOption 
+
+| Name | Type | Means |
+|------|------|-------|
+| Trace_Manager | bool? | tracing enbled for Manager |
 
 -----
 # Properties
@@ -127,4 +136,20 @@ SetUp(port,opt):@ref pg_class_websock_server_agent
 | Name | Type | Means |
 |------|------|-------|
 | port | int | listening port |
-| opt | @ref WebSockServer_Container_Option | optional params |
+| opt | @ref WebSockServer_Container_AgentOption | optional params |
+
+-----
+## Manage {#WebSockServer_Container_Manage}
+
+create a @ref pg_class_network_driver with managed a @ref pg_class_websock_server_agent  
+
+## Spec
+
+Manage(port,opt):@ref pg_class_websock_server_manager
+
+## Args
+
+| Name | Type | Means |
+|------|------|-------|
+| port | int | listening port |
+| opt | @ref WebSockServer_Container_ManagerOption | optional params |

@@ -66,7 +66,7 @@ CB_Received(agent,data):void
 # Structures
 
 -----
-## Option {#WebSockServer_Container_Option}
+## Option {#WebSockClient_Container_Option}
 
 | Name | Type | Means |
 |------|------|-------|
@@ -108,4 +108,4 @@ SetUp(port,opt):@ref pg_class_websock_server_agent
 | Name | Type | Means |
 |------|------|-------|
 | url | string | connecting server |
-| opt | @ref WebSockServer_Container_Option | optional params |
+| opt | @ref WebSockClient_Container_Option | optional params |
